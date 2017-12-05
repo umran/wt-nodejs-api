@@ -1,0 +1,5 @@
+{
+  "port": 8080,
+  "privateKeyDir": "/keys/mainKey",
+  "web3Provider": "https://kovan.infura.io/WKNyJ0kClh8Ao5LdmO7z"
+}
