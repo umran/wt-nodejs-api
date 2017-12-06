@@ -1,0 +1,28 @@
+{
+  "name": "wt-nodejs-api",
+  "version": "0.1.0",
+  "description": " API to interact with the Winding Tree platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/windingtree/wt-nodejs-api.git"
+  },
+  "keywords": [
+    "winding-tree",
+    "api",
+    "nodejs",
+    "javascript"
+  ],
+  "author": "WT Dev Team <support@winidngtree.com>",
+  "license": "APACHE 2.0",
+  "bugs": {
+    "url": "https://github.com/windingtree/wt-nodejs-api/issues"
+  },
+  "homepage": "https://github.com/windingtree/wt-nodejs-api#readme",
+  "dependencies": {
+    "web3": "^1.0.0-beta.26"
+  }
+}
