@@ -1,18 +1,18 @@
 
-var http = require('http');
-var fs = require('fs');
-var Web3 = require('web3');
-var BookingData = require('./libs/BookingData.js');
-var HotelManager = require('./libs/HotelManager.js');
-var HotelEvents = require('./libs/HotelEvents.js');
-var User = require('./libs/User.js');
-var Utils = require('./libs/Utils.js');
+const http = require('http');
+const fs = require('fs');
+const Web3 = require('web3');
+const BookingData = require('./libs/BookingData.js');
+const HotelManager = require('./libs/HotelManager.js');
+const HotelEvents = require('./libs/HotelEvents.js');
+const User = require('./libs/User.js');
+const Utils = require('./libs/Utils.js');
 
 const CONFIG = require('./config.json');
 
 console.log('Config:', CONFIG);
 
-var web3 = new Web3(new Web3.providers.HttpProvider(CONFIG.web3Provider));
+const web3 = new Web3(new Web3.providers.HttpProvider(CONFIG.web3Provider));
 
 const privateKeyString = fs.readFileSync(__dirname+CONFIG.privateKeyDir, "utf8");
 const privateKeyJSON = JSON.parse(privateKeyString);
