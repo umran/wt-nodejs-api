@@ -1,5 +1,5 @@
 const express = require('express')
-const routes = require('./routes').router
+const {router} = require('./routes')
 const fs = require('fs');
 const Web3 = require('web3');
 const BookingData = require('../../libs/BookingData.js');
@@ -18,14 +18,9 @@ const privateKeyString = fs.readFileSync(`../../${CONFIG.privateKeyDir}`, "utf8"
 const privateKeyJSON = JSON.parse(privateKeyString);
 
 console.log('API ETH address:', privateKeyJSON.address);
-// http.createServer(function (req, res) {
-//   res.write('WT Nodejs API');
-//   res.end(); //end the response
-// }).listen(CONFIG.port);
-const app = express()
 
-console.log(routes)
-app.use(routes)
+const app = express()
+app.use(router)
 
 app.use((err, req, res, next) => {
   console.error(err)
