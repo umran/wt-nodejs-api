@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/windingtree/wt-nodejs-api#readme",
   "dependencies": {
+    "express": "^4.16.2",
     "web3": "^1.0.0-beta.26"
   }
 }
