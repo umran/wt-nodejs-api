@@ -14,7 +14,7 @@ console.log('Config:', CONFIG);
 
 const web3 = new Web3(new Web3.providers.HttpProvider(CONFIG.web3Provider));
 
-const privateKeyString = fs.readFileSync(`../../${CONFIG.privateKeyDir}`, "utf8");
+const privateKeyString = fs.readFileSync(`${CONFIG.privateKeyDir}`, "utf8");
 const privateKeyJSON = JSON.parse(privateKeyString);
 
 console.log('API ETH address:', privateKeyJSON.address);
