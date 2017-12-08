@@ -13,13 +13,13 @@ function decrypt(password, privateKeyJSON) {
   return web3.eth.accounts.decrypt(privateKeyJSON, password);
 };
 
-function updateAccountPassword(oldPassword, newPassword, privateKeyJSON, writeTo){
-  const {privateKey} = decrypt(oldPassword, privateKeyJSON);
+function updateAccountPassword(oldPassword, newPassword, privateKeyJSON, writeTo = CONFIG.privateKeyDir){
+  const { privateKey } = decrypt(oldPassword, privateKeyJSON);
   const cryptedAccount = web3.eth.accounts.encrypt(privateKey, newPassword);
   fs.writeFileSync(writeTo, JSON.stringify(cryptedAccount), "utf8");
 }
 
 module.exports = {
-  loadAccount: loadAccount,
-  updateAccountPassword: updateAccountPassword
+  loadAccount,
+  updateAccountPassword
 };
