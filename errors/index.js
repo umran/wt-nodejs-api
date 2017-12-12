@@ -1,6 +1,6 @@
 const errorCodes = require('./codes.js')
 
-function handle(code, e {
+function handle(code, e) {
   if (code === 'web3') {
     e.code = `#${code}`;
     e.short = e.name;
