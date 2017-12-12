@@ -5,6 +5,7 @@ const Web3 = require('web3');
 const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
 
+const { handle } = require('../../errors')
 const BookingData = require('../../libs/BookingData.js');
 const HotelManager = require('../../libs/HotelManager.js');
 const HotelEvents = require('../../libs/HotelEvents.js');
@@ -23,8 +24,12 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(require('../../docs/swagger.js
 app.use(bodyParser.json())
 app.use(router)
 app.use((err, req, res, next) => {
-  console.error(err)
-  res.sendStatus(400).json(err)
+  console.error(err);
+  res.status(400).json({
+    code: err.code,
+    short: err.short,
+    long: err.long
+  })
 })
 
 app.listen(3000, () => {
