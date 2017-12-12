@@ -67,14 +67,20 @@
     },
     "definitions": {
         "Error": {
-            "title": "Default error",
-            "description": "Something was unexpected.",
+            "title": "Error",
+            "description": "Default schema for errors returned by API.",
             "properties": {
                 "code": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Computer-readable error. Use this for comparison."
                 },
-                "message": {
-                    "type": "string"
+                "short": {
+                    "type": "string",
+                    "description": "Human-readable error with a short description of the error."
+                },
+                "long": {
+                    "type": "string",
+                    "description": "Verbose explanation of what happen."
                 }
             }
         }
