@@ -1,0 +1,82 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "0.0.1",
+        "title": "Winding tree API",
+        "description": "Node js API for Winding Tree",
+        "contact": {
+            "name": "Winding tree",
+            "url": "https://windingtree.com/"
+        },
+        "license": {
+            "name": "Apache-2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0"
+        }
+    },
+    "externalDocs": {
+        "description": "Complete documentation",
+        "url": "https://windingtree.github.io/wt-js-libs/"
+    },
+    "schemes": [
+        "http"
+    ],
+    "host": "localhost:3000",
+    "basePath": "/",
+    "paths": {
+        "/password": {
+            "post": {
+                "summary": "Update password",
+                "description": "Update the password of the account",
+                "parameters": [
+                    {
+                        "name": "passwords",
+                        "in": "body",
+                        "description": "Old and new passwords.",
+                        "required": true,
+                        "schema": {
+                            "required": [
+                                "password",
+                                "newPassword"
+                            ],
+                            "properties": {
+                                "password": {
+                                    "description": "Current password. This will no longer be the current password.",
+                                    "type": "string"
+                                },
+                                "newPassword": {
+                                    "description": "The new password. If the operation is successful, this will be the password.",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Sucefully updated."
+                    },
+                    "400": {
+                        "description": "Invalid input",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Error": {
+            "title": "Default error",
+            "description": "Something was unexpected.",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

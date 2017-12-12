@@ -3,6 +3,7 @@ const {router} = require('./routes')
 const fs = require('fs');
 const Web3 = require('web3');
 const bodyParser = require('body-parser');
+const swaggerUi = require('swagger-ui-express');
 
 const BookingData = require('../../libs/BookingData.js');
 const HotelManager = require('../../libs/HotelManager.js');
@@ -18,6 +19,7 @@ const privateKeyJSON = JSON.parse(privateKeyString);
 
 const app = express()
 
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(require('../../docs/swagger.json')));
 app.use(bodyParser.json())
 app.use(router)
 app.use((err, req, res, next) => {
