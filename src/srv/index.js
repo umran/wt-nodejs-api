@@ -5,7 +5,6 @@ const Web3 = require('web3');
 const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
 
-const { handle } = require('../../errors')
 const BookingData = require('../../libs/BookingData.js');
 const HotelManager = require('../../libs/HotelManager.js');
 const HotelEvents = require('../../libs/HotelEvents.js');
