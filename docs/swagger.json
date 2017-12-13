@@ -1,88 +1,188 @@
 {
-    "swagger": "2.0",
-    "info": {
-        "version": "0.0.1",
-        "title": "Winding tree API",
-        "description": "Node js API for Winding Tree",
-        "contact": {
-            "name": "Winding tree",
-            "url": "https://windingtree.com/"
-        },
-        "license": {
-            "name": "Apache-2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0"
-        }
+  "swagger": "2.0",
+  "info": {
+    "version": "0.0.1",
+    "title": "Winding tree API",
+    "description": "Node js API for Winding Tree",
+    "contact": {
+      "name": "Winding tree",
+      "url": "https://windingtree.com/"
     },
-    "externalDocs": {
-        "description": "Complete documentation",
-        "url": "https://windingtree.github.io/wt-js-libs/"
-    },
-    "schemes": [
-        "http"
-    ],
-    "host": "localhost:3000",
-    "basePath": "/",
-    "paths": {
-        "/password": {
-            "post": {
-                "summary": "Update password",
-                "description": "Update the password of the account",
-                "parameters": [
-                    {
-                        "name": "passwords",
-                        "in": "body",
-                        "description": "Old and new passwords.",
-                        "required": true,
-                        "schema": {
-                            "required": [
-                                "password",
-                                "newPassword"
-                            ],
-                            "properties": {
-                                "password": {
-                                    "description": "Current password. This will no longer be the current password.",
-                                    "type": "string"
-                                },
-                                "newPassword": {
-                                    "description": "The new password. If the operation is successful, this will be the password.",
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Sucefully updated."
-                    },
-                    "400": {
-                        "description": "Invalid input",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                }
-            }
-        }
-    },
-    "definitions": {
-        "Error": {
-            "title": "Error",
-            "description": "Default schema for errors returned by API.",
-            "properties": {
-                "code": {
-                    "type": "string",
-                    "description": "Computer-readable error. Use this for comparison."
-                },
-                "short": {
-                    "type": "string",
-                    "description": "Human-readable error with a short description of the error."
-                },
-                "long": {
-                    "type": "string",
-                    "description": "Verbose explanation of what happen."
-                }
-            }
-        }
+    "license": {
+      "name": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
     }
+  },
+  "externalDocs": {
+    "description": "Complete documentation",
+    "url": "https://windingtree.github.io/wt-js-libs/"
+  },
+  "schemes": [
+    "http"
+  ],
+  "host": "localhost:3000",
+  "basePath": "/",
+  "paths": {
+    "/password": {
+      "post": {
+        "summary": "Update password",
+        "description": "Update the password of the account",
+        "parameters": [
+          {
+            "name": "passwords",
+            "in": "body",
+            "description": "Old and new passwords.",
+            "required": true,
+            "schema": {
+              "required": [
+                "password",
+                "newPassword"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password. This will no longer be the current password.",
+                  "type": "string"
+                },
+                "newPassword": {
+                  "description": "The new password. If the operation is successful, this will be the password.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Sucefully updated."
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/hotels": {
+      "get": {
+        "summary": "Retrieves all hotels.",
+        "description": "Retrieves hotels for the account.",
+        "responses": {
+          "200": {
+            "description": "Ok.",
+            "schema": {
+              "$ref": "#/definitions/Hotels"
+            }
+          },
+          "400": {
+            "description": "Can not get.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Error": {
+      "title": "Error",
+      "description": "Default schema for errors returned by API.",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Computer-readable error. Use this for comparison."
+        },
+        "short": {
+          "type": "string",
+          "description": "Human-readable error with a short description of the error."
+        },
+        "long": {
+          "type": "string",
+          "description": "Verbose explanation of what happen."
+        }
+      }
+    },
+    "Hotels": {
+      "title": "Hotels",
+      "description": "Hotels list.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Hotel"
+      }
+    },
+    "Hotel": {
+      "title": "Hotel",
+      "description": "Hotel properties",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "manager": {
+          "type": "string"
+        },
+        "lineOne": {
+          "type": "string"
+        },
+        "lineTwo": {
+          "type": "string"
+        },
+        "zip": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "created": {
+          "type": "integer"
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "latitude": {
+          "type": "number"
+        },
+        "longitude": {
+          "type": "number"
+        },
+        "waitConfirmation": {
+          "type": "boolean"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "unitTypeNames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "unitTypes": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "units": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "unitAddresses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
 }
