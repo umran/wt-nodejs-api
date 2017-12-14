@@ -8,6 +8,7 @@ const { validatePasswords,
         validateCreateHotel
       } = require('../helpers/validators')
 
+const { handle } = require('../../errors')
 const BookingData = require('../../libs/BookingData.js')
 const HotelManager = require('../../libs/HotelManager.js')
 const HotelEvents = require('../../libs/HotelEvents.js')
@@ -26,7 +27,7 @@ router.post('/password', validatePasswords, (req, res, next) => {
   try {
     updateAccountPassword(password, newPassword, loadAccount(CONFIG.privateKeyDir))
   } catch (err) {
-    return next({code: 'web3', err})
+    return next(handle('web3', err))
   }
   res.sendStatus(200)
 })
@@ -37,7 +38,7 @@ router.get('/hotels', validatePassword, async (req, res, next) => {
   try {
     ownerAccount = web3.eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
   } catch (err) {
-    return next({code: 'web3', err})
+    return next(handle('web3', err))
   }
   try {
     const hotelManager = new HotelManager({
@@ -49,7 +50,7 @@ router.get('/hotels', validatePassword, async (req, res, next) => {
     const hotels = await hotelManager.getHotels()
     res.status(200).json(hotels)
   } catch (err) {
-    return next({code: 'hotelManager', err})
+    return next(handle('hotelManager', err))
   }
 })
 
@@ -71,7 +72,7 @@ router.post('/hotels', validateCreateHotel, async (req, res, next) => {
       txHash: logs[0].transactionHash
     })
   } catch (err) {
-    return next({code: 'web3', err})
+    return next(handle('web3', err))
   }
 })
 
