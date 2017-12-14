@@ -58,21 +58,20 @@ router.post('/hotels', validateCreateHotel, async (req, res, next) => {
   let ownerAccount = {}
   try {
     ownerAccount = web3.eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
-  } catch (err) {
-    return next({code: 'web3', err})
-  }
-  try {
     const hotelManager = new HotelManager({
       indexAddress: CONFIG.indexAddress,
       owner: ownerAccount.address,
       gasMargin: CONFIG.gasMargin,
       web3: web3
     })
-    const hotel = await hotelManager.createHotel(name, description)
-    res.status(200).json(hotel)
+    hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
+    const { logs } = await hotelManager.createHotel(name, description)
+    hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
+    res.status(200).json({
+      txHash: logs[0].transactionHash
+    })
   } catch (err) {
-    console.log(err)
-    return next({code: 'hotelManager', err})
+    return next({code: 'web3', err})
   }
 })
 
