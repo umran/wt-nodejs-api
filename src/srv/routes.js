@@ -3,7 +3,10 @@ const express = require('express')
 const router = express.Router()
 const CONFIG = require('../../config.json')
 const { loadAccount, updateAccountPassword } = require('../helpers/crypto')
-const { validatePasswords, validatePassword } = require('../helpers/validators')
+const { validatePasswords,
+        validatePassword,
+        validateCreateHotel
+      } = require('../helpers/validators')
 
 const BookingData = require('../../libs/BookingData.js')
 const HotelManager = require('../../libs/HotelManager.js')
@@ -46,6 +49,29 @@ router.get('/hotels', validatePassword, async (req, res, next) => {
     const hotels = await hotelManager.getHotels()
     res.status(200).json(hotels)
   } catch (err) {
+    return next({code: 'hotelManager', err})
+  }
+})
+
+router.post('/hotels', validateCreateHotel, async (req, res, next) => {
+  const { password, name, description } = req.body
+  let ownerAccount = {}
+  try {
+    ownerAccount = web3.eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
+  } catch (err) {
+    return next({code: 'web3', err})
+  }
+  try {
+    const hotelManager = new HotelManager({
+      indexAddress: CONFIG.indexAddress,
+      owner: ownerAccount.address,
+      gasMargin: CONFIG.gasMargin,
+      web3: web3
+    })
+    const hotel = await hotelManager.createHotel(name, description)
+    res.status(200).json(hotel)
+  } catch (err) {
+    console.log(err)
     return next({code: 'hotelManager', err})
   }
 })
