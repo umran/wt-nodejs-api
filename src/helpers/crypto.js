@@ -9,12 +9,8 @@ function loadAccount (dir) {
   return JSON.parse(privateKeyString)
 }
 
-function decrypt (password, privateKeyJSON) {
-  return web3.eth.accounts.decrypt(privateKeyJSON, password)
-};
-
 function updateAccountPassword (oldPassword, newPassword, privateKeyJSON, writeTo = CONFIG.privateKeyDir) {
-  const { privateKey } = decrypt(oldPassword, privateKeyJSON)
+  const { privateKey } = web3.eth.accounts.decrypt(privateKeyJSON, oldPassword)
   const cryptedAccount = web3.eth.accounts.encrypt(privateKey, newPassword)
   fs.writeFileSync(writeTo, JSON.stringify(cryptedAccount), 'utf8')
 }

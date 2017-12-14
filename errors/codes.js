@@ -1,5 +1,5 @@
 module.exports = {
-  unknownError:  {
+  unknownError: {
     short: 'Something went wrong.',
     long: 'Something went wrong. Please contact the administrator.'
   },
@@ -10,5 +10,9 @@ module.exports = {
   missingNewPassword: {
     short: 'A new password is required',
     long: `Body must include "newPassword"`
+  },
+  hotelManager: {
+    short: 'Something went wrong with the hotel manager.',
+    long: 'Hotel manager can not process the request. Please contact the administrator.'
   }
-};
+}

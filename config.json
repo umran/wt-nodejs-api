@@ -1,5 +1,7 @@
 {
+  "gasMargin": 1.5,
+  "indexAddress": "0x787593b0A1020FD796312B5D284Ee64a0947cc52",
   "port": 8080,
-  "privateKeyDir": "/keys/mainKey",
-  "web3Provider": "https://kovan.infura.io/WKNyJ0kClh8Ao5LdmO7z"
+  "privateKeyDir": "keys/mainKey.json",
+  "web3Provider": "https://ropsten.infura.io/WKNyJ0kClh8Ao5LdmO7z"
 }
