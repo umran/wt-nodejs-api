@@ -68,6 +68,23 @@
       "get": {
         "summary": "Retrieves all hotels.",
         "description": "Retrieves hotels for the account.",
+        "parameters": [
+          {
+            "name": "password",
+            "in": "body",
+            "schema": {
+              "required": [
+                "password"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password. This will no longer be the current password.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Ok.",

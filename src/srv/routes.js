@@ -3,7 +3,7 @@ const express = require('express')
 const router = express.Router()
 const CONFIG = require('../../config.json')
 const { loadAccount, updateAccountPassword } = require('../helpers/crypto')
-const { validatePasswords } = require('../helpers/validators')
+const { validatePasswords, validatePassword } = require('../helpers/validators')
 
 const BookingData = require('../../libs/BookingData.js')
 const HotelManager = require('../../libs/HotelManager.js')
@@ -28,11 +28,11 @@ router.post('/password', validatePasswords, (req, res, next) => {
   res.sendStatus(200)
 })
 
-router.get('/hotels', async (req, res, next) => {
-  // const {password} = req.
+router.get('/hotels', validatePassword, async (req, res, next) => {
+  const { password } = req.body
   let ownerAccount = {}
   try {
-    ownerAccount = web3.eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), 'test123')
+    ownerAccount = web3.eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
   } catch (err) {
     return next({code: 'web3', err})
   }
@@ -40,7 +40,7 @@ router.get('/hotels', async (req, res, next) => {
     const hotelManager = new HotelManager({
       indexAddress: CONFIG.indexAddress,
       owner: ownerAccount.address,
-      gasMargin: 1.5,
+      gasMargin: CONFIG.gasMargin,
       web3: web3
     })
     const hotels = await hotelManager.getHotels()
