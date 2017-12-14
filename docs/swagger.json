@@ -99,10 +99,67 @@
             }
           }
         }
+      },
+      "post":
+        {
+          "summary": "Create hotel",
+          "description": "Create a new hotel with name and description.",
+          "parameters": [
+            {
+              "name": "params",
+              "in": "body",
+              "required": true,
+              "schema": {
+                "required": [
+                  "password",
+                  "name",
+                  "description"
+                ],
+                "properties": {
+                  "password": {
+                    "description": "Current password.",
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "Hotel's name.",
+                    "type": "string"
+                  },
+                  "description": {
+                    "description": "Hotel's description.",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Sucefully created.",
+              "schema":{
+                "$ref" : "#/definitions/txHash"
+              }
+            },
+            "400": {
+              "description": "Invalid input",
+              "schema": {
+                "$ref": "#/definitions/Error"
+              }
+            }
+          }
       }
     }
   },
   "definitions": {
+    "txHash": {
+      "title": "Transaction hash",
+      "description": "transaction hash for the operation.",
+      "properties": {
+        "txHash": {
+          "type": "string",
+          "description": "Transaction hash."
+        }
+      }
+    },
     "Error": {
       "title": "Error",
       "description": "Default schema for errors returned by API.",
