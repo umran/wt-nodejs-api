@@ -148,6 +148,35 @@
       }
     },
     "/hotels/{address}/images": {
+      "get": {
+        "summary": "Hotel's images.",
+        "description": "Retrieves hotel's",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "array",
+              "items" : {
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
       "post": {
         "summary": "Add image to hotel",
         "description": "Add an image of the hotel.",
