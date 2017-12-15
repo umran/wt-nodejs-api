@@ -21,7 +21,14 @@ function validateCreateHotel (req, res, next) {
   next()
 }
 
+function validateAddImage (req, res, next) {
+  const { url } = req.body
+  if (!url || !url) return next(handle('missingUrl', new Error()))
+  next()
+}
+
 module.exports = {
+  validateAddImage,
   validateCreateHotel,
   validatePassword,
   validatePasswords
