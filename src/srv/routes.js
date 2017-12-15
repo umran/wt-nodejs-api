@@ -3,7 +3,8 @@ const express = require('express')
 const router = express.Router()
 const CONFIG = require('../../config.json')
 const { loadAccount, updateAccountPassword } = require('../helpers/crypto')
-const { validatePasswords,
+const { validateAddImage,
+        validatePasswords,
         validatePassword,
         validateCreateHotel
       } = require('../helpers/validators')
@@ -67,6 +68,29 @@ router.post('/hotels', validateCreateHotel, async (req, res, next) => {
     })
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
     const { logs } = await hotelManager.createHotel(name, description)
+    hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
+    res.status(200).json({
+      txHash: logs[0].transactionHash
+    })
+  } catch (err) {
+    return next(handle('web3', err))
+  }
+})
+
+router.post('/hotels/:address/images', validatePassword, validateAddImage, async (req, res, next) => {
+  const { password, url } = req.body
+  const { address } = req.params
+  let ownerAccount = {}
+  try {
+    ownerAccount = web3.eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
+    const hotelManager = new HotelManager({
+      indexAddress: CONFIG.indexAddress,
+      owner: ownerAccount.address,
+      gasMargin: CONFIG.gasMargin,
+      web3: web3
+    })
+    hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
+    const { logs } = await hotelManager.addImageHotel(address, url)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash
