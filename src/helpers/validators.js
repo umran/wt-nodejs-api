@@ -13,7 +13,16 @@ function validatePassword (req, res, next) {
   next()
 }
 
+function validateCreateHotel (req, res, next) {
+  const { password, name, description } = req.body
+  if (!password) return next(handle('missingPassword', new Error()))
+  if (!name) return next(handle('createHotel', new Error()))
+  if (!description) return next(handle('createHotel', new Error()))
+  next()
+}
+
 module.exports = {
+  validateCreateHotel,
   validatePassword,
   validatePasswords
 }
