@@ -100,6 +100,28 @@ router.post('/hotels/:address/images', validatePassword, validateAddImage, async
   }
 })
 
+router.get('/hotels/:address/images', async (req, res, next) => {
+  const { address } = req.params
+  try {
+    const images = []
+    const context = {
+      indexAddress: CONFIG.indexAddress,
+      gasMargin: CONFIG.gasMargin,
+      web3: web3
+    }
+    const hotelInstance = Utils.getInstance('Hotel', address, context)
+    const totalImages = await hotelInstance.methods.getImagesLength().call()
+    for (var i = 0; i < totalImages; i++) {
+      images.push(await hotelInstance.methods.images(i).call())
+    }
+    res.status(200).json({
+      images
+    })
+  } catch (err) {
+    return next(handle('web3', err))
+  }
+})
+
 module.exports = {
   router
 }
