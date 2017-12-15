@@ -100,52 +100,101 @@
           }
         }
       },
-      "post":
-        {
-          "summary": "Create hotel",
-          "description": "Create a new hotel with name and description.",
-          "parameters": [
-            {
-              "name": "params",
-              "in": "body",
-              "required": true,
-              "schema": {
-                "required": [
-                  "password",
-                  "name",
-                  "description"
-                ],
-                "properties": {
-                  "password": {
-                    "description": "Current password.",
-                    "type": "string"
-                  },
-                  "name": {
-                    "description": "Hotel's name.",
-                    "type": "string"
-                  },
-                  "description": {
-                    "description": "Hotel's description.",
-                    "type": "string"
-                  }
+      "post": {
+        "summary": "Create hotel",
+        "description": "Create a new hotel with name and description.",
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "password",
+                "name",
+                "description"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "Hotel's name.",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "Hotel's description.",
+                  "type": "string"
                 }
               }
             }
-          ],
-          "responses": {
-            "200": {
-              "description": "Sucefully created.",
-              "schema":{
-                "$ref" : "#/definitions/txHash"
-              }
-            },
-            "400": {
-              "description": "Invalid input",
-              "schema": {
-                "$ref": "#/definitions/Error"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully created.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/hotels/{address}/images": {
+      "post": {
+        "summary": "Add image to hotel",
+        "description": "Add an image of the hotel.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "password",
+                "url"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "url": {
+                  "description": "Picture's url.",
+                  "type": "string"
+                }
               }
             }
           }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully created.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
       }
     }
   },
