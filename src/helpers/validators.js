@@ -27,9 +27,16 @@ function validateAddImage (req, res, next) {
   next()
 }
 
+function validateType (req, res, next) {
+  const { type } = req.body
+  if (!type) return next(handle('missingType', new Error()))
+  next()
+}
+
 module.exports = {
   validateAddImage,
   validateCreateHotel,
   validatePassword,
-  validatePasswords
+  validatePasswords,
+  validateType
 }
