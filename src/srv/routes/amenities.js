@@ -35,6 +35,26 @@ amenitiesRouter.post('/hotels/:address/unitTypes/:type/amenities', validateAmeni
   }
 })
 
+amenitiesRouter.delete('/hotels/:address/unitTypes/:type/amenities/:amenity', validatePassword, async (req, res, next) => {
+  const { password } = req.body
+  const { address, type, amenity } = req.params
+  let ownerAccount = {}
+  try {
+    ownerAccount = web3.eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
+    context.owner = ownerAccount.address
+    const hotelManager = new HotelManager(context)
+    hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
+    const { logs } = await hotelManager.removeAmenity(address, type, amenity)
+    hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
+    context.owner = undefined
+    res.status(200).json({
+      txHash: logs[0].transactionHash
+    })
+  } catch (err) {
+    next(handle('web3', err))
+  }
+})
+
 module.exports = {
   amenitiesRouter
 }
