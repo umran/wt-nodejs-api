@@ -3,7 +3,8 @@ const express = require('express')
 const router = express.Router()
 const CONFIG = require('../../config.json')
 const { loadAccount, updateAccountPassword } = require('../helpers/crypto')
-const { validatePasswords,
+const { validateAddImage,
+        validatePasswords,
         validatePassword,
         validateCreateHotel
       } = require('../helpers/validators')
@@ -71,6 +72,79 @@ router.post('/hotels', validateCreateHotel, async (req, res, next) => {
     res.status(200).json({
       txHash: logs[0].transactionHash
     })
+  } catch (err) {
+    return next(handle('web3', err))
+  }
+})
+
+router.post('/hotels/:address/images', validatePassword, validateAddImage, async (req, res, next) => {
+  const { password, url } = req.body
+  const { address } = req.params
+  let ownerAccount = {}
+  try {
+    ownerAccount = web3.eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
+    const hotelManager = new HotelManager({
+      indexAddress: CONFIG.indexAddress,
+      owner: ownerAccount.address,
+      gasMargin: CONFIG.gasMargin,
+      web3: web3
+    })
+    hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
+    const { logs } = await hotelManager.addImageHotel(address, url)
+    hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
+    res.status(200).json({
+      txHash: logs[0].transactionHash
+    })
+  } catch (err) {
+    return next(handle('web3', err))
+  }
+})
+
+router.get('/hotels/:address/images', async (req, res, next) => {
+  const { address } = req.params
+  try {
+    const images = []
+    const context = {
+      indexAddress: CONFIG.indexAddress,
+      gasMargin: CONFIG.gasMargin,
+      web3: web3
+    }
+    const hotelInstance = Utils.getInstance('Hotel', address, context)
+    const totalImages = await hotelInstance.methods.getImagesLength().call()
+    for (var i = 0; i < totalImages; i++) {
+      images.push(await hotelInstance.methods.images(i).call())
+    }
+    res.status(200).json({
+      images
+    })
+  } catch (err) {
+    return next(handle('web3', err))
+  }
+})
+
+router.delete('/hotels/:address/images/:id', validatePassword, async (req, res, next) => {
+  const { address, id } = req.params
+  const { password } = req.body
+  let ownerAccount = {}
+  try {
+    ownerAccount = web3.eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
+    const hotelManager = new HotelManager({
+      indexAddress: CONFIG.indexAddress,
+      owner: ownerAccount.address,
+      gasMargin: CONFIG.gasMargin,
+      web3: web3
+    })
+    hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
+    const hotel = await hotelManager.getHotel(address)
+    const response = {
+      txHash: '0x0000000000000000000000000000000000000000000000000000000000000000'
+    }
+    if (hotel.images.length > id) {
+      const { logs } = await hotelManager.removeImageHotel(address, id)
+      response.txHash = logs[0].transactionHash
+    }
+    hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
+    res.status(204).json(response)
   } catch (err) {
     return next(handle('web3', err))
   }
