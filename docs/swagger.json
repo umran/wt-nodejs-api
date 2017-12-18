@@ -278,6 +278,140 @@
             }
           }
         }
+    },
+    "/hotels/{address}/unitTypes": {
+      "post": {
+        "summary": "Add unit type to hotel",
+        "description": "Add an unit type to the hotel.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "password",
+                "type"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "type": {
+                  "description": "Unit type.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully created.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Hotel's unit types.",
+        "description": "Retrieves hotel's unit types.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "array",
+              "items" : {
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+
+      }
+    },
+    "/hotels/{address}/unitTypes/{type}": {
+
+      "delete": {
+        "summary": "remove unity type from hotel.",
+        "description": "Remove a unit type from hotel.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "in": "path",
+            "name": "type",
+            "type": "string",
+            "required": true,
+            "description": "unit type."
+          },
+          {
+            "in": "body",
+            "name": "password",
+            "required": true,
+            "description": "Password.",
+            "schema": {
+              "required": [
+                "password"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Sucefully removed.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
