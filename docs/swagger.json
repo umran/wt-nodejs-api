@@ -360,7 +360,6 @@
       }
     },
     "/hotels/{address}/unitTypes/{type}": {
-
       "delete": {
         "summary": "remove unity type from hotel.",
         "description": "Remove a unit type from hotel.",
@@ -378,6 +377,124 @@
             "type": "string",
             "required": true,
             "description": "unit type."
+          },
+          {
+            "in": "body",
+            "name": "password",
+            "required": true,
+            "description": "Password.",
+            "schema": {
+              "required": [
+                "password"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Sucefully removed.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/hotels/{address}/unitTypes/{type}/amenities": {
+      "post": {
+        "summary": "Create amenities.",
+        "description": "Add amenities for unit type.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "in": "path",
+            "name": "type",
+            "type": "string",
+            "required": true,
+            "description": "unit type."
+          },
+          {
+            "in": "body",
+            "name": "password",
+            "required": true,
+            "description": "Password.",
+            "schema": {
+              "required": [
+                "password",
+                "amenity"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "amenity": {
+                  "description": "Code of amenity to add",
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully created.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/hotels/{address}/unitTypes/{type}/amenities/{amenity}": {
+      "delete": {
+        "summary": "remove amenity.",
+        "description": "Remove amenity for unit.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "in": "path",
+            "name": "type",
+            "type": "string",
+            "required": true,
+            "description": "unit type."
+          },
+          {
+            "in": "path",
+            "name": "amenity",
+            "type": "number",
+            "required": true,
+            "description": "Amenity code."
           },
           {
             "in": "body",

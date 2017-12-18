@@ -33,8 +33,15 @@ function validateType (req, res, next) {
   next()
 }
 
+function validateAmenity (req, res, next) {
+  const { amenity } = req.body
+  if (!amenity) return next(handle('missingAmenity', new Error()))
+  next()
+}
+
 module.exports = {
   validateAddImage,
+  validateAmenity,
   validateCreateHotel,
   validatePassword,
   validatePasswords,

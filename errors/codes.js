@@ -3,6 +3,10 @@ module.exports = {
     short: 'Something went wrong.',
     long: 'Something went wrong. Please contact the administrator.'
   },
+  missingAmenity: {
+    short: 'Amenity is required.',
+    long: `Body must include "amenity"`
+  },
   missingPassword: {
     short: 'Password is required',
     long: `Body must include "password"`
@@ -10,6 +14,10 @@ module.exports = {
   missingNewPassword: {
     short: 'A new password is required',
     long: `Body must include "newPassword"`
+  },
+  missingType: {
+    short: 'Type is required.',
+    long: `Body must include "type".`
   },
   missingUrl: {
     short: 'An url is required.',
