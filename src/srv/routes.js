@@ -122,6 +122,34 @@ router.get('/hotels/:address/images', async (req, res, next) => {
   }
 })
 
+router.delete('/hotels/:address/images/:id', validatePassword, async (req, res, next) => {
+  const { address, id } = req.params
+  const { password } = req.body
+  let ownerAccount = {}
+  try {
+    ownerAccount = web3.eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
+    const hotelManager = new HotelManager({
+      indexAddress: CONFIG.indexAddress,
+      owner: ownerAccount.address,
+      gasMargin: CONFIG.gasMargin,
+      web3: web3
+    })
+    hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
+    const hotel = await hotelManager.getHotel(address)
+    const response = {
+      txHash: '0x0000000000000000000000000000000000000000000000000000000000000000'
+    }
+    if (hotel.images.length > id) {
+      const { logs } = await hotelManager.removeImageHotel(address, id)
+      response.txHash = logs[0].transactionHash
+    }
+    hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
+    res.status(204).json(response)
+  } catch (err) {
+    return next(handle('web3', err))
+  }
+})
+
 module.exports = {
   router
 }

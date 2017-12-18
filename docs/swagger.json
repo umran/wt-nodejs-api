@@ -205,7 +205,7 @@
                 "url": {
                   "description": "Picture's url.",
                   "type": "string"
-                }
+                 }
               }
             }
           }
@@ -225,6 +225,59 @@
           }
         }
       }
+    },
+    "/hotels/{address}/images/{id}": {
+        "delete": {
+          "summary": "remove image from hotel.",
+          "description": "Remove image from hotel by id.",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "address",
+              "type": "string",
+              "required": true,
+              "description": "Hotel address."
+            },
+            {
+              "in": "path",
+              "name": "id",
+              "type": "integer",
+              "required": true,
+              "description": "Image id."
+            },
+            {
+              "in": "body",
+              "name": "password",
+              "required": true,
+              "description": "Password.",
+              "schema": {
+                "required": [
+                  "password"
+                ],
+                "properties": {
+                  "password": {
+                    "description": "Current password.",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "Sucefully removed.",
+              "schema": {
+                "$ref": "#/definitions/txHash"
+              }
+            },
+            "400": {
+              "description": "Invalid input",
+              "schema": {
+                "$ref": "#/definitions/Error"
+              }
+            }
+          }
+        }
     }
   },
   "definitions": {
