@@ -3,6 +3,10 @@ module.exports = {
     short: 'Something went wrong.',
     long: 'Something went wrong. Please contact the administrator.'
   },
+  missingActive: {
+    short: 'Active is required',
+    long: `Body must include "active"`
+  },
   missingAmenity: {
     short: 'Amenity is required.',
     long: `Body must include "amenity"`

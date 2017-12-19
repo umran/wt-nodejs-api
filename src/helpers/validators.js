@@ -39,7 +39,14 @@ function validateAmenity (req, res, next) {
   next()
 }
 
+function validateActive (req, res, next) {
+  const { active } = req.body
+  if (!active) return next(handle('missingActive', new Error()))
+  next()
+}
+
 module.exports = {
+  validateActive,
   validateAddImage,
   validateAmenity,
   validateCreateHotel,
