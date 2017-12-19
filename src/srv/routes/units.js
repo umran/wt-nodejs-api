@@ -35,6 +35,29 @@ unitsRouter.post('/hotels/:address/unitTypes/:type/units', validatePassword, asy
   }
 })
 
+unitsRouter.delete([
+  '/hotels/:address/unitTypes/:type/units/:unit',
+  'hotels/:address/units/:unit'
+], validatePassword, async (req, res, next) => {
+  const { password } = req.body
+  const { address, unit } = req.params
+  let ownerAccount = {}
+  try {
+    ownerAccount = web3.eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
+    context.owner = ownerAccount.address
+    const hotelManager = new HotelManager(context)
+    hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
+    const { logs } = await hotelManager.removeUnit(address, unit)
+    hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
+    context.owner = undefined
+    res.status(200).json({
+      txHash: logs[0].transactionHash
+    })
+  } catch (err) {
+    next(handle('web3', err))
+  }
+})
+
 module.exports = {
   unitsRouter
 }
