@@ -9,6 +9,7 @@ const provider = new Web3.providers.HttpProvider('http://localhost:8545')
 const web3 = new Web3(provider)
 const fetch = require('node-fetch')
 
+const addressZero = '0x0000000000000000000000000000000000000000000000000000000000000000'
 describe('API', function () {
   const gasMargin = 1.5
 
@@ -38,6 +39,7 @@ describe('API', function () {
       gasMargin: gasMargin,
       web3: web3
     })
+    expect(index._address).to.not.equal(addressZero)
   })
 
   after(async function () {
