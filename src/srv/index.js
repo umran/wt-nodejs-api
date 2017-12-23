@@ -1,5 +1,5 @@
 const { app } = require('./service')
-
-app.listen(3000, () => {
+const config = require('../../config.js')
+app.listen(config.get('port'), () => {
   console.log('WT API AT 3000!')
 })
