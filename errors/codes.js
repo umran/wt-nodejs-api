@@ -7,6 +7,14 @@ module.exports = {
     short: 'Amenity is required.',
     long: `Body must include "amenity"`
   },
+  missingDescription: {
+    short: 'Description is required.',
+    long: `Body must include "description".`
+  },
+  missingName: {
+    short: 'Name is required.',
+    long: `Body must include "name".`
+  },
   missingPassword: {
     short: 'Password is required',
     long: `Body must include "password"`
