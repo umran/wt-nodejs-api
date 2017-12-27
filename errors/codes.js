@@ -27,6 +27,10 @@ module.exports = {
     short: 'An url is required.',
     long: 'Body must include an "url" pointing to an hotel image.'
   },
+  missingWallet: {
+    short: 'Wallet is required.',
+    long: 'Body must include "wallet". Also must be a valid V3 wallet.'
+  },
   hotelManager: {
     short: 'Something went wrong with the hotel manager.',
     long: 'Hotel manager can not process the request. Please contact the administrator.'

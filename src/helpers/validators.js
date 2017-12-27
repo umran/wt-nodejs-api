@@ -45,6 +45,12 @@ function validateActive (req, res, next) {
   next()
 }
 
+function validateWallet (req, res, next) {
+  const { wallet } = req.body
+  if (!wallet) return next(handle('missingWallet', new Error()))
+  next()
+}
+
 module.exports = {
   validateActive,
   validateAddImage,
@@ -52,5 +58,6 @@ module.exports = {
   validateCreateHotel,
   validatePassword,
   validatePasswords,
-  validateType
+  validateType,
+  validateWallet
 }
