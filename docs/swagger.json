@@ -23,10 +23,119 @@
   "host": "localhost:3000",
   "basePath": "/",
   "paths": {
-    "/password": {
+    "/wallet": {
       "post": {
-        "summary": "Update password",
-        "description": "Update the password of the account",
+        "summary": "upload wallet.",
+        "description": "Upload account v3 wallet",
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "description": "Parameters",
+            "required": true,
+            "schema": {
+              "required": [
+                "password",
+                "wallet"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "wallet": {
+                  "description": "v3 account wallet.",
+                  "type": "object"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully upload."
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get wallet.",
+        "description": "Get decrypted account v3 wallet",
+        "parameters": [
+          {
+            "name": "password",
+            "in": "body",
+            "description": "Account password.",
+            "required": true,
+            "schema": {
+              "required": [
+                "password"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok."
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete wallet.",
+        "description": "Delete the wallet stored in server",
+        "parameters": [
+          {
+            "name": "password",
+            "in": "body",
+            "description": "Current password.",
+            "required": true,
+            "schema": {
+              "required": [
+                "password"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/password": {
+      "put": {
+        "summary": "Update password.",
+        "description": "update account password",
         "parameters": [
           {
             "name": "passwords",
