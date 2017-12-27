@@ -39,11 +39,25 @@ function validateAmenity (req, res, next) {
   next()
 }
 
+function validateActive (req, res, next) {
+  const { active } = req.body
+  if (!active) return next(handle('missingActive', new Error()))
+  next()
+}
+
+function validateWallet (req, res, next) {
+  const { wallet } = req.body
+  if (!wallet) return next(handle('missingWallet', new Error()))
+  next()
+}
+
 module.exports = {
+  validateActive,
   validateAddImage,
   validateAmenity,
   validateCreateHotel,
   validatePassword,
   validatePasswords,
-  validateType
+  validateType,
+  validateWallet
 }
