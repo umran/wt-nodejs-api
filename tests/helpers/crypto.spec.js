@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai')
-const { updateAccountPassword, loadAccount } = require('../../src/helpers/crypto')
+const { updateAccount, loadAccount } = require('../../src/helpers/crypto')
 const Web3 = require('web3')
 const CONFIG = require('../../config.json')
 
@@ -19,7 +19,7 @@ describe('Utils test', function () {
       expect(privateKeyJSON).to.be.ok
     })
     it('Update password. Expect ok', async function () {
-      updateAccountPassword(password, newPassword, loadAccount(TEST_ACCOUNT_DIR), UPDATED_TEST_ACCOUNT_DIR)
+      updateAccount(password, newPassword, loadAccount(TEST_ACCOUNT_DIR), UPDATED_TEST_ACCOUNT_DIR)
       let error, account
       try {
         account = web3.eth.accounts.decrypt(loadAccount(UPDATED_TEST_ACCOUNT_DIR), newPassword)
@@ -32,7 +32,7 @@ describe('Utils test', function () {
     it('Update password. Expect bad password', async function () {
       let error, account
       try {
-        account = updateAccountPassword('BAD_PASSWORD', newPassword, loadAccount(TEST_ACCOUNT_DIR), UPDATED_TEST_ACCOUNT_DIR)
+        account = updateAccount('BAD_PASSWORD', newPassword, loadAccount(TEST_ACCOUNT_DIR), UPDATED_TEST_ACCOUNT_DIR)
       } catch (e) {
         error = e
       }
