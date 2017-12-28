@@ -3,6 +3,10 @@ module.exports = {
     short: 'Something went wrong.',
     long: 'Something went wrong. Please contact the administrator.'
   },
+  missingActive: {
+    short: 'Active is required',
+    long: `Body must include "active"`
+  },
   missingAmenity: {
     short: 'Amenity is required.',
     long: `Body must include "amenity"`
@@ -30,6 +34,10 @@ module.exports = {
   missingUrl: {
     short: 'An url is required.',
     long: 'Body must include an "url" pointing to an hotel image.'
+  },
+  missingWallet: {
+    short: 'Wallet is required.',
+    long: 'Body must include "wallet". Also must be a valid V3 wallet.'
   },
   hotelManager: {
     short: 'Something went wrong with the hotel manager.',

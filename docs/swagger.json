@@ -23,10 +23,119 @@
   "host": "localhost:3000",
   "basePath": "/",
   "paths": {
-    "/password": {
+    "/wallet": {
       "post": {
-        "summary": "Update password",
-        "description": "Update the password of the account",
+        "summary": "upload wallet.",
+        "description": "Upload account v3 wallet",
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "description": "Parameters",
+            "required": true,
+            "schema": {
+              "required": [
+                "password",
+                "wallet"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "wallet": {
+                  "description": "v3 account wallet.",
+                  "type": "object"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully upload."
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get wallet.",
+        "description": "Get decrypted account v3 wallet",
+        "parameters": [
+          {
+            "name": "password",
+            "in": "body",
+            "description": "Account password.",
+            "required": true,
+            "schema": {
+              "required": [
+                "password"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok."
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete wallet.",
+        "description": "Delete the wallet stored in server",
+        "parameters": [
+          {
+            "name": "password",
+            "in": "body",
+            "description": "Current password.",
+            "required": true,
+            "schema": {
+              "required": [
+                "password"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/wallet/password": {
+      "put": {
+        "summary": "Update password.",
+        "description": "update account password",
         "parameters": [
           {
             "name": "passwords",
@@ -517,6 +626,184 @@
         "responses": {
           "204": {
             "description": "Sucefully removed.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/hotels/{address}/unitTypes/{type}/units": {
+      "post": {
+        "summary": "Create units.",
+        "description": "Add units to unit type.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "in": "path",
+            "name": "type",
+            "type": "string",
+            "required": true,
+            "description": "unit type."
+          },
+          {
+            "in": "body",
+            "name": "password",
+            "required": true,
+            "description": "Password.",
+            "schema": {
+              "required": [
+                "password"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully created.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/hotels/{address}/unitTypes/{type}/units/{unit}" : {
+      "delete": {
+        "summary": "remove unit.",
+        "description": "Remove unit for hotel.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "in": "path",
+            "name": "type",
+            "type": "string",
+            "required": true,
+            "description": "unit type."
+          },
+          {
+            "in": "path",
+            "name": "unit",
+            "type": "string",
+            "required": true,
+            "description": "unit address."
+          },
+          {
+            "in": "body",
+            "name": "password",
+            "required": true,
+            "description": "Password.",
+            "schema": {
+              "required": [
+                "password"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Sucefully removed.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/hotels/{address}/unitTypes/{type}/units/{unit}/active" : {
+      "put": {
+        "summary": "Active status.",
+        "description": "Set active/inactive status for a unit of hotel.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "in": "path",
+            "name": "type",
+            "type": "string",
+            "required": true,
+            "description": "unit type."
+          },
+          {
+            "in": "path",
+            "name": "unit",
+            "type": "string",
+            "required": true,
+            "description": "unit address."
+          },
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "description": "parameters.",
+            "schema": {
+              "required": [
+                "password",
+                "active"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "active": {
+                  "description": "Sets unit active/inactive.",
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully updated.",
             "schema": {
               "$ref": "#/definitions/txHash"
             }
