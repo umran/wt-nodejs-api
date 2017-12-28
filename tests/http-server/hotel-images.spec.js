@@ -16,7 +16,7 @@ describe('Hotel images', function () {
       'password': config.get('password'),
       'url': 'test.jpeg'
     })
-    await fetch(`http://localhost:3000/hotels/${config.get('testAdress')}/images`, {
+    await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/images`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -96,7 +96,7 @@ describe('Hotel images', function () {
     const body = JSON.stringify({
       'password': config.get('password')
     })
-    await fetch(`http://localhost:3000/hotels/${config.get('testAdress')}/images/0`, {
+    await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/images/0`, {
       method: 'DELETE',
       headers: {
         'Accept': 'application/json',
