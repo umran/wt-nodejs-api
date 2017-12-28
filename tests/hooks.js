@@ -56,6 +56,7 @@ async function generateHotel (ownerAddres) {
   const hotelName = 'Hotel'
   const hotelDesc = ' Hotel desc'
   const unitTypeName = 'TYPE_000'
+  const amenity = 5
   const url = 'image.jpeg'
 
   body = JSON.stringify({
@@ -87,6 +88,7 @@ async function generateHotel (ownerAddres) {
   })
 
   hotelAddresses = Object.keys(await res.json())
+  config.set('testAddress', hotelAddresses[0])
   body = JSON.stringify({
     'password': config.get('password'),
     type: unitTypeName
@@ -101,6 +103,18 @@ async function generateHotel (ownerAddres) {
     body
   })
 
+  body = JSON.stringify({
+    'password': config.get('password'),
+    amenity
+  })
+  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitTypeName}/amenities`, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body
+  })
   res = await fetch('http://localhost:3000/hotels', {
     method: 'GET',
     headers: {
@@ -119,6 +133,7 @@ async function generateHotel (ownerAddres) {
   expect(hotel).to.have.property('description', hotelDesc)
   expect(hotel).to.have.property('unitTypeNames')
   expect(hotel.unitTypeNames).to.include(unitTypeName)
+  expect(hotel.unitTypes[unitTypeName].amenities).to.include(amenity)
 }
 
 async function setUpWallet () {
