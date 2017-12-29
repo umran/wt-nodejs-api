@@ -17,7 +17,7 @@ app.use(unitsRouter)
 app.use(walletRouter)
 
 app.use((err, req, res, next) => {
-  // console.error(err)
+  console.error(err)
   res.status(400).json({
     code: err.code,
     short: err.short,
