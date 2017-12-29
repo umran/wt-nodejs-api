@@ -29,17 +29,18 @@ describe('Hotels', function () {
     })
       .then(async response => {
         expect(response).to.be.ok
-        const res = await response.json()
         expect(response).to.have.property('status', 200)
       })
   })
   it('POST /hotels. Expect 200', async () => {
+    const hotelName = 'Test Hotel'
+    const hotelDesc = 'Natural and charming atmosphere'
     const body = JSON.stringify({
       'password': config.get('password'),
-      'description': 'string',
-      'name': 'name'
+      'description': hotelDesc,
+      'name': hotelName
     })
-    await fetch('http://localhost:3000/hotels', {
+    let response = await fetch('http://localhost:3000/hotels', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -47,11 +48,23 @@ describe('Hotels', function () {
       },
       body
     })
-      .then(async response => {
-        expect(response).to.be.ok
-        const res = await response.json()
-        expect(response).to.have.property('status', 200)
-      })
+    expect(response).to.have.property('status', 200)
+
+    response = await fetch('http://localhost:3000/hotels', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body)
+      },
+      body
+    })
+
+    const hotels = await response.json()
+    let hotelAddresses = Object.keys(hotels)
+    const hotel = hotels[hotelAddresses[hotelAddresses.length - 1]]
+    expect(hotel).to.have.property('name', hotelName)
+    expect(hotel).to.have.property('description', hotelDesc)
   })
   it('POST /hotels. Expect 400 #missingPassword', async () => {
     const body = JSON.stringify({

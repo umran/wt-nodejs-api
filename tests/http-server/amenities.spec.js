@@ -12,11 +12,12 @@ describe('amenities', function () {
   BeforeEach()
   Before()
   it('POST /hotels/:address/unitTypes/TYPE_000/amenities. Expect 200', async () => {
+    const amenity = 7
     const body = JSON.stringify({
       'password': config.get('password'),
-      amenity: 5
+      amenity
     })
-    await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/TYPE_000/amenities`, {
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/TYPE_000/amenities`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -24,11 +25,21 @@ describe('amenities', function () {
       },
       body
     })
-      .then(async response => {
-        expect(response).to.be.ok
-        const res = await response.json()
-        expect(response).to.have.property('status', 200)
-      })
+    expect(response).to.be.ok
+    expect(response).to.have.property('status', 200)
+    response = await fetch('http://localhost:3000/hotels', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body)
+      },
+      body
+    })
+
+    const hotels = await response.json()
+    const hotel = hotels[config.get('testAddress')]
+    expect(hotel.unitTypes['TYPE_000'].amenities).to.include(amenity)
   })
   it('POST /hotels/:address/unitTypes/TYPE_000/amenities. Expect 400 #missingPassword', async () => {
     const body = JSON.stringify({
