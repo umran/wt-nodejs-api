@@ -13,7 +13,7 @@ function validatePassword (req, res, next) {
   next()
 }
 
-function validateCreateHotel (req, res, next) {
+function validateHotelInfo (req, res, next) {
   const { password, name, description } = req.body
   if (!password) return next(handle('missingPassword', new Error()))
   if (!name) return next(handle('missingName', new Error()))
@@ -51,7 +51,7 @@ function validateWallet (req, res, next) {
   next()
 }
 
-function validateHotelInfo (req, res, next) {
+function validateHotelAddress (req, res, next) {
   const { lineOne, lineTwo, zipCode, country } = req.body
   if (!lineOne) return next(handle('missingLineOne', new Error()))
   if (!lineTwo) return next(handle('missingLineTwo', new Error()))
@@ -63,8 +63,8 @@ module.exports = {
   validateActive,
   validateAddImage,
   validateAmenity,
-  validateCreateHotel,
   validateHotelInfo,
+  validateHotelAddress,
   validatePassword,
   validatePasswords,
   validateType,
