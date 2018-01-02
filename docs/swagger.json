@@ -254,6 +254,52 @@
             }
           }
         }
+      },
+      "put": {
+        "summary": "Update hotel info",
+        "description": "Update hotel name and description.",
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "password",
+                "name",
+                "description"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "Hotel's name.",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "Hotel's description.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully updated.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
       }
     },
     "/hotels/{address}/address": {
