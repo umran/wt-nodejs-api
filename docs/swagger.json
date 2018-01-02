@@ -256,6 +256,121 @@
         }
       }
     },
+    "/hotels/{address}/address": {
+      "put": {
+        "summary": "Hotel's address.",
+        "description": "Change hotel's address",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "password",
+                "lineOne",
+                "lineTwo",
+                "zipCode",
+                "country"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "lineOne": {
+                  "description": "street number , street name.",
+                  "type": "string"
+                },
+                "lineTwo": {
+                  "description": "street number , street name.",
+                  "type": "string"
+                },
+                "zipCode": {
+                  "description": "Hotel's zip code.",
+                  "type": "string"
+                },
+                "country": {
+                  "description": "Hotel's country.",
+                  "type": "string"
+                 }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "array",
+              "items" : {
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add image to hotel",
+        "description": "Add an image of the hotel.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "password",
+                "url"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "url": {
+                  "description": "Picture's url.",
+                  "type": "string"
+                 }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully created.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/hotels/{address}/images": {
       "get": {
         "summary": "Hotel's images.",
