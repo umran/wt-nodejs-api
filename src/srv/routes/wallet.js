@@ -13,14 +13,12 @@ const {
       } = require('../../helpers/validators')
 
 const { handle } = require('../../../errors')
-const CONFIG = require('../../../config.json')
-const Web3 = require('web3')
-const web3 = new Web3(new Web3.providers.HttpProvider(CONFIG.web3Provider))
+const config = require('../../../config.js')
 
 walletRouter.post('/wallet', validatePassword, validateWallet, (req, res, next) => {
   const {wallet, password} = req.body
   try {
-    web3.eth.accounts.decrypt(wallet, password)
+    config.get('web3').eth.accounts.decrypt(wallet, password)
     storeWallet(wallet)
   } catch (err) {
     return next(handle('web3', err))
@@ -32,7 +30,7 @@ walletRouter.get('/wallet', validatePassword, (req, res, next) => {
   const { password } = req.body
   let wallet
   try {
-    wallet = web3.eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
+    wallet = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
   } catch (err) {
     return next(handle('web3', err))
   }
@@ -44,7 +42,7 @@ walletRouter.get('/wallet', validatePassword, (req, res, next) => {
 walletRouter.put('/wallet/password', validatePasswords, (req, res, next) => {
   const { password, newPassword } = req.body
   try {
-    updateAccount(password, newPassword, loadAccount(CONFIG.privateKeyDir))
+    updateAccount(password, newPassword, loadAccount(config.get('privateKeyDir')))
   } catch (err) {
     return next(handle('web3', err))
   }
@@ -54,11 +52,11 @@ walletRouter.put('/wallet/password', validatePasswords, (req, res, next) => {
 walletRouter.delete('/wallet', validatePassword, (req, res, next) => {
   const { password } = req.body
   try {
-    web3.eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
+    config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
   } catch (err) {
     return next(handle('web3', err))
   }
-  fs.unlinkSync(CONFIG.privateKeyDir)
+  fs.unlinkSync(config.get('privateKeyDir'))
   res.sendStatus(204)
 })
 
