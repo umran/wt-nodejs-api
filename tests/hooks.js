@@ -56,6 +56,7 @@ async function generateHotel (ownerAddres) {
   const hotelName = 'Hotel'
   const hotelDesc = ' Hotel desc'
   const unitTypeName = 'TYPE_000'
+  const amenity = 5
   const url = 'image.jpeg'
 
   body = JSON.stringify({
@@ -87,12 +88,39 @@ async function generateHotel (ownerAddres) {
   })
 
   hotelAddresses = Object.keys(await res.json())
+  config.set('testAddress', hotelAddresses[0])
   body = JSON.stringify({
     'password': config.get('password'),
     type: unitTypeName
   })
 
   res = await fetch(`http://localhost:3000/hotels/${hotelAddresses[0]}/unitTypes`, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body
+  })
+
+  body = JSON.stringify({
+    'password': config.get('password'),
+    amenity
+  })
+  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitTypeName}/amenities`, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body
+  })
+
+  body = JSON.stringify({
+    'password': config.get('password')
+  })
+
+  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitTypeName}/units`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -110,15 +138,18 @@ async function generateHotel (ownerAddres) {
     },
     body
   })
-
   const hotels = await res.json()
   hotelAddresses = Object.keys(hotels)
-
   const hotel = hotels[hotelAddresses[0]]
+  let unitAddresses = Object.keys(hotel.units)
   expect(hotel).to.have.property('name', hotelName)
   expect(hotel).to.have.property('description', hotelDesc)
   expect(hotel).to.have.property('unitTypeNames')
   expect(hotel.unitTypeNames).to.include(unitTypeName)
+  expect(hotel.unitTypes[unitTypeName].amenities).to.include(amenity)
+  const unitAdress = hotel.unitAddresses[unitAddresses.length - 1]
+  config.set('unitAdress', unitAdress)
+  expect(hotel.units[unitAdress]).to.have.property('unitType', unitTypeName)
 }
 
 async function setUpWallet () {

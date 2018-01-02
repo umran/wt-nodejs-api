@@ -58,7 +58,7 @@ router.post('/hotels', validateCreateHotel, async (req, res, next) => {
   const { password, name, description } = req.body
   let ownerAccount = {}
   try {
-    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
+    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
     const hotelManager = new HotelManager({
       indexAddress: config.get('indexAddress'),
       owner: ownerAccount.address,
@@ -81,7 +81,7 @@ router.post('/hotels/:address/images', validatePassword, validateAddImage, async
   const { address } = req.params
   let ownerAccount = {}
   try {
-    ownerAccount = config('web3').eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
+    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
     const hotelManager = new HotelManager({
       indexAddress: config.get('indexAddress'),
       owner: ownerAccount.address,
@@ -126,7 +126,7 @@ router.delete('/hotels/:address/images/:id', validatePassword, async (req, res, 
   const { password } = req.body
   let ownerAccount = {}
   try {
-    ownerAccount = config('web3').eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
+    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
     const hotelManager = new HotelManager({
       indexAddress: config.get('indexAddress'),
       owner: ownerAccount.address,
