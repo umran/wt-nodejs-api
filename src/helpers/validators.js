@@ -51,11 +51,20 @@ function validateWallet (req, res, next) {
   next()
 }
 
+function validateHotelInfo (req, res, next) {
+  const { lineOne, lineTwo, zipCode, country } = req.body
+  if (!lineOne) return next(handle('missingLineOne', new Error()))
+  if (!lineTwo) return next(handle('missingLineTwo', new Error()))
+  if (!zipCode) return next(handle('missingZipCode', new Error()))
+  if (!country) return next(handle('missingCountry', new Error()))
+  next()
+}
 module.exports = {
   validateActive,
   validateAddImage,
   validateAmenity,
   validateCreateHotel,
+  validateHotelInfo,
   validatePassword,
   validatePasswords,
   validateType,
