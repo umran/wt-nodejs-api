@@ -1,4 +1,3 @@
-const Web3 = require('web3')
 const express = require('express')
 const router = express.Router()
 const CONFIG = require('../../config.json')
@@ -16,7 +15,7 @@ const HotelEvents = require('../../libs/HotelEvents.js')
 const User = require('../../libs/User.js')
 const Utils = require('../../libs/Utils.js')
 
-const web3 = new Web3(new Web3.providers.HttpProvider(CONFIG.web3Provider))
+const config = require('../../config.js')
 
 router.get('/', (req, res) => {
   res.write('WT Nodejs API')
@@ -26,7 +25,7 @@ router.get('/', (req, res) => {
 router.post('/password', validatePasswords, (req, res, next) => {
   const { password, newPassword } = req.body
   try {
-    updateAccountPassword(password, newPassword, loadAccount(CONFIG.privateKeyDir))
+    updateAccountPassword(password, newPassword, loadAccount(config.get('privateKeyDir')))
   } catch (err) {
     return next(handle('web3', err))
   }
@@ -37,16 +36,16 @@ router.get('/hotels', validatePassword, async (req, res, next) => {
   const { password } = req.body
   let ownerAccount = {}
   try {
-    ownerAccount = web3.eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
+    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
   } catch (err) {
     return next(handle('web3', err))
   }
   try {
     const hotelManager = new HotelManager({
-      indexAddress: CONFIG.indexAddress,
+      indexAddress: config.get('indexAddress'),
       owner: ownerAccount.address,
-      gasMargin: CONFIG.gasMargin,
-      web3: web3
+      gasMargin: config.get('gasMargin'),
+      web3: config.get('web3')
     })
     const hotels = await hotelManager.getHotels()
     res.status(200).json(hotels)
@@ -59,12 +58,12 @@ router.post('/hotels', validateCreateHotel, async (req, res, next) => {
   const { password, name, description } = req.body
   let ownerAccount = {}
   try {
-    ownerAccount = web3.eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
+    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
     const hotelManager = new HotelManager({
-      indexAddress: CONFIG.indexAddress,
+      indexAddress: config.get('indexAddress'),
       owner: ownerAccount.address,
-      gasMargin: CONFIG.gasMargin,
-      web3: web3
+      gasMargin: config.get('gasMargin'),
+      web3: config.get('web3')
     })
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
     const { logs } = await hotelManager.createHotel(name, description)
@@ -82,12 +81,12 @@ router.post('/hotels/:address/images', validatePassword, validateAddImage, async
   const { address } = req.params
   let ownerAccount = {}
   try {
-    ownerAccount = web3.eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
+    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
     const hotelManager = new HotelManager({
-      indexAddress: CONFIG.indexAddress,
+      indexAddress: config.get('indexAddress'),
       owner: ownerAccount.address,
-      gasMargin: CONFIG.gasMargin,
-      web3: web3
+      gasMargin: config.get('gasMargin'),
+      web3: config.get('web3')
     })
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
     const { logs } = await hotelManager.addImageHotel(address, url)
@@ -105,9 +104,9 @@ router.get('/hotels/:address/images', async (req, res, next) => {
   try {
     const images = []
     const context = {
-      indexAddress: CONFIG.indexAddress,
-      gasMargin: CONFIG.gasMargin,
-      web3: web3
+      indexAddress: config.get('indexAddress'),
+      gasMargin: config.get('gasMargin'),
+      web3: config.get('web3')
     }
     const hotelInstance = Utils.getInstance('Hotel', address, context)
     const totalImages = await hotelInstance.methods.getImagesLength().call()
@@ -127,12 +126,12 @@ router.delete('/hotels/:address/images/:id', validatePassword, async (req, res, 
   const { password } = req.body
   let ownerAccount = {}
   try {
-    ownerAccount = web3.eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
+    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
     const hotelManager = new HotelManager({
-      indexAddress: CONFIG.indexAddress,
+      indexAddress: config.get('indexAddress'),
       owner: ownerAccount.address,
-      gasMargin: CONFIG.gasMargin,
-      web3: web3
+      gasMargin: config.get('gasMargin'),
+      web3: config.get('web3')
     })
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
     const hotel = await hotelManager.getHotel(address)

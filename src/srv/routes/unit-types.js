@@ -1,24 +1,20 @@
-const Web3 = require('web3')
 const express = require('express')
 const unitTypesRouter = express.Router()
-const CONFIG = require('../../../config.json')
+const config = require('../../../config.js')
 const { loadAccount } = require('../../helpers/crypto')
 const { validatePassword, validateType } = require('../../helpers/validators')
 
 const { handle } = require('../../../errors')
 const HotelManager = require('../../../libs/HotelManager.js')
 
-const web3 = new Web3(new Web3.providers.HttpProvider(CONFIG.web3Provider))
-let context = {
-  indexAddress: CONFIG.indexAddress,
-  gasMargin: CONFIG.gasMargin,
-  web3: web3
-}
-
 unitTypesRouter.get('/hotels/:address/unitTypes', async (req, res, next) => {
   const { address } = req.params
   try {
-    const hotelManager = new HotelManager(context)
+    const hotelManager = new HotelManager({
+      indexAddress: config.get('indexAddress'),
+      gasMargin: config.get('gasMargin'),
+      web3: config.get('web3')
+    })
     const hotel = await hotelManager.getHotel(address)
     res.status(200).json({
       unitTypes: hotel.unitTypes
@@ -33,13 +29,16 @@ unitTypesRouter.post('/hotels/:address/unitTypes', validateType, validatePasswor
   const { address } = req.params
   let ownerAccount = {}
   try {
-    ownerAccount = web3.eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
-    context.owner = ownerAccount.address
-    const hotelManager = new HotelManager(context)
+    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
+    const hotelManager = new HotelManager({
+      indexAddress: config.get('indexAddress'),
+      gasMargin: config.get('gasMargin'),
+      owner: ownerAccount.address,
+      web3: config.get('web3')
+    })
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
     const { logs } = await hotelManager.addUnitType(address, type)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
-    context.owner = undefined
     res.status(200).json({
       txHash: logs[0].transactionHash
     })
@@ -53,13 +52,16 @@ unitTypesRouter.delete('/hotels/:address/unitTypes/:type', validatePassword, asy
   const { address, type } = req.params
   let ownerAccount = {}
   try {
-    ownerAccount = web3.eth.accounts.decrypt(loadAccount(CONFIG.privateKeyDir), password)
-    context.owner = ownerAccount.address
-    const hotelManager = new HotelManager(context)
+    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
+    const hotelManager = new HotelManager({
+      indexAddress: config.get('indexAddress'),
+      gasMargin: config.get('gasMargin'),
+      owner: ownerAccount.address,
+      web3: config.get('web3')
+    })
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
     const { logs } = await hotelManager.removeUnitType(address, type)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
-    context.owner = undefined
     res.status(200).json({
       txHash: logs[0].transactionHash
     })

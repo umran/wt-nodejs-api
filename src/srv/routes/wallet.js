@@ -1,7 +1,11 @@
 const express = require('express')
 const walletRouter = express.Router()
 const fs = require('fs')
-const { loadAccount, updateAccount } = require('../../helpers/crypto')
+const {
+  loadAccount,
+  updateAccount,
+  storeWallet
+} = require('../../helpers/crypto')
 const {
         validatePasswords,
         validatePassword,
@@ -16,7 +20,8 @@ const web3 = new Web3(new Web3.providers.HttpProvider(CONFIG.web3Provider))
 walletRouter.post('/wallet', validatePassword, validateWallet, (req, res, next) => {
   const {wallet, password} = req.body
   try {
-    updateAccount(password, null, JSON.stringify(wallet))
+    web3.eth.accounts.decrypt(wallet, password)
+    storeWallet(wallet)
   } catch (err) {
     return next(handle('web3', err))
   }

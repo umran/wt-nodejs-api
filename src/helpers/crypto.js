@@ -1,7 +1,7 @@
 const fs = require('fs')
 const Web3 = require('web3')
 const CONFIG = require('../../config.json')
-
+const config = require('../../config.js')
 const web3 = new Web3(new Web3.providers.HttpProvider(CONFIG.web3Provider))
 
 function loadAccount (dir) {
@@ -16,7 +16,11 @@ function updateAccount (oldPassword, newPassword, privateKeyJSON, writeTo = CONF
   fs.writeFileSync(writeTo, JSON.stringify(cryptedAccount), 'utf8')
 }
 
+function storeWallet (wallet) {
+  fs.writeFileSync(config.get('privateKeyDir'), JSON.stringify(wallet), 'utf8')
+}
 module.exports = {
   loadAccount,
+  storeWallet,
   updateAccount
 }
