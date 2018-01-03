@@ -404,6 +404,142 @@ describe('Hotels', function () {
     const res = await response.json()
     expect(res).to.have.property('code', '#missingCountry')
   })
+
+  it('PUT /hotels/:address/location. Expect 200 ', async () => {
+    const timezone = 3
+    const latitude = 38.002281
+    const longitude = 57.557541
+    let body = JSON.stringify({
+      password: config.get('password'),
+      timezone,
+      latitude,
+      longitude
+    })
+
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/location`, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body
+    })
+    expect(response).to.be.ok
+    expect(response).to.have.property('status', 200)
+    body = JSON.stringify({
+      password: config.get('password')
+    })
+    response = await fetch('http://localhost:3000/hotels', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body)
+      },
+      body
+    })
+    expect(response).to.be.ok
+    expect(response).to.have.property('status', 200)
+    const hotels = await response.json()
+    let hotelAddresses = Object.keys(hotels)
+    const hotel = hotels[hotelAddresses[hotelAddresses.length - 1]]
+    expect(hotel).to.have.property('timezone', timezone)
+    expect(hotel).to.have.property('latitude', latitude.toString())
+    expect(hotel).to.have.property('longitude', longitude.toString())
+  })
+
+  it('PUT /hotels/:address/location. Expect 400 #missingPassword', async () => {
+    const timezone = 3
+    const latitude = 38.002281
+    const longitude = 57.557541
+    let body = JSON.stringify({
+      timezone,
+      latitude,
+      longitude
+    })
+
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/location`, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body
+    })
+    expect(response).to.be.ok
+    expect(response).to.have.property('status', 400)
+    const res = await response.json()
+    expect(res).to.have.property('code', '#missingPassword')
+  })
+
+  it('PUT /hotels/:address/location. Expect 400 #missingTimezone', async () => {
+    const latitude = 38.002281
+    const longitude = 57.557541
+    let body = JSON.stringify({
+      password: config.get('password'),
+      latitude,
+      longitude
+    })
+
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/location`, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body
+    })
+    expect(response).to.be.ok
+    expect(response).to.have.property('status', 400)
+    const res = await response.json()
+    expect(res).to.have.property('code', '#missingTimezone')
+  })
+
+  it('PUT /hotels/:address/location. Expect 400 #missingLatitude', async () => {
+    const timezone = 3
+    const longitude = 57.557541
+    let body = JSON.stringify({
+      password: config.get('password'),
+      timezone,
+      longitude
+    })
+
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/location`, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body
+    })
+    expect(response).to.be.ok
+    expect(response).to.have.property('status', 400)
+    const res = await response.json()
+    expect(res).to.have.property('code', '#missingLatitude')
+  })
+
+  it('PUT /hotels/:address/location. Expect 400 #missingLongitude', async () => {
+    const timezone = 3
+    const latitude = 38.002281
+    let body = JSON.stringify({
+      password: config.get('password'),
+      timezone,
+      latitude
+    })
+
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/location`, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body
+    })
+    expect(response).to.be.ok
+    expect(response).to.have.property('status', 400)
+    const res = await response.json()
+    expect(res).to.have.property('code', '#missingLongitude')
+  })
 })
 
 describe('Hotel', function () {
