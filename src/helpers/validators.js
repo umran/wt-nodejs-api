@@ -59,12 +59,21 @@ function validateHotelAddress (req, res, next) {
   if (!country) return next(handle('missingCountry', new Error()))
   next()
 }
+
+function validateHotelLocation (req, res, next) {
+  const { timezone, latitude, longitude } = req.body
+  if (!timezone && timezone !== 0) return next(handle('missingTimezone', new Error()))
+  if (!latitude) return next(handle('missingLatitude', new Error()))
+  if (!longitude) return next(handle('missingLongitude', new Error()))
+  next()
+}
 module.exports = {
   validateActive,
   validateAddImage,
   validateAmenity,
   validateHotelInfo,
   validateHotelAddress,
+  validateHotelLocation,
   validatePassword,
   validatePasswords,
   validateType,

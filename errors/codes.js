@@ -19,6 +19,10 @@ module.exports = {
     short: 'Description is required.',
     long: `Body must include "description".`
   },
+  missingLatitude: {
+    short: 'Latitude one is required.',
+    long: `Body must include "latitude".`
+  },
   missingLineOne: {
     short: 'Line one is required.',
     long: `Body must include "lineOne".`
@@ -26,6 +30,10 @@ module.exports = {
   missingLineTwo: {
     short: 'Line two is required.',
     long: `Body must include "lineTwo".`
+  },
+  missingLongitude: {
+    short: 'Lonngitude one is required.',
+    long: `Body must include "longitude".`
   },
   missingName: {
     short: 'Name is required.',
@@ -38,6 +46,10 @@ module.exports = {
   missingNewPassword: {
     short: 'A new password is required',
     long: `Body must include "newPassword"`
+  },
+  missingTimezone: {
+    short: 'A timezone is required.',
+    long: 'Body must include an "timezone".'
   },
   missingType: {
     short: 'Type is required.',
