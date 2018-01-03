@@ -367,17 +367,19 @@
             }
           }
         }
-      },
-      "post": {
-        "summary": "Add image to hotel",
-        "description": "Add an image of the hotel.",
+      }
+    },
+    "/hotels/{address}/location": {
+      "put": {
+        "summary": "Hotel's location.",
+        "description": "Change hotel's location",
         "parameters": [
           {
             "in": "path",
             "name": "address",
             "type": "string",
             "required": true,
-            "description": "Hotel address."
+            "description": "Hotel location."
           },
           {
             "name": "params",
@@ -386,24 +388,34 @@
             "schema": {
               "required": [
                 "password",
-                "url"
+                "timezon",
+                "latitude",
+                "longitude"
               ],
               "properties": {
                 "password": {
                   "description": "Current password.",
                   "type": "string"
                 },
-                "url": {
-                  "description": "Picture's url.",
+                "latitude": {
+                  "description": "Hotels's latitude.",
                   "type": "string"
-                 }
+                },
+                "longitude": {
+                  "description": "Hotels's longitude.",
+                  "type": "string"
+                },
+                "timezone": {
+                  "description": "Hotel's timezone.",
+                  "type": "string"
+                }
               }
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Sucefully created.",
+            "description": "Invalid input",
             "schema": {
               "$ref": "#/definitions/txHash"
             }
