@@ -302,6 +302,43 @@
         }
       }
     },
+    "/hotels/{address}":{
+      "get":{
+        "summary": "Get Hotel.",
+        "description": "Get Hotel by contract address.",
+        "parameters": [
+          {
+            "name": "password",
+            "in": "body",
+            "schema": {
+              "required": [
+                "password"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password. This will no longer be the current password.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok.",
+            "schema": {
+              "$ref": "#/definitions/Hotels"
+            }
+          },
+          "400": {
+            "description": "Can not get.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/hotels/{address}/address": {
       "put": {
         "summary": "Hotel's address.",
