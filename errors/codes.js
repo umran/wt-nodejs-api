@@ -11,9 +11,29 @@ module.exports = {
     short: 'Amenity is required.',
     long: `Body must include "amenity"`
   },
+  missingCountry: {
+    short: 'Country is required.',
+    long: `Body must include "country"`
+  },
   missingDescription: {
     short: 'Description is required.',
     long: `Body must include "description".`
+  },
+  missingLatitude: {
+    short: 'Latitude one is required.',
+    long: `Body must include "latitude".`
+  },
+  missingLineOne: {
+    short: 'Line one is required.',
+    long: `Body must include "lineOne".`
+  },
+  missingLineTwo: {
+    short: 'Line two is required.',
+    long: `Body must include "lineTwo".`
+  },
+  missingLongitude: {
+    short: 'Lonngitude one is required.',
+    long: `Body must include "longitude".`
   },
   missingName: {
     short: 'Name is required.',
@@ -27,6 +47,10 @@ module.exports = {
     short: 'A new password is required',
     long: `Body must include "newPassword"`
   },
+  missingTimezone: {
+    short: 'A timezone is required.',
+    long: 'Body must include an "timezone".'
+  },
   missingType: {
     short: 'Type is required.',
     long: `Body must include "type".`
@@ -39,8 +63,8 @@ module.exports = {
     short: 'Wallet is required.',
     long: 'Body must include "wallet". Also must be a valid V3 wallet.'
   },
-  hotelManager: {
-    short: 'Something went wrong with the hotel manager.',
-    long: 'Hotel manager can not process the request. Please contact the administrator.'
+  missingZipCode: {
+    short: 'Zip code is required.',
+    long: 'Body must include "zipCode".'
   }
 }

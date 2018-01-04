@@ -254,6 +254,179 @@
             }
           }
         }
+      },
+      "put": {
+        "summary": "Update hotel info",
+        "description": "Update hotel name and description.",
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "password",
+                "name",
+                "description"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "Hotel's name.",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "Hotel's description.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully updated.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/hotels/{address}/address": {
+      "put": {
+        "summary": "Hotel's address.",
+        "description": "Change hotel's address",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "password",
+                "lineOne",
+                "lineTwo",
+                "zipCode",
+                "country"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "lineOne": {
+                  "description": "street number , street name.",
+                  "type": "string"
+                },
+                "lineTwo": {
+                  "description": "street number , street name.",
+                  "type": "string"
+                },
+                "zipCode": {
+                  "description": "Hotel's zip code.",
+                  "type": "string"
+                },
+                "country": {
+                  "description": "Hotel's country.",
+                  "type": "string"
+                 }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "array",
+              "items" : {
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/hotels/{address}/location": {
+      "put": {
+        "summary": "Hotel's location.",
+        "description": "Change hotel's location",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel location."
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "password",
+                "timezon",
+                "latitude",
+                "longitude"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "latitude": {
+                  "description": "Hotels's latitude.",
+                  "type": "string"
+                },
+                "longitude": {
+                  "description": "Hotels's longitude.",
+                  "type": "string"
+                },
+                "timezone": {
+                  "description": "Hotel's timezone.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
       }
     },
     "/hotels/{address}/images": {

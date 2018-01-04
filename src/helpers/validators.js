@@ -13,7 +13,7 @@ function validatePassword (req, res, next) {
   next()
 }
 
-function validateCreateHotel (req, res, next) {
+function validateHotelInfo (req, res, next) {
   const { password, name, description } = req.body
   if (!password) return next(handle('missingPassword', new Error()))
   if (!name) return next(handle('missingName', new Error()))
@@ -51,11 +51,29 @@ function validateWallet (req, res, next) {
   next()
 }
 
+function validateHotelAddress (req, res, next) {
+  const { lineOne, lineTwo, zipCode, country } = req.body
+  if (!lineOne) return next(handle('missingLineOne', new Error()))
+  if (!lineTwo) return next(handle('missingLineTwo', new Error()))
+  if (!zipCode) return next(handle('missingZipCode', new Error()))
+  if (!country) return next(handle('missingCountry', new Error()))
+  next()
+}
+
+function validateHotelLocation (req, res, next) {
+  const { timezone, latitude, longitude } = req.body
+  if (!timezone && timezone !== 0) return next(handle('missingTimezone', new Error()))
+  if (!latitude) return next(handle('missingLatitude', new Error()))
+  if (!longitude) return next(handle('missingLongitude', new Error()))
+  next()
+}
 module.exports = {
   validateActive,
   validateAddImage,
   validateAmenity,
-  validateCreateHotel,
+  validateHotelInfo,
+  validateHotelAddress,
+  validateHotelLocation,
   validatePassword,
   validatePasswords,
   validateType,
