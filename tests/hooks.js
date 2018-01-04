@@ -53,8 +53,8 @@ async function generateHotel (ownerAddres) {
   let body
   let res
   let hotelAddresses
-  const hotelName = 'Hotel'
-  const hotelDesc = ' Hotel desc'
+  const hotelName = 'Test Hotel'
+  const hotelDesc = 'Test Hotel desccription'
   const unitTypeName = 'TYPE_000'
   const amenity = 5
   const url = 'image.jpeg'
