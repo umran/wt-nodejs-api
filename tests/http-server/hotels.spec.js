@@ -13,39 +13,18 @@ describe('Hotels', function () {
   Before()
 
   it('GET /hotels/:address. Expect 200', async () => {
-    const body = JSON.stringify({
-      'password': config.get('password')
-    })
-
-    const response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(body)
-      },
-      body
-    })
-    expect(response).to.be.ok
-    expect(response).to.have.property('status', 200)
-    const hotel = await response.json()
-    expect(hotel).to.have.property('name', 'Test Hotel')
-    expect(hotel).to.have.property('description', 'Test Hotel desccription')
-  })
-  it('GET /hotels/:address. Expect 400 #missingPassword', async () => {
-    const body = JSON.stringify({})
     const response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
-      },
-      body
+      }
     })
     expect(response).to.be.ok
-    expect(response).to.have.property('status', 400)
-    const res = await response.json()
-    expect(res).to.have.property('code', '#missingPassword')
+    expect(response).to.have.property('status', 200)
+    const { hotel } = await response.json()
+    expect(hotel).to.have.property('name', 'Test Hotel')
+    expect(hotel).to.have.property('description', 'Test Hotel desccription')
   })
 
   it('DELETE /hotels/:address. Expect 204', async () => {
