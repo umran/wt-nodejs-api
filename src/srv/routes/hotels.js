@@ -33,6 +33,31 @@ hotelsRouter.get('/hotels/:address', validatePassword, async (req, res, next) =>
   }
 })
 
+hotelsRouter.delete('/hotels/:address', validatePassword, async (req, res, next) => {
+  const { password } = req.body
+  const { address } = req.params
+  let ownerAccount = {}
+  try {
+    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
+  } catch (err) {
+    return next(handle('web3', err))
+  }
+  try {
+    const hotelManager = new HotelManager({
+      indexAddress: config.get('indexAddress'),
+      owner: ownerAccount.address,
+      gasMargin: config.get('gasMargin'),
+      web3: config.get('web3')
+    })
+    const { transactionHash } = await hotelManager.removeHotel(address)
+    res.status(204).json({
+      txHash: transactionHash
+    })
+  } catch (err) {
+    return next(handle('hotelManager', err))
+  }
+})
+
 hotelsRouter.get('/hotels', validatePassword, async (req, res, next) => {
   const { password } = req.body
   let ownerAccount = {}
