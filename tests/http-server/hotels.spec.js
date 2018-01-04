@@ -47,6 +47,51 @@ describe('Hotels', function () {
     const res = await response.json()
     expect(res).to.have.property('code', '#missingPassword')
   })
+
+  it('DELETE /hotels/:address. Expect 204', async () => {
+    const body = JSON.stringify({
+      password: config.get('password')
+    })
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}`, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body
+    })
+    expect(response).to.be.ok
+    expect(response).to.have.property('status', 204)
+    response = await fetch('http://localhost:3000/hotels', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body)
+      },
+      body
+    })
+    expect(response).to.be.ok
+    expect(response).to.have.property('status', 200)
+    const hotels = await response.json()
+    expect(hotels).to.be.null
+  })
+
+  it('DELETE /hotels/:address. Expect 400 #missingPassword', async () => {
+    const body = JSON.stringify({})
+    const response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}`, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body
+    })
+    expect(response).to.be.ok
+    expect(response).to.have.property('status', 400)
+    const res = await response.json()
+    expect(res).to.have.property('code', '#missingPassword')
+  })
   it('GET /hotels. Expect 200', async () => {
     const body = JSON.stringify({
       'password': config.get('password'),
