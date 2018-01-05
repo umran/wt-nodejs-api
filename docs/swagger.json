@@ -455,6 +455,56 @@
         }
       }
     },
+    "/hotels/{address}/confirmBooking": {
+      "put": {
+        "summary": "Confirm booking.",
+        "description": "Confirms a pending booking request.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel location."
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "password",
+                "reservationId"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "reservationId": {
+                  "description": "Reservation id.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/hotels/{address}/location": {
       "put": {
         "summary": "Hotel's location.",
@@ -501,7 +551,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Invalid input",
+            "description": "Ok.",
             "schema": {
               "$ref": "#/definitions/txHash"
             }
