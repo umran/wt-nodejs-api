@@ -73,6 +73,13 @@ function validateReservationId (req, res, next) {
   if (!reservationId) return next(handle('missingReservationId', new Error()))
   next()
 }
+
+function validateRequired (req, res, next) {
+  const { required } = req.body
+  if (!required && required !== false) return next(handle('missingRequired', new Error()))
+  next()
+}
+
 module.exports = {
   validateActive,
   validateAddImage,
@@ -83,6 +90,7 @@ module.exports = {
   validatePassword,
   validatePasswords,
   validateReservationId,
+  validateRequired,
   validateType,
   validateWallet
 }
