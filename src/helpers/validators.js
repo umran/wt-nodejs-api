@@ -67,6 +67,13 @@ function validateHotelLocation (req, res, next) {
   if (!longitude) return next(handle('missingLongitude', new Error()))
   next()
 }
+
+function validatePrice (req, res, next) {
+  const { price } = req.body
+  if (!price) return next(handle('missingPrice', new Error()))
+  next()
+}
+
 module.exports = {
   validateActive,
   validateAddImage,
@@ -76,6 +83,7 @@ module.exports = {
   validateHotelLocation,
   validatePassword,
   validatePasswords,
+  validatePrice,
   validateType,
   validateWallet
 }

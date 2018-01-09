@@ -43,6 +43,10 @@ module.exports = {
     short: 'Password is required',
     long: `Body must include "password"`
   },
+  missingPrice: {
+    short: 'A price is required.',
+    long: 'Body must include "price".'
+  },
   missingNewPassword: {
     short: 'A new password is required',
     long: `Body must include "newPassword"`
