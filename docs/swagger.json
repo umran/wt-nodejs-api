@@ -780,6 +780,63 @@
         }
       }
     },
+    "/hotels/{address}/unitTypes/{type}/images": {
+      "post": {
+        "summary": "Add image to unit type",
+        "description": "Add an image for the unit type.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "in": "path",
+            "name": "type",
+            "type": "string",
+            "required": true,
+            "description": "Unit type."
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "password",
+                "url"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "url": {
+                  "description": "Picture's url.",
+                  "type": "string"
+                 }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully created.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/hotels/{address}/unitTypes/{type}/amenities": {
       "post": {
         "summary": "Create amenities.",
