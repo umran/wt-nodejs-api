@@ -12,6 +12,7 @@ describe('Unit', function () {
   BeforeEach()
   Before()
   const unitType = 'TYPE_000'
+  const imageUrl = 'picture.jpg'
   it('POST /hotels/:address/unitTypes/:type/units. Expect 200', async () => {
     const body = JSON.stringify({
       'password': config.get('password')
@@ -62,6 +63,69 @@ describe('Unit', function () {
         expect(res).to.have.property('code', '#missingPassword')
       })
   })
+
+  it('POST /hotels/:address/unitTypes/:type/images. Expect 200', async () => {
+    const body = JSON.stringify({
+      'password': config.get('password'),
+      'url': imageUrl
+    })
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitType}/images`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body
+    })
+    expect(response).to.have.property('status', 200)
+    response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body)
+      },
+      body
+    })
+
+    const {hotel} = await response.json()
+    expect(hotel.unitTypes[unitType].images).to.include(imageUrl)
+  })
+
+  it('POST /hotels/:address/unitTypes/:type/images. Expect 400 #missingPassword', async () => {
+    const body = JSON.stringify({
+      'url': imageUrl
+    })
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitType}/images`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body
+    })
+    expect(response).to.have.property('status', 400)
+    const res = await response.json()
+    expect(res).to.have.property('code', '#missingPassword')
+  })
+
+  it('POST /hotels/:address/unitTypes/:type/images. Expect 400 #missingUrl', async () => {
+    const body = JSON.stringify({
+      'password': config.get('password')
+    })
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitType}/images`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body
+    })
+    expect(response).to.have.property('status', 400)
+    const res = await response.json()
+    expect(res).to.have.property('code', '#missingUrl')
+  })
+
   it('DELETE /hotels/:hotelAddress/unitTypes/:unitType/units/:unitAddress. Expect 200 ', async () => {
     const body = JSON.stringify({
       'password': config.get('password')
