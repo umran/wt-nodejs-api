@@ -1075,7 +1075,65 @@
           }
         }
       }
-    }
+    },
+    "/hotels/{address}/units/{unit}/defaultPrice" : {
+      "put": {
+        "summary": "Set default price.",
+        "description": "Set default price for a unit of hotel.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "in": "path",
+            "name": "unit",
+            "type": "string",
+            "required": true,
+            "description": "unit address."
+          },
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "description": "parameters.",
+            "schema": {
+              "required": [
+                "password",
+                "price"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "price": {
+                  "description": "Default price.",
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully updated.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+     }
   },
   "definitions": {
     "txHash": {
