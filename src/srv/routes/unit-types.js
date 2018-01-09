@@ -2,7 +2,9 @@ const express = require('express')
 const unitTypesRouter = express.Router()
 const config = require('../../../config.js')
 const { loadAccount } = require('../../helpers/crypto')
-const { validatePassword, validateType } = require('../../helpers/validators')
+const { validatePassword,
+        validateType,
+        validateAddImage } = require('../../helpers/validators')
 
 const { handle } = require('../../../errors')
 const HotelManager = require('../../../libs/HotelManager.js')
@@ -67,6 +69,29 @@ unitTypesRouter.delete('/hotels/:address/unitTypes/:type', validatePassword, asy
     })
   } catch (err) {
     next(handle('web3', err))
+  }
+})
+
+unitTypesRouter.post('/hotels/:address/unitTypes/:type/images', validatePassword, validateAddImage, async (req, res, next) => {
+  const { password, url } = req.body
+  const { address, type } = req.params
+  let ownerAccount = {}
+  try {
+    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
+    const hotelManager = new HotelManager({
+      indexAddress: config.get('indexAddress'),
+      owner: ownerAccount.address,
+      gasMargin: config.get('gasMargin'),
+      web3: config.get('web3')
+    })
+    hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
+    const { logs } = await hotelManager.addImageUnitType(address, type, url)
+    hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
+    res.status(200).json({
+      txHash: logs[0].transactionHash
+    })
+  } catch (err) {
+    return next(handle('web3', err))
   }
 })
 
