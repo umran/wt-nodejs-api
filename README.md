@@ -287,6 +287,25 @@ fetch(`http://localhost:3000/hotels/0x0..1/units/0x2...1/defaultPrice`, {
   }
 })
 ```
+Also, we need to set the currency
+```curl
+curl -X PUT "http://localhost:3000/hotels/0x0...1/units/0x2...1/currencyCode" \
+  -H  "accept: application/json" -H  "Content-Type: application/json" \
+  -d "{  \"password\": \"secret\",  \"code\": 964}"
+```
+```javaScript
+fetch(`http://localhost:3000/hotels/0x0...1/units/0x2..1/currencyCode`, {
+  method: 'POST',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    password: 'secret',
+    code: 964
+  })
+})
+```
 #### Unit special prices
 (TBA)
 
