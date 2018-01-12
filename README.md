@@ -1,9 +1,277 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-
 # WT NodeJS API
-
 API written in nodejs to interact with the Winding Tree platform, it creates an http server with an encrypted ethereum account to send transactions to the WT platform hosted over the ethereum network.
-
 ## Requirements
 
-- Nodejs 7.10.1
+- Nodejs 8.9.x LTS
+
+## Examples
+### Wallet
+The very first thing to do, is add a Wallet. This wallet is used to make transactions with the Ethereum network. An example of encrypted keystore v3 JSON:
+```javaScript
+{
+    version: 3,
+    id: '04e9bcbb-96fa-497b-94d1-14df4cd20af6',
+    address: '2c7536e3605d9c16a7a3d7b1898e529396a65c23',
+    crypto: {
+        ciphertext: 'a1c25da3ecde4e6a24f3697251dd15d6208520efc84ad97397e906e6df24d251',
+        cipherparams: { iv: '2885df2b63f7ef247d753c82fa20038a' },
+        cipher: 'aes-128-ctr',
+        kdf: 'scrypt',
+        kdfparams: {
+            dklen: 32,
+            salt: '4531b3c174cc3ff32a6a7a85d6761b410db674807b2d216d022318ceee50be10',
+            n: 262144,
+            r: 8,
+            p: 1
+        },
+        mac: 'b8b010fff37f9ae5559a352a185e86f9b9c1d7f7a9f1bd4e82a5dd35468fc7f6'
+    }
+}
+```
+In order to add a new one, we must send a POST message
+```bash
+curl -X POST "http://localhost:3000/wallet" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \"password\": \"string\",  \"wallet\": {...}}"
+```
+
+```javascript
+fetch('http://localhost:3000/wallet', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+    password: 'secret',
+    wallet
+  })
+})
+  ```
+  Now, we can start to manage hotels.
+
+  ### Hotel manager
+
+  #### Create Hotel
+  Our first step with hotels is to create one. This requires an Hotel's name and description. Dont forget the password in order to use the stored wallet.
+  ```bash
+  curl -X POST "http://localhost:3000/hotels" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \"password\": \"secret\",  \"name\": \"WT Hotel\",  \"description\": \"Winding tree test hotel\"}"
+  ```
+  ```javascript
+fetch('http://localhost:3000/hotels', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body : JSON.stringify({
+    'password': 'secret',
+    'name': 'Winding Tree Hotel',
+    'description': 'WT test hotel'
+  })
+})
+```
+This will return a transaction hash. After, we can check the hotels that we manage with
+
+```bash
+curl -X GET "http://localhost:3000/hotels" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \"password\": \"secret\"}"
+```
+
+```javascript
+fetch('http://localhost:3000/hotels', {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(body)
+    },
+    body: JSON.stringify({
+    password: 'secret'
+  })
+})
+```
+The response is an JSON object where each key is the address of the Smart Contract that holds the holtel.
+#### Add image to hotel
+We can add images to our hotel.
+
+```bash
+curl -X POST "http://localhost:3000/hotels/0x0...0/images" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \"password\": \"secret\",  \"url\": \"imageUrl.me/front-1\"}"
+```
+
+```javascript
+fetch(`http://localhost:3000/hotels/0x3...b/images`, {
+    method: 'POST',
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    },
+    body : JSON.stringify({
+      password: 'secret'
+      url: 'imageUrl.me/front-1'
+    })
+})
+```
+#### Hotel address
+
+```bash
+curl -X POST "http://localhost:3000/hotels/0x0...0/images" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \"password\": \"secret\",  \"lineOne\": \"Fake street 123\",  \"lineTwo\": \"Springfield\",  \"zipCode\": \"C1414\",  \"country\": \"Greece\"}"
+```
+
+```javascript
+fetch(`http://localhost:3000/hotels/0x0...1/address`, {
+  method: 'PUT',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    password: 'secret',
+    lineOne: 'Fake street 123',
+    lineTwo: 'Springfield',
+    zipCode: 'C1414',
+    country: 'Greece'
+  })
+})
+```
+#### Hotel location
+We can set a geo location to our Hotels
+```javascript
+const timezone = 3
+const latitude = 38.002281
+const longitude = 57.557541
+let body = JSON.stringify({
+  password: config.get('password'),
+  timezone,
+  latitude,
+  longitude
+})
+
+let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/location`, {
+  method: 'PUT',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    password: 'secret',
+    timezone: '-3',
+    latitude: '-38.0022800',
+    longitude: '-57.5575400'
+  })
+})
+```
+### Unit Types
+
+Each hotels have different unit types, in order to crate a new type
+
+```javascript
+fetch(`http://localhost:3000/hotels/0x0...1/unitTypes`, {
+  method: 'POST',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    password: 'secret',
+    type: 'FAMILY_CABIN'
+    })
+})
+```
+#### Unit type - Images
+As we add images to our hotel, we can add images to our unit types. We must
+```javascript
+fetch(`http://localhost:3000/hotels/0x0...1/unitTypes/FAMILY_CABIN/images`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+      'password': 'secret',
+      'url': 'imageUrl.me/front-1'
+    })
+})
+```
+```bash
+curl -X POST "http://localhost:3000/hotels/0x0...1/unitTypes/FAMILY_CABIN/images" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \"password\": \"secret\",  \"url\": \"url.to/nice-image\"}"
+```
+#### Unit type - Amenity
+Now, we can add amenities identified by his numeric code
+```javascript
+fetch('http://localhost:3000/hotels/0x0...1/unitTypes/FAMILY_CABIN/amenities', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+    password: 'secret',
+    amenity: 23
+  })
+  })
+```
+
+```bash
+curl -X POST "http://localhost:3000/hotels/0x0...1/unitTypes/FAMILY_CABIN/amenities" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \"password\": \"secret\",  \"amenity\": 23}"
+```
+### Unit
+Suppose that we have 2 `FAMILY_CABIN`. Lets create the first
+
+```javascript
+  fetch(`http://localhost:3000/hotels/0x0...1/unitTypes/FAMILY_CABIN/units`, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: {
+        password: 'secret'
+  })
+```
+
+```bash
+curl -X POST "http://localhost:3000/hotels/0x0...1/unitTypes/FAMILY_CABIN/units" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \"password\": \"secret\"}"
+```
+After the transaction is processed, a new smart contract is deployed. To get the new unit address we must `GET /hotel/0x0...1`, under the key units are listed all the available units.
+#### Unit default prices
+To set a default lif price, we must
+(TBA)
+
+We can set a default fiat price trough
+```javascript
+fetch(`http://localhost:3000/hotels/0x0..1/units/0x2...1/defaultPrice`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    body: {
+        password: 'secret',
+        price: 30
+    }
+})
+```
+
+```bash
+curl -X PUT "http://localhost:3000/hotels/0x0...1/units/0x2...1/defaultPrice" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \"password\": \"secret\",  \"price\": 30}"
+```
+#### Unit special prices
+(TBA)
+
+#### Unit - In/Active
+We can set an unit as inactive or inactive for a perdiod of time.
+```javascript
+fetch(`http://localhost:3000/hotels/0x0..1/units/0x2...1/active`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    body: {
+        password: 'secret',
+        active: false
+    }
+})
+```
+```bash
+curl -X PUT "http://localhost:3000/hotels/0x0...1/units/0x2...1/active" -H  "accept: application/json" -H  "Content-Type: application/json" -d "{  \"password\": \"secret\",  \"active\": false}"
+```
