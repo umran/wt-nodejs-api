@@ -1249,7 +1249,66 @@
           }
         }
       }
-     }
+    },
+     "/hotels/{address}/units/{unit}/currencyCode" : {
+       "post": {
+         "summary": "Set currency Code.",
+         "description": "Set currency code for a unit of hotel.",
+         "parameters": [
+           {
+             "in": "path",
+             "name": "address",
+             "type": "string",
+             "required": true,
+             "description": "Hotel address."
+           },
+           {
+             "in": "path",
+             "name": "unit",
+             "type": "string",
+             "required": true,
+             "description": "unit address."
+           },
+           {
+             "in": "body",
+             "name": "params",
+             "required": true,
+             "description": "parameters.",
+             "schema": {
+               "required": [
+                 "password",
+                 "code"
+               ],
+               "properties": {
+                 "password": {
+                   "description": "Current password.",
+                   "type": "string"
+                 },
+                 "code": {
+                   "description": "Currency code.",
+                   "type": "number"
+                 }
+               }
+             }
+           }
+         ],
+         "responses": {
+           "200": {
+             "description": "Sucefully updated.",
+             "schema": {
+               "$ref": "#/definitions/txHash"
+             }
+           },
+           "400": {
+             "description": "Invalid input",
+             "schema": {
+               "$ref": "#/definitions/Error"
+             }
+           }
+         }
+       }
+      }
+
   },
   "definitions": {
     "txHash": {
