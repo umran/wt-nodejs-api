@@ -74,10 +74,17 @@ function validatePrice (req, res, next) {
   next()
 }
 
+function validateCode (req, res, next) {
+  const { code } = req.body
+  if (!code) return next(handle('missingCode', new Error()))
+  next()
+}
+
 module.exports = {
   validateActive,
   validateAddImage,
   validateAmenity,
+  validateCode,
   validateHotelInfo,
   validateHotelAddress,
   validateHotelLocation,
