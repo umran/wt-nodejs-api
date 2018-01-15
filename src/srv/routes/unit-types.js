@@ -7,7 +7,7 @@ const { validatePassword,
         validateAddImage } = require('../../helpers/validators')
 
 const { handle } = require('../../../errors')
-const HotelManager = require('../../../libs/HotelManager.js')
+const HotelManager = require('../../../wt-js-libs/dist/node/HotelManager.js')
 
 unitTypesRouter.get('/hotels/:address/unitTypes', async (req, res, next) => {
   const { address } = req.params

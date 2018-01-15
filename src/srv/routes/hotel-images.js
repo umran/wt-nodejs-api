@@ -5,8 +5,8 @@ const { validatePassword,
         validateAddImage
       } = require('../../helpers/validators')
 const { handle } = require('../../../errors')
-const HotelManager = require('../../../libs/HotelManager.js')
-const Utils = require('../../../libs/Utils.js')
+const HotelManager = require('../../../wt-js-libs/dist/node/HotelManager.js')
+const Utils = require('../../../wt-js-libs/dist/node/Utils.js')
 const config = require('../../../config.js')
 
 hotelImagesRouter.post('/hotels/:address/images', validatePassword, validateAddImage, async (req, res, next) => {
