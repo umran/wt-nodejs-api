@@ -11,6 +11,10 @@ module.exports = {
     short: 'Amenity is required.',
     long: `Body must include "amenity"`
   },
+  missingCode: {
+    short: 'Currency code is required.',
+    long: 'Body must include "code". These codes are 3 digits long.'
+  },
   missingCountry: {
     short: 'Country is required.',
     long: `Body must include "country"`
