@@ -778,7 +778,79 @@
             }
           }
         }
+      },
+      "put": {
+        "summary": "Edit unity type.",
+        "description": "Edit information.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "in": "path",
+            "name": "type",
+            "type": "string",
+            "required": true,
+            "description": "Unit type."
+          },
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "description": "Password.",
+            "schema": {
+              "required": [
+                "password",
+                "description",
+                "minGuests",
+                "maxGuests",
+                "price"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "Unit type description.",
+                  "type": "string"
+                },
+                "minGuests": {
+                  "description": "Minimun guest allowed.",
+                  "type": "number"
+                },
+                "maxGuests": {
+                  "description": "Maximun guests allowed.",
+                  "type": "number"
+                },
+                "price": {
+                  "description": "Unit type price.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Sucefully removed.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
       }
+
     },
     "/hotels/{address}/unitTypes/{type}/images": {
       "post": {
