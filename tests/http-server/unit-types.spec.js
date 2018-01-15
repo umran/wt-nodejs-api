@@ -125,4 +125,163 @@ describe('Unit', function () {
     let {hotel} = await response.json()
     expect(hotel.unitTypes[unitType].images).to.not.include('test-image.jpeg')
   })
+
+  it('PUT /hotels/:address/unitTypes/:type. Expect 200', async () => {
+    const description = 'Rural family cabin'
+    const minGuests = 1
+    const maxGuests = 5
+    const price = '15'
+    const body = JSON.stringify({
+      password: config.get('password'),
+      description,
+      minGuests,
+      maxGuests,
+      price
+    })
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitType}`, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body
+    })
+    expect(response).to.have.property('status', 200)
+    response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body)
+      },
+      body
+    })
+
+    const { hotel } = await response.json()
+    expect(hotel.unitTypes[unitType].info).to.have.property('description', description)
+    expect(hotel.unitTypes[unitType].info).to.have.property('minGuests', minGuests)
+    expect(hotel.unitTypes[unitType].info).to.have.property('maxGuests', maxGuests)
+    expect(hotel.unitTypes[unitType].info).to.have.property('price', price)
+  })
+
+  it('PUT /hotels/:address/unitTypes/:type. Expect 400 #missingPassword', async () => {
+    const description = 'Rural family cabin'
+    const minGuests = 1
+    const maxGuests = 5
+    const price = '15'
+    const body = JSON.stringify({
+      description,
+      minGuests,
+      maxGuests,
+      price
+    })
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitType}`, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body
+    })
+
+    expect(response).to.have.property('status', 400)
+    const resp = await response.json()
+    expect(resp).to.have.property('code', '#missingPassword')
+  })
+
+  it('PUT /hotels/:address/unitTypes/:type. Expect 400 #missingDescription', async () => {
+    const minGuests = 1
+    const maxGuests = 5
+    const price = '15'
+    const body = JSON.stringify({
+      password: config.get('password'),
+      minGuests,
+      maxGuests,
+      price
+    })
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitType}`, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body
+    })
+
+    expect(response).to.have.property('status', 400)
+    const resp = await response.json()
+    expect(resp).to.have.property('code', '#missingDescription')
+  })
+
+  it('PUT /hotels/:address/unitTypes/:type. Expect 400 #missingMinGuests', async () => {
+    const description = 'Rural family cabin'
+    const maxGuests = 5
+    const price = '15'
+    const body = JSON.stringify({
+      password: config.get('password'),
+      description,
+      maxGuests,
+      price
+    })
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitType}`, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body
+    })
+
+    expect(response).to.have.property('status', 400)
+    const resp = await response.json()
+    expect(resp).to.have.property('code', '#missingMinGuests')
+  })
+
+  it('PUT /hotels/:address/unitTypes/:type. Expect 400 #missingMaxGuests', async () => {
+    const description = 'Rural family cabin'
+    const minGuests = 1
+    const price = '15'
+    const body = JSON.stringify({
+      password: config.get('password'),
+      description,
+      minGuests,
+      price
+    })
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitType}`, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body
+    })
+
+    expect(response).to.have.property('status', 400)
+    const resp = await response.json()
+    expect(resp).to.have.property('code', '#missingMaxGuests')
+  })
+
+  it('PUT /hotels/:address/unitTypes/:type. Expect 400 #missingPrice', async () => {
+    const description = 'Rural family cabin'
+    const minGuests = 1
+    const maxGuests = 5
+    const body = JSON.stringify({
+      password: config.get('password'),
+      description,
+      minGuests,
+      maxGuests
+    })
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitType}`, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body
+    })
+
+    expect(response).to.have.property('status', 400)
+    const resp = await response.json()
+    expect(resp).to.have.property('code', '#missingPrice')
+  })
 })
