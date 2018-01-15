@@ -39,6 +39,14 @@ module.exports = {
     short: 'Lonngitude one is required.',
     long: `Body must include "longitude".`
   },
+  missingMaxGuests: {
+    short: 'Maximun guests is required.',
+    long: 'Body must include "maxGuests"'
+  },
+  missingMinGuests: {
+    short: 'Minimun guests is required.',
+    long: 'Body must include "minGuests"'
+  },
   missingName: {
     short: 'Name is required.',
     long: `Body must include "name".`
