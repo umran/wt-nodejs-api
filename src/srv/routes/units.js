@@ -2,7 +2,9 @@ const express = require('express')
 const unitsRouter = express.Router()
 const config = require('../../../config.js')
 const { loadAccount } = require('../../helpers/crypto')
-const { validatePassword, validateActive } = require('../../helpers/validators')
+const { validatePassword,
+        validateActive,
+        validateDate } = require('../../helpers/validators')
 
 const { handle } = require('../../../errors')
 const HotelManager = require('../../../wt-js-libs/dist/node/HotelManager.js')
@@ -83,6 +85,26 @@ async (req, res, next) => {
     context.owner = undefined
     res.status(200).json({
       txHash: logs[0].transactionHash
+    })
+  } catch (err) {
+    next(handle('web3', err))
+  }
+})
+
+unitsRouter.get('/units/:unit/reservation', validateDate, async (req, res, next) => {
+  const { date } = req.body
+  const { unit } = req.params
+  try {
+    let context = {
+      indexAddress: config.get('indexAddress'),
+      gasMargin: config.get('gasMargin'),
+      web3: config.get('web3')
+    }
+    const hotelManager = new HotelManager(context)
+    const reservation = await hotelManager.getReservation(unit, date)
+    context.owner = undefined
+    res.status(200).json({
+      reservation
     })
   } catch (err) {
     next(handle('web3', err))

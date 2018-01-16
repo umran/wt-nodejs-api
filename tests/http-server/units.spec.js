@@ -70,4 +70,26 @@ describe('Unit', function () {
     const hotel = hotels[config.get('testAddress')]
     expect(hotel.units).to.not.have.property(config.get('unitAdress'))
   })
+
+  it('GET /units/:unit/reservation. Expect 200 ', async () => {
+    const body = JSON.stringify({
+      date: Math.round(new Date('10/10/2020').getTime() / 86400000)
+    })
+
+    let response = await fetch(`http://localhost:3000/units/${config.get('unitAdress')}/reservation`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body)
+      },
+      body
+    })
+    expect(response).to.have.property('status', 200)
+
+    const { reservation } = await response.json()
+    expect(reservation).to.have.property('specialPrice')
+    expect(reservation).to.have.property('specialLifPrice')
+    expect(reservation).to.have.property('bookedBy')
+  })
 })
