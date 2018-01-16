@@ -1322,7 +1322,7 @@
         }
       }
     },
-     "/hotels/{address}/units/{unit}/currencyCode" : {
+    "/hotels/{address}/units/{unit}/currencyCode" : {
        "post": {
          "summary": "Set currency Code.",
          "description": "Set currency code for a unit of hotel.",
@@ -1379,8 +1379,51 @@
            }
          }
        }
+     },
+    "/units/{unit}/reservations":{
+        "get":{
+          "summary": "Get reservations.",
+          "description": "Get reservation for an unit.",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "unit",
+              "type": "string",
+              "required": true,
+              "description": "Unit address."
+            },
+            {
+              "name": "params",
+              "in": "body",
+              "schema": {
+                "required": [
+                  "date"
+                ],
+                "properties": {
+                  "date": {
+                    "description": "Date of the reservation. UTC day since 1970",
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Ok.",
+              "schema": {
+                "$ref": "#/definitions/Reservation"
+              }
+            },
+            "400": {
+              "description": "Can not get.",
+              "schema": {
+                "$ref": "#/definitions/Error"
+              }
+            }
+          }
+        }
       }
-
   },
   "definitions": {
     "txHash": {
@@ -1488,6 +1531,24 @@
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "Reservation": {
+      "title": "Reservation",
+      "description": "Reservation schema .",
+      "properties": {
+        "specialPrice": {
+          "type": "string",
+          "description": "Specil price for reservation."
+        },
+        "specialLifPrice": {
+          "type": "string",
+          "description": "Specil Lif price for reservation."
+        },
+        "BookedBy": {
+          "type": "string",
+          "description": "Addres that booked the unit."
         }
       }
     }
