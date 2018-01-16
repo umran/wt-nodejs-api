@@ -68,6 +68,27 @@ function validateHotelLocation (req, res, next) {
   next()
 }
 
+function validatePrice (req, res, next) {
+  const { price } = req.body
+  if (!price) return next(handle('missingPrice', new Error()))
+  next()
+}
+
+function validateCode (req, res, next) {
+  const { code } = req.body
+  if (!code) return next(handle('missingCode', new Error()))
+  next()
+}
+
+function validateUnitTypeInformation (req, res, next) {
+  const { description, minGuests, maxGuests, price } = req.body
+  if (!description) return next(handle('missingDescription', new Error()))
+  if (!minGuests) return next(handle('missingMinGuests', new Error()))
+  if (!maxGuests) return next(handle('missingMaxGuests', new Error()))
+  if (!price) return next(handle('missingPrice', new Error()))
+  next()
+}
+
 function validateReservationId (req, res, next) {
   const { reservationId } = req.body
   if (!reservationId) return next(handle('missingReservationId', new Error()))
@@ -84,13 +105,16 @@ module.exports = {
   validateActive,
   validateAddImage,
   validateAmenity,
+  validateCode,
   validateHotelInfo,
   validateHotelAddress,
   validateHotelLocation,
   validatePassword,
+  validatePrice,
   validatePasswords,
   validateReservationId,
   validateRequired,
   validateType,
+  validateUnitTypeInformation,
   validateWallet
 }

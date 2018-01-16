@@ -878,6 +878,194 @@
             }
           }
         }
+      },
+      "put": {
+        "summary": "Edit unity type.",
+        "description": "Edit information.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "in": "path",
+            "name": "type",
+            "type": "string",
+            "required": true,
+            "description": "Unit type."
+          },
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "description": "Password.",
+            "schema": {
+              "required": [
+                "password",
+                "description",
+                "minGuests",
+                "maxGuests",
+                "price"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "Unit type description.",
+                  "type": "string"
+                },
+                "minGuests": {
+                  "description": "Minimun guest allowed.",
+                  "type": "number"
+                },
+                "maxGuests": {
+                  "description": "Maximun guests allowed.",
+                  "type": "number"
+                },
+                "price": {
+                  "description": "Unit type price.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Sucefully removed.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+
+    },
+    "/hotels/{address}/unitTypes/{type}/images": {
+      "post": {
+        "summary": "Add image to unit type",
+        "description": "Add an image for the unit type.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "in": "path",
+            "name": "type",
+            "type": "string",
+            "required": true,
+            "description": "Unit type."
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "password",
+                "url"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "url": {
+                  "description": "Picture's url.",
+                  "type": "string"
+                 }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully created.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/hotels/{address}/unitTypes/{type}/images/{index}": {
+      "delete": {
+        "summary": "Remove image from unit type",
+        "description": "Remove image from the unit type by index.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "in": "path",
+            "name": "type",
+            "type": "string",
+            "required": true,
+            "description": "Unit type."
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "required": true,
+            "description": "Image index."
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "password"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Sucefully removed.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
       }
     },
     "/hotels/{address}/unitTypes/{type}/amenities": {
@@ -1175,7 +1363,124 @@
           }
         }
       }
-    }
+    },
+    "/hotels/{address}/units/{unit}/defaultPrice" : {
+      "put": {
+        "summary": "Set default price.",
+        "description": "Set default price for a unit of hotel.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "in": "path",
+            "name": "unit",
+            "type": "string",
+            "required": true,
+            "description": "unit address."
+          },
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "description": "parameters.",
+            "schema": {
+              "required": [
+                "password",
+                "price"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "price": {
+                  "description": "Default price.",
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully updated.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+     "/hotels/{address}/units/{unit}/currencyCode" : {
+       "post": {
+         "summary": "Set currency Code.",
+         "description": "Set currency code for a unit of hotel.",
+         "parameters": [
+           {
+             "in": "path",
+             "name": "address",
+             "type": "string",
+             "required": true,
+             "description": "Hotel address."
+           },
+           {
+             "in": "path",
+             "name": "unit",
+             "type": "string",
+             "required": true,
+             "description": "unit address."
+           },
+           {
+             "in": "body",
+             "name": "params",
+             "required": true,
+             "description": "parameters.",
+             "schema": {
+               "required": [
+                 "password",
+                 "code"
+               ],
+               "properties": {
+                 "password": {
+                   "description": "Current password.",
+                   "type": "string"
+                 },
+                 "code": {
+                   "description": "Currency code.",
+                   "type": "number"
+                 }
+               }
+             }
+           }
+         ],
+         "responses": {
+           "200": {
+             "description": "Sucefully updated.",
+             "schema": {
+               "$ref": "#/definitions/txHash"
+             }
+           },
+           "400": {
+             "description": "Invalid input",
+             "schema": {
+               "$ref": "#/definitions/Error"
+             }
+           }
+         }
+       }
+      }
+
   },
   "definitions": {
     "txHash": {

@@ -5,7 +5,7 @@ const { loadAccount } = require('../../helpers/crypto')
 const { validatePassword, validateActive } = require('../../helpers/validators')
 
 const { handle } = require('../../../errors')
-const HotelManager = require('../../../libs/HotelManager.js')
+const HotelManager = require('../../../wt-js-libs/dist/node/HotelManager.js')
 
 unitsRouter.post('/hotels/:address/unitTypes/:type/units', validatePassword, async (req, res, next) => {
   const { password } = req.body
