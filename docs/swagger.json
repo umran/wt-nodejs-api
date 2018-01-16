@@ -1422,7 +1422,65 @@
         }
       }
     },
-     "/hotels/{address}/units/{unit}/currencyCode" : {
+    "/hotels/{address}/units/{unit}/defaultLifPrice" : {
+      "put": {
+        "summary": "Set default Lif price.",
+        "description": "Set default Lif price for a unit of hotel.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "in": "path",
+            "name": "unit",
+            "type": "string",
+            "required": true,
+            "description": "unit address."
+          },
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "description": "parameters.",
+            "schema": {
+              "required": [
+                "password",
+                "price"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "price": {
+                  "description": "Default price.",
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully updated.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/hotels/{address}/units/{unit}/currencyCode" : {
        "post": {
          "summary": "Set currency Code.",
          "description": "Set currency code for a unit of hotel.",
@@ -1479,8 +1537,51 @@
            }
          }
        }
+     },
+    "/units/{unit}/reservations":{
+        "get":{
+          "summary": "Get reservations.",
+          "description": "Get reservation for an unit.",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "unit",
+              "type": "string",
+              "required": true,
+              "description": "Unit address."
+            },
+            {
+              "name": "params",
+              "in": "body",
+              "schema": {
+                "required": [
+                  "date"
+                ],
+                "properties": {
+                  "date": {
+                    "description": "Date of the reservation. UTC day since 1970",
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Ok.",
+              "schema": {
+                "$ref": "#/definitions/Reservation"
+              }
+            },
+            "400": {
+              "description": "Can not get.",
+              "schema": {
+                "$ref": "#/definitions/Error"
+              }
+            }
+          }
+        }
       }
-
   },
   "definitions": {
     "txHash": {
@@ -1588,6 +1689,24 @@
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "Reservation": {
+      "title": "Reservation",
+      "description": "Reservation schema .",
+      "properties": {
+        "specialPrice": {
+          "type": "string",
+          "description": "Specil price for reservation."
+        },
+        "specialLifPrice": {
+          "type": "string",
+          "description": "Specil Lif price for reservation."
+        },
+        "BookedBy": {
+          "type": "string",
+          "description": "Addres that booked the unit."
         }
       }
     }

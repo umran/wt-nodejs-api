@@ -101,11 +101,18 @@ function validateRequired (req, res, next) {
   next()
 }
 
+function validateDate (req, res, next) {
+  const { date } = req.body
+  if (!date) return next(handle('missingDate', new Error()))
+  next()
+}
+
 module.exports = {
   validateActive,
   validateAddImage,
   validateAmenity,
   validateCode,
+  validateDate,
   validateHotelInfo,
   validateHotelAddress,
   validateHotelLocation,

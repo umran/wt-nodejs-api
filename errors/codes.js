@@ -19,6 +19,10 @@ module.exports = {
     short: 'Country is required.',
     long: `Body must include "country"`
   },
+  missingDate: {
+    short: 'Date is required.',
+    long: `Body must include "date"`
+  },
   missingDescription: {
     short: 'Description is required.',
     long: `Body must include "description".`
