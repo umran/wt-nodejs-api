@@ -71,7 +71,7 @@ describe('Unit', function () {
     expect(hotel.units).to.not.have.property(config.get('unitAdress'))
   })
 
-  it.only('GET /units/:unit/reservation. Expect 200 ', async () => {
+  it('GET /units/:unit/reservation. Expect 200 ', async () => {
     const body = JSON.stringify({
       date: Math.round(new Date('10/10/2020').getTime() / 86400000)
     })
