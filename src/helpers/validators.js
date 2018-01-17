@@ -95,6 +95,12 @@ function validateDate (req, res, next) {
   next()
 }
 
+function validateRequired (req, res, next) {
+  const { required } = req.body
+  if (!required && required !== false) return next(handle('missingRequired', new Error()))
+  next()
+}
+
 module.exports = {
   validateActive,
   validateAddImage,
@@ -107,6 +113,7 @@ module.exports = {
   validatePassword,
   validatePasswords,
   validatePrice,
+  validateRequired,
   validateType,
   validateUnitTypeInformation,
   validateWallet
