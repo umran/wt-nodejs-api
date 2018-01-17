@@ -1373,7 +1373,7 @@
       }
     },
     "/hotels/{address}/units/{unit}/defaultLifPrice" : {
-      "put": {
+      "post": {
         "summary": "Set default Lif price.",
         "description": "Set default Lif price for a unit of hotel.",
         "parameters": [
@@ -1408,6 +1408,64 @@
                 },
                 "price": {
                   "description": "Default price.",
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully updated.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/hotels/{address}/units/{unit}/specialLifPrice" : {
+      "post": {
+        "summary": "Set special Lif price.",
+        "description": "Set special Lif price for a unit of hotel.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "in": "path",
+            "name": "unit",
+            "type": "string",
+            "required": true,
+            "description": "unit address."
+          },
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "description": "parameters.",
+            "schema": {
+              "required": [
+                "password",
+                "price"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "price": {
+                  "description": "Special price.",
                   "type": "number"
                 }
               }
