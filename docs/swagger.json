@@ -515,6 +515,56 @@
         }
       }
     },
+    "/hotels/{address}/confirmation": {
+      "post": {
+        "summary": "require confirmation.",
+        "description": "Set require confirmation for an hotel.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "password",
+                "required"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "required": {
+                  "description": "Require confirmation.",
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/hotels/{address}/images": {
       "get": {
         "summary": "Hotel's images.",
