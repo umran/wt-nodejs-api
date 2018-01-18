@@ -12,6 +12,7 @@ let fundingSource
 let daoAccount
 let ownerAccount
 let server
+let user
 
 const Before = () => (
   before(async function () {
@@ -19,14 +20,15 @@ const Before = () => (
     config.set('web3Provider', 'http://localhost:8545')
     config.updateWeb3Provider()
     config.set('privateKeyDir', 'keys/test.json')
-    const wallet = await config.get('web3').eth.accounts.wallet.create(2)
+    const wallet = await config.get('web3').eth.accounts.wallet.create(3)
     const accounts = await config.get('web3').eth.getAccounts()
     fundingSource = accounts[0]
     ownerAccount = wallet['0'].address
     daoAccount = wallet['1'].address
-
+    user = wallet['2'].address
     await utils.fundAccount(fundingSource, ownerAccount, '50', config.get('web3'))
     await utils.fundAccount(fundingSource, daoAccount, '50', config.get('web3'))
+    await utils.fundAccount(fundingSource, user, '50', config.get('web3'))
   })
 )
 const BeforeEach = () => (
@@ -58,6 +60,7 @@ async function generateHotel (ownerAddres) {
   const unitTypeName = 'TYPE_000'
   const amenity = 5
   const imageUrl = 'test-image.jpeg'
+  const defaultPrice = 78
 
   body = JSON.stringify({
     'password': config.get('password'),
@@ -76,7 +79,6 @@ async function generateHotel (ownerAddres) {
   body = JSON.stringify({
     'password': config.get('password')
   })
-
   res = await fetch('http://localhost:3000/hotels', {
     method: 'GET',
     headers: {
@@ -93,7 +95,6 @@ async function generateHotel (ownerAddres) {
     'password': config.get('password'),
     type: unitTypeName
   })
-
   res = await fetch(`http://localhost:3000/hotels/${hotelAddresses[0]}/unitTypes`, {
     method: 'POST',
     headers: {
@@ -119,7 +120,6 @@ async function generateHotel (ownerAddres) {
   body = JSON.stringify({
     'password': config.get('password')
   })
-
   res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitTypeName}/units`, {
     method: 'POST',
     headers: {
@@ -141,7 +141,6 @@ async function generateHotel (ownerAddres) {
     },
     body
   })
-
   res = await fetch('http://localhost:3000/hotels', {
     method: 'GET',
     headers: {
@@ -164,6 +163,19 @@ async function generateHotel (ownerAddres) {
   config.set('unitAdress', unitAdress)
   expect(hotel.units[unitAdress]).to.have.property('unitType', unitTypeName)
   expect(hotel.unitTypes[unitTypeName].images).to.include(imageUrl)
+
+  body = JSON.stringify({
+    password: config.get('password'),
+    price: defaultPrice
+  })
+  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAdress')}/defaultPrice`, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body
+  })
 }
 
 async function setUpWallet () {
