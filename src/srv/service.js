@@ -11,6 +11,7 @@ const { hotelsRouter } = require('./routes/hotels')
 const { defaultPricesRouter } = require('./routes/default-prices')
 const { hotelBookingRouter } = require('./routes/hotel-bookings')
 const { specialPricesRouter } = require('./routes/special-prices')
+const { costsRouter } = require('./routes/booking-data/costs')
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(require('../../docs/swagger.json')))
 app.use(bodyParser.json())
@@ -23,6 +24,7 @@ app.use(hotelsRouter)
 app.use(defaultPricesRouter)
 app.use(hotelBookingRouter)
 app.use(specialPricesRouter)
+app.use(costsRouter)
 
 app.use((err, req, res, next) => {
   console.error(err)
