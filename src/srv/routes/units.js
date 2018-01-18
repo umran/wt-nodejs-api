@@ -4,10 +4,12 @@ const config = require('../../../config.js')
 const { loadAccount } = require('../../helpers/crypto')
 const { validatePassword,
         validateActive,
-        validateDate } = require('../../helpers/validators')
+        validateDate,
+        validateDateRange } = require('../../helpers/validators')
 
 const { handle } = require('../../../errors')
 const HotelManager = require('../../../wt-js-libs/dist/node/HotelManager.js')
+const BookingData = require('../../../wt-js-libs/dist/node/BookingData.js')
 
 unitsRouter.post('/hotels/:address/unitTypes/:type/units', validatePassword, async (req, res, next) => {
   const { password } = req.body
@@ -106,6 +108,18 @@ unitsRouter.get('/units/:unit/reservation', validateDate, async (req, res, next)
     res.status(200).json({
       reservation
     })
+  } catch (err) {
+    next(handle('web3', err))
+  }
+})
+
+unitsRouter.get('/units/:unitAdress/available', validateDateRange, async (req, res, next) => {
+  const { from, days } = req.body
+  const { unitAdress } = req.params
+  try {
+    const data = new BookingData(config.get('web3'))
+    const available = await data.unitIsAvailable(unitAdress, from, days)
+    res.status(200).json({available})
   } catch (err) {
     next(handle('web3', err))
   }
