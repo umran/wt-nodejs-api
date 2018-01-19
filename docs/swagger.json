@@ -455,6 +455,49 @@
         }
       }
     },
+    "/hotels/{hotelAddress}/bookings": {
+      "get": {
+        "summary": "Get bookings.",
+        "description": "Get confirmed bookings.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "hotelAddress",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "properties": {
+                "block": {
+                  "description": "Block to begin searching from..",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok.",
+            "schema": {
+              "$ref": "#/definitions/Bookings"
+            }
+          },
+          "400": {
+            "description": "can not get",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+
     "/hotels/{address}/location": {
       "put": {
         "summary": "Hotel's location.",
@@ -1823,6 +1866,48 @@
           "type": "string",
           "description": "Addres that booked the unit."
         }
+      }
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "Booking schema.",
+      "properties": {
+        "transactionHash": {
+          "type": "string",
+          "description": "Transaction hash"
+        },
+        "blockNumber": {
+          "type": "string",
+          "description": "block number of the reservation"
+        },
+        "id": {
+          "type": "string",
+          "description": "Id of the booking"
+        },
+        "from":{
+          "type": "string",
+          "description":"Gest address"
+        },
+        "unit": {
+          "type": "string",
+          "description":"Unit contract address"
+        },
+        "fromDate": {
+          "type": "string",
+          "description":"Start date of the booking"
+        },
+        "daysAmount": {
+          "type": "string",
+          "description":"Booking days"
+        }
+      }
+    },
+    "Bookings":{
+      "title": "Bookings",
+      "description": "Booking list.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Booking"
       }
     }
   }
