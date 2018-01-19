@@ -74,4 +74,35 @@ describe('Hotels bookings', function () {
     const res = await response.json()
     expect(res).to.have.property('code', '#missingRequired')
   })
+
+  it('GET /hotels/:hotelAdress/bookings. Expect 200', async () => {
+    const body = JSON.stringify({
+      block: 1
+    })
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/bookings`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body)
+      },
+      body
+    })
+
+    expect(response).to.have.property('status', 200)
+    const { bookings } = await response.json()
+    expect(bookings).to.be.an('array')
+  })
+  it('GET /hotels/:hotelAdress/bookings from creation block. Expect 200', async () => {
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/bookings`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    })
+    expect(response).to.have.property('status', 200)
+    const { bookings } = await response.json()
+    expect(bookings).to.be.an('array')
+  })
 })
