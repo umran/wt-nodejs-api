@@ -1357,6 +1357,74 @@
         }
       }
     },
+    "/hotels/{hotelAddress}/units/{unitAddress}/book" : {
+      "put": {
+        "summary": "Book ad unit.",
+        "description": "Book a unit.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "hotelAddress",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "in": "path",
+            "name": "unitAddress",
+            "type": "string",
+            "required": true,
+            "description": "unit address."
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "description": "parameters.",
+            "schema": {
+              "required": [
+                "account",
+                "guest",
+                "days",
+                "from"
+              ],
+              "properties": {
+                "account": {
+                  "description": "Client's account address.",
+                  "type": "string"
+                },
+                "guest": {
+                  "description": "Guest data.",
+                  "type": "string"
+                },
+                "days": {
+                  "description": "Amount of days.",
+                  "type": "number"
+                },
+                "from": {
+                  "description": "First day of the booking.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully updated.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/hotels/{address}/units/{unit}/defaultPrice" : {
       "put": {
         "summary": "Set default price.",
