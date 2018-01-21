@@ -4,8 +4,7 @@
   "description": " API to interact with the Winding Tree platform",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha ./tests/**/*.spec.js",
-    "test-api": "scripts/test.sh",
+    "test": "scripts/test.sh",
     "dev": "node ./src/srv/index.js"
   },
   "repository": {
