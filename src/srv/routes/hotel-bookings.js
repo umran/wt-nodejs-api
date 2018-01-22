@@ -48,6 +48,18 @@ hotelBookingRouter.get('/hotels/:hotelAddress/bookings', async (req, res, next) 
   }
 })
 
+hotelBookingRouter.get('/hotels/:hotelAddress/requests', async (req, res, next) => {
+  const { block } = req.body
+  const { hotelAddress } = req.params
+  try {
+    const data = new BookingData(config.get('web3'))
+    const requests = await data.getBookingRequests(hotelAddress, block)
+    res.status(200).json({requests})
+  } catch (err) {
+    next(handle('web3', err))
+  }
+})
+
 module.exports = {
   hotelBookingRouter
 }

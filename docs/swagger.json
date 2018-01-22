@@ -497,7 +497,6 @@
         }
       }
     },
-
     "/hotels/{address}/location": {
       "put": {
         "summary": "Hotel's location.",
@@ -680,6 +679,48 @@
           },
           "400": {
             "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/hotels/{hotelAddress}/requests": {
+      "get": {
+        "summary": "Get requests.",
+        "description": "Get pendig requests.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "hotelAddress",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "properties": {
+                "block": {
+                  "description": "Block to begin searching from.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok.",
+            "schema": {
+              "$ref": "#/definitions/Bookings"
+            }
+          },
+          "400": {
+            "description": "can not get",
             "schema": {
               "$ref": "#/definitions/Error"
             }
