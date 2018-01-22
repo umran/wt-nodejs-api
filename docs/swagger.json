@@ -555,6 +555,48 @@
         }
       }
     },
+    "/hotels/{hotelAddress}/bookings": {
+      "get": {
+        "summary": "Get bookings.",
+        "description": "Get confirmed bookings.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "hotelAddress",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "properties": {
+                "block": {
+                  "description": "Block to begin searching from..",
+                  "type": "string"
+                  }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Ok.",
+              "schema": {
+                  "$ref": "#/definitions/Bookings"
+                }
+            },
+            "400": {
+              "description": "can not get",
+                "schema": {
+                  "$ref": "#/definitions/Error"
+              }
+            }
+          }
+        }
+    },
     "/hotels/{address}/location": {
       "put": {
         "summary": "Hotel's location.",
@@ -594,6 +636,56 @@
                 "timezone": {
                   "description": "Hotel's timezone.",
                   "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/hotels/{address}/confirmation": {
+      "post": {
+        "summary": "require confirmation.",
+        "description": "Set require confirmation for an hotel.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "password",
+                "required"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "required": {
+                  "description": "Require confirmation.",
+                  "type": "boolean"
                 }
               }
             }
@@ -687,6 +779,48 @@
           },
           "400": {
             "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/hotels/{hotelAddress}/requests": {
+      "get": {
+        "summary": "Get requests.",
+        "description": "Get pendig requests.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "hotelAddress",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "properties": {
+                "block": {
+                  "description": "Block to begin searching from.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok.",
+            "schema": {
+              "$ref": "#/definitions/Bookings"
+            }
+          },
+          "400": {
+            "description": "can not get",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -950,7 +1084,6 @@
           }
         }
       }
-
     },
     "/hotels/{address}/unitTypes/{type}/images": {
       "post": {
@@ -1364,6 +1497,74 @@
         }
       }
     },
+    "/hotels/{hotelAddress}/units/{unitAddress}/book" : {
+      "put": {
+        "summary": "Book ad unit.",
+        "description": "Book a unit.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "hotelAddress",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "in": "path",
+            "name": "unitAddress",
+            "type": "string",
+            "required": true,
+            "description": "unit address."
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "description": "parameters.",
+            "schema": {
+              "required": [
+                "account",
+                "guest",
+                "days",
+                "from"
+              ],
+              "properties": {
+                "account": {
+                  "description": "Client's account address.",
+                  "type": "string"
+                },
+                "guest": {
+                  "description": "Guest data.",
+                  "type": "string"
+                },
+                "days": {
+                  "description": "Amount of days.",
+                  "type": "number"
+                },
+                "from": {
+                  "description": "First day of the booking.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully updated.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/hotels/{address}/units/{unit}/defaultPrice" : {
       "put": {
         "summary": "Set default price.",
@@ -1423,7 +1624,7 @@
       }
     },
     "/hotels/{address}/units/{unit}/defaultLifPrice" : {
-      "put": {
+      "post": {
         "summary": "Set default Lif price.",
         "description": "Set default Lif price for a unit of hotel.",
         "parameters": [
@@ -1458,6 +1659,122 @@
                 },
                 "price": {
                   "description": "Default price.",
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully updated.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/hotels/{address}/units/{unit}/specialLifPrice" : {
+      "post": {
+        "summary": "Set special Lif price.",
+        "description": "Set special Lif price for a unit of hotel.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "in": "path",
+            "name": "unit",
+            "type": "string",
+            "required": true,
+            "description": "unit address."
+          },
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "description": "parameters.",
+            "schema": {
+              "required": [
+                "password",
+                "price"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "price": {
+                  "description": "Special price.",
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucefully updated.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/hotels/{address}/units/{unit}/specialPrice" : {
+      "post": {
+        "summary": "Set special price.",
+        "description": "Set special price for a unit of hotel.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel address."
+          },
+          {
+            "in": "path",
+            "name": "unit",
+            "type": "string",
+            "required": true,
+            "description": "unit address."
+          },
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "description": "parameters.",
+            "schema": {
+              "required": [
+                "password",
+                "price"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "price": {
+                  "description": "Special price.",
                   "type": "number"
                 }
               }
@@ -1538,7 +1855,61 @@
          }
        }
      },
-    "/units/{unit}/reservations":{
+     "/units/{unitAdress}/available":{
+         "get":{
+           "summary": "Unit availability.",
+           "description": "Get unit availability for a range of days.",
+           "parameters": [
+             {
+               "in": "path",
+               "name": "unit",
+               "type": "string",
+               "required": true,
+               "description": "Unit address."
+             },
+             {
+               "name": "params",
+               "in": "body",
+               "schema": {
+                 "required": [
+                   "from",
+                   "days"
+                 ],
+                 "properties": {
+                   "from": {
+                     "description": "Start date. UTC day since 1970",
+                     "type": "number"
+                   },
+                   "days": {
+                     "description": "Amount of days of the reservation.",
+                     "type": "numer"
+                   }
+                 }
+               }
+             }
+           ],
+           "responses": {
+             "200": {
+               "description": "Ok.",
+               "schema": {
+                 "properties": {
+                   "available": {
+                     "description": "True if the unit is available.",
+                     "type": "boolean"
+                   }
+                 }
+               }
+             },
+             "400": {
+               "description": "Can not get.",
+               "schema": {
+                 "$ref": "#/definitions/Error"
+               }
+             }
+           }
+         }
+       },
+    "/units/{unit}/cost":{
         "get":{
           "summary": "Get reservations.",
           "description": "Get reservation for an unit.",
@@ -1555,12 +1926,17 @@
               "in": "body",
               "schema": {
                 "required": [
-                  "date"
+                  "from",
+                  "days"
                 ],
                 "properties": {
-                  "date": {
-                    "description": "Date of the reservation. UTC day since 1970",
+                  "from": {
+                    "description": "Start date. UTC day since 1970",
                     "type": "number"
+                  },
+                  "days": {
+                    "description": "Amount of days of the reservation.",
+                    "type": "numer"
                   }
                 }
               }
@@ -1581,7 +1957,51 @@
             }
           }
         }
-      }
+      },
+      "/units/{unit}/reservations":{
+          "get":{
+            "summary": "Get reservations.",
+            "description": "Get reservation for an unit.",
+            "parameters": [
+              {
+                "in": "path",
+                "name": "unit",
+                "type": "string",
+                "required": true,
+                "description": "Unit address."
+              },
+              {
+                "name": "params",
+                "in": "body",
+                "schema": {
+                  "required": [
+                    "date"
+                  ],
+                  "properties": {
+                    "date": {
+                      "description": "Date of the reservation. UTC day since 1970",
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Ok.",
+                "schema": {
+                  "$ref": "#/definitions/Reservation"
+                }
+              },
+              "400": {
+                "description": "Can not get.",
+                "schema": {
+                  "$ref": "#/definitions/Error"
+                }
+              }
+            }
+          }
+        }
   },
   "definitions": {
     "txHash": {
@@ -1708,6 +2128,48 @@
           "type": "string",
           "description": "Addres that booked the unit."
         }
+      }
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "Booking schema.",
+      "properties": {
+        "transactionHash": {
+          "type": "string",
+          "description": "Transaction hash"
+        },
+        "blockNumber": {
+          "type": "string",
+          "description": "block number of the reservation"
+        },
+        "id": {
+          "type": "string",
+          "description": "Id of the booking"
+        },
+        "from":{
+          "type": "string",
+          "description":"Gest address"
+        },
+        "unit": {
+          "type": "string",
+          "description":"Unit contract address"
+        },
+        "fromDate": {
+          "type": "string",
+          "description":"Start date of the booking"
+        },
+        "daysAmount": {
+          "type": "string",
+          "description":"Booking days"
+        }
+      }
+    },
+    "Bookings":{
+      "title": "Bookings",
+      "description": "Booking list.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Booking"
       }
     }
   }

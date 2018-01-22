@@ -92,4 +92,61 @@ describe('Unit', function () {
     expect(reservation).to.have.property('specialLifPrice')
     expect(reservation).to.have.property('bookedBy')
   })
+
+  it('GET /units/:unitAdress/available. Expect 200', async () => {
+    const days = 5
+    const body = JSON.stringify({
+      password: config.get('password'),
+      days,
+      from: new Date('10/10/2020')
+    })
+    let response = await fetch(`http://localhost:3000/units/${config.get('unitAdress')}/available`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body)
+      },
+      body
+    })
+
+    expect(response).to.have.property('status', 200)
+    expect(await response.json()).to.have.property('available', true)
+  })
+
+  it('GET /units/:unitAdress/available. Expect 400 #missingDays', async () => {
+    const body = JSON.stringify({
+      from: new Date('10/10/2020')
+    })
+    let response = await fetch(`http://localhost:3000/units/${config.get('unitAdress')}/available`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body)
+      },
+      body
+    })
+
+    expect(response).to.have.property('status', 400)
+    expect(await response.json()).to.have.property('code', '#missingDays')
+  })
+  it('GET /units/:unitAdress/available. Expect 400 #missingFrom', async () => {
+    const days = 5
+    const body = JSON.stringify({
+      days
+    })
+    let response = await fetch(`http://localhost:3000/units/${config.get('unitAdress')}/available`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body)
+      },
+      body
+    })
+
+    expect(response).to.have.property('status', 400)
+    expect(await response.json()).to.have.property('code', '#missingFrom')
+  })
 })

@@ -107,12 +107,20 @@ function validateDate (req, res, next) {
   next()
 }
 
+function validateDateRange (req, res, next) {
+  const { from, days } = req.body
+  if (!from) return next(handle('missingFrom', new Error()))
+  if (!days) return next(handle('missingDays', new Error()))
+  next()
+}
+
 module.exports = {
   validateActive,
   validateAddImage,
   validateAmenity,
   validateCode,
   validateDate,
+  validateDateRange,
   validateHotelInfo,
   validateHotelAddress,
   validateHotelLocation,

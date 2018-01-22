@@ -1,19 +1,21 @@
 const express = require('express')
-const bookingRouter = express.Router()
+const specialPricesRouter = express.Router()
 const { loadAccount } = require('../../helpers/crypto')
 const { validatePassword,
-        validateReservationId,
-        validateRequired } = require('../../helpers/validators')
+        validatePrice } = require('../../helpers/validators')
+
 const { handle } = require('../../../errors')
 const HotelManager = require('../../../wt-js-libs/dist/node/HotelManager.js')
 
 const config = require('../../../config.js')
 
-bookingRouter.post('/hotels/:address/confirmBooking',
-validatePassword, validateReservationId,
-async(req, res, next) => {
-  const { password, reservationId } = req.body
-  const { address } = req.params
+specialPricesRouter.post([
+  '/hotels/:address/unitTypes/:type/units/:unit/specialLifPrice',
+  '/hotels/:address/units/:unit/specialLifPrice'
+], validatePassword, validatePrice,
+async (req, res, next) => {
+  const { password, price, from, days } = req.body
+  const { address, unit } = req.params
   let ownerAccount = {}
   try {
     let context = {
@@ -25,22 +27,24 @@ async(req, res, next) => {
     context.owner = ownerAccount.address
     const hotelManager = new HotelManager(context)
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.confirmBooking(address, reservationId)
+    const {transactionHash} = await hotelManager.setUnitSpecialLifPrice(address, unit, price, from, days)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     context.owner = undefined
     res.status(200).json({
-      txHash: logs[0].transactionHash
+      txHash: transactionHash
     })
   } catch (err) {
     next(handle('web3', err))
   }
 })
 
-bookingRouter.put('/hotels/:address/confirmation',
-validatePassword, validateRequired,
-async(req, res, next) => {
-  const { password, required } = req.body
-  const { address } = req.params
+specialPricesRouter.post([
+  '/hotels/:address/unitTypes/:type/units/:unit/specialPrice',
+  '/hotels/:address/units/:unit/specialPrice'
+], validatePassword, validatePrice,
+async (req, res, next) => {
+  const { password, price, from, days } = req.body
+  const { address, unit } = req.params
   let ownerAccount = {}
   try {
     let context = {
@@ -52,11 +56,11 @@ async(req, res, next) => {
     context.owner = ownerAccount.address
     const hotelManager = new HotelManager(context)
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.setRequireConfirmation(address, !!required)
+    const {transactionHash} = await hotelManager.setUnitSpecialPrice(address, unit, price, from, days)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     context.owner = undefined
     res.status(200).json({
-      txHash: logs[0].transactionHash
+      txHash: transactionHash
     })
   } catch (err) {
     next(handle('web3', err))
@@ -64,5 +68,5 @@ async(req, res, next) => {
 })
 
 module.exports = {
-  bookingRouter
+  specialPricesRouter
 }
