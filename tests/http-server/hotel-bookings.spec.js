@@ -74,4 +74,82 @@ describe('Hotels bookings', function () {
     const res = await response.json()
     expect(res).to.have.property('code', '#missingRequired')
   })
+
+  it('GET /hotels/:hotelAdress/bookings. Expect 200', async () => {
+    const body = JSON.stringify({
+      block: 1
+    })
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/bookings`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body)
+      },
+      body
+    })
+
+    expect(response).to.have.property('status', 200)
+    const { bookings } = await response.json()
+    expect(bookings).to.be.an('array')
+  })
+
+  it('POST /hotels/:hotelAdress/units/:unitAddress/book. Expect 200', async () => {
+    const guestData = '0123456789ABCDEF'
+    const daysAmount = 1
+    const fromDate = new Date('10/10/2020')
+
+    const body = JSON.stringify({
+      account: config.get('user'),
+      guest: guestData,
+      days: daysAmount,
+      from: fromDate
+    })
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAdress')}/book`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body
+    })
+    expect(response).to.have.property('status', 200)
+
+    response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/bookings`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    })
+    expect(response).to.have.property('status', 200)
+    const { bookings } = await response.json()
+
+    expect(bookings).to.be.an('array')
+    expect(bookings[0]).to.have.property('guestData', guestData)
+    expect(bookings[0]).to.have.property('daysAmount', daysAmount.toString())
+    expect(Date.parse(bookings[0].fromDate)).to.eql(Date.parse(fromDate))
+    expect(bookings[0]).to.have.property('unit', config.get('unitAdress'))
+    expect(bookings[0]).to.have.property('from', config.get('user'))
+    expect(bookings[0]).to.have.property('id')
+  })
+
+  it('POST /hotels/:hotelAdress/units/:unitAddress/book. Expect 400 #missingFrom', async () => {
+    const guestData = '0123456789ABCDEF'
+    const body = JSON.stringify({
+      account: config.get('user'),
+      guest: guestData,
+      days: 5
+    })
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAdress')}/book`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body
+    })
+    expect(response).to.have.property('status', 400)
+    expect(await response.json()).to.have.property('code', '#missingFrom')
+  })
 })

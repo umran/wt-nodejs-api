@@ -12,7 +12,6 @@ let fundingSource
 let daoAccount
 let ownerAccount
 let server
-let user
 
 const Before = () => (
   before(async function () {
@@ -25,10 +24,10 @@ const Before = () => (
     fundingSource = accounts[0]
     ownerAccount = wallet['0'].address
     daoAccount = wallet['1'].address
-    user = wallet['2'].address
+    config.set('user', wallet['2'].address)
     await utils.fundAccount(fundingSource, ownerAccount, '50', config.get('web3'))
     await utils.fundAccount(fundingSource, daoAccount, '50', config.get('web3'))
-    await utils.fundAccount(fundingSource, user, '50', config.get('web3'))
+    await utils.fundAccount(fundingSource, config.get('user'), '50', config.get('web3'))
   })
 )
 const BeforeEach = () => (
