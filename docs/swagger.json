@@ -1756,6 +1756,60 @@
          }
        }
      },
+     "/units/{unitAdress}/available":{
+         "get":{
+           "summary": "Unit availability.",
+           "description": "Get unit availability for a range of days.",
+           "parameters": [
+             {
+               "in": "path",
+               "name": "unit",
+               "type": "string",
+               "required": true,
+               "description": "Unit address."
+             },
+             {
+               "name": "params",
+               "in": "body",
+               "schema": {
+                 "required": [
+                   "from",
+                   "days"
+                 ],
+                 "properties": {
+                   "from": {
+                     "description": "Start date. UTC day since 1970",
+                     "type": "number"
+                   },
+                   "days": {
+                     "description": "Amount of days of the reservation.",
+                     "type": "numer"
+                   }
+                 }
+               }
+             }
+           ],
+           "responses": {
+             "200": {
+               "description": "Ok.",
+               "schema": {
+                 "properties": {
+                   "available": {
+                     "description": "True if the unit is available.",
+                     "type": "boolean"
+                   }
+                 }
+               }
+             },
+             "400": {
+               "description": "Can not get.",
+               "schema": {
+                 "$ref": "#/definitions/Error"
+               }
+             }
+           }
+         }
+       },
     "/units/{unit}/cost":{
         "get":{
           "summary": "Get reservations.",
