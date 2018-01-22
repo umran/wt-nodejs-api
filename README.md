@@ -7,3 +7,10 @@ API written in nodejs to interact with the Winding Tree platform, it creates an 
 ## Requirements
 
 - Nodejs 7.10.1
+
+### Getting stared
+In order to install and run test we must: 
+- git clone git@github.com:windingtree/wt-nodejs-api.git --recursive
+- npm i
+- cd wt-js-libs && npm i
+- npm test
