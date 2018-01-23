@@ -161,10 +161,9 @@ describe('Hotels', function () {
   })
 
   it('POST /hotels/:address/units/:unit/currencyCode. Expect 200', async () => {
-    const code = 948
     const body = JSON.stringify({
       password: config.get('password'),
-      code
+      code: 948
     })
     let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAdress')}/currencyCode`, {
       method: 'POST',
@@ -186,12 +185,11 @@ describe('Hotels', function () {
       body
     })
     const { hotel } = await response.json()
-    expect(hotel.units[config.get('unitAdress')]).to.have.property('currencyCode', code)
+    expect(hotel.units[config.get('unitAdress')]).to.have.property('currencyCode', 'CHW')
   })
   it('POST /hotels/:address/units/:unit/currencyCode. Expect 400 #missingPassword', async () => {
-    const code = 948
     const body = JSON.stringify({
-      code
+      code: 948
     })
     let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAdress')}/currencyCode`, {
       method: 'POST',
