@@ -89,15 +89,21 @@ function validateUnitTypeInformation (req, res, next) {
   next()
 }
 
-function validateDate (req, res, next) {
-  const { date } = req.body
-  if (!date) return next(handle('missingDate', new Error()))
+function validateReservationId (req, res, next) {
+  const { reservationId } = req.body
+  if (!reservationId) return next(handle('missingReservationId', new Error()))
   next()
 }
 
 function validateRequired (req, res, next) {
   const { required } = req.body
   if (!required && required !== false) return next(handle('missingRequired', new Error()))
+  next()
+}
+
+function validateDate (req, res, next) {
+  const { date } = req.body
+  if (!date) return next(handle('missingDate', new Error()))
   next()
 }
 
@@ -119,8 +125,9 @@ module.exports = {
   validateHotelAddress,
   validateHotelLocation,
   validatePassword,
-  validatePasswords,
   validatePrice,
+  validatePasswords,
+  validateReservationId,
   validateRequired,
   validateType,
   validateUnitTypeInformation,

@@ -71,6 +71,15 @@ module.exports = {
     short: 'A new password is required',
     long: `Body must include "newPassword"`
   },
+  missingRequired: {
+    short: 'A required is required.',
+    long: 'Body must include an "required".'
+
+  },
+  missingReservationId: {
+    short: 'A reservation id is required.',
+    long: 'Body must include an "reservationId".'
+  },
   missingTimezone: {
     short: 'A timezone is required.',
     long: 'Body must include an "timezone".'

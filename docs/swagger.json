@@ -455,6 +455,106 @@
         }
       }
     },
+    "/hotels/{address}/confirmBooking": {
+      "post": {
+        "summary": "Confirm booking.",
+        "description": "Confirms a pending booking request.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel location."
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "password",
+                "reservationId"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "reservationId": {
+                  "description": "Reservation id.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/hotels/{address}/confirmation": {
+      "put": {
+        "summary": "Confirm booking.",
+        "description": "Confirms a pending booking request.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "address",
+            "type": "string",
+            "required": true,
+            "description": "Hotel location."
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "required": [
+                "password",
+                "required"
+              ],
+              "properties": {
+                "password": {
+                  "description": "Current password.",
+                  "type": "string"
+                },
+                "required": {
+                  "description": "Set true if confirmation is required from manager.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok.",
+            "schema": {
+              "$ref": "#/definitions/txHash"
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/hotels/{hotelAddress}/bookings": {
       "get": {
         "summary": "Get bookings.",
@@ -476,26 +576,26 @@
                 "block": {
                   "description": "Block to begin searching from..",
                   "type": "string"
+                  }
                 }
               }
             }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Ok.",
-            "schema": {
-              "$ref": "#/definitions/Bookings"
-            }
-          },
-          "400": {
-            "description": "can not get",
-            "schema": {
-              "$ref": "#/definitions/Error"
+          ],
+          "responses": {
+            "200": {
+              "description": "Ok.",
+              "schema": {
+                  "$ref": "#/definitions/Bookings"
+                }
+            },
+            "400": {
+              "description": "can not get",
+                "schema": {
+                  "$ref": "#/definitions/Error"
+              }
             }
           }
         }
-      }
     },
     "/hotels/{address}/location": {
       "put": {
@@ -543,7 +643,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Invalid input",
+            "description": "Ok.",
             "schema": {
               "$ref": "#/definitions/txHash"
             }
@@ -984,7 +1084,6 @@
           }
         }
       }
-
     },
     "/hotels/{address}/unitTypes/{type}/images": {
       "post": {

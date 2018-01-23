@@ -153,7 +153,7 @@ describe('Hotels bookings', function () {
     expect(await response.json()).to.have.property('code', '#missingFrom')
   })
 
-  it.only('GET /hotels/:hotelAdress/requests. Expect 200', async () => {
+  it('GET /hotels/:hotelAdress/requests. Expect 200', async () => {
     let body = JSON.stringify({
       password: config.get('password'),
       required: true
@@ -168,6 +168,7 @@ describe('Hotels bookings', function () {
     })
     expect(response).to.be.ok
     expect(response).to.have.property('status', 200)
+
     response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}`, {
       method: 'GET',
       headers: {
@@ -189,6 +190,7 @@ describe('Hotels bookings', function () {
       days: daysAmount,
       from: fromDate
     })
+
     response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAdress')}/book`, {
       method: 'POST',
       headers: {
@@ -202,6 +204,7 @@ describe('Hotels bookings', function () {
     body = JSON.stringify({
       block: 1
     })
+
     response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/requests`, {
       method: 'GET',
       headers: {
@@ -211,9 +214,9 @@ describe('Hotels bookings', function () {
       },
       body
     })
-
     expect(response).to.have.property('status', 200)
-    const { requests } = await response.json()
+
+    const {requests} = await response.json()
     expect(requests).to.be.an('array')
     expect(requests[0]).to.have.property('guestData', guestData)
     expect(requests[0]).to.have.property('daysAmount', daysAmount.toString())
