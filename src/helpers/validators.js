@@ -74,16 +74,62 @@ function validatePrice (req, res, next) {
   next()
 }
 
+function validateCode (req, res, next) {
+  const { code } = req.body
+  if (!code) return next(handle('missingCode', new Error()))
+  next()
+}
+
+function validateUnitTypeInformation (req, res, next) {
+  const { description, minGuests, maxGuests, price } = req.body
+  if (!description) return next(handle('missingDescription', new Error()))
+  if (!minGuests) return next(handle('missingMinGuests', new Error()))
+  if (!maxGuests) return next(handle('missingMaxGuests', new Error()))
+  if (!price) return next(handle('missingPrice', new Error()))
+  next()
+}
+
+function validateReservationId (req, res, next) {
+  const { reservationId } = req.body
+  if (!reservationId) return next(handle('missingReservationId', new Error()))
+  next()
+}
+
+function validateRequired (req, res, next) {
+  const { required } = req.body
+  if (!required && required !== false) return next(handle('missingRequired', new Error()))
+  next()
+}
+
+function validateDate (req, res, next) {
+  const { date } = req.body
+  if (!date) return next(handle('missingDate', new Error()))
+  next()
+}
+
+function validateDateRange (req, res, next) {
+  const { from, days } = req.body
+  if (!from) return next(handle('missingFrom', new Error()))
+  if (!days) return next(handle('missingDays', new Error()))
+  next()
+}
+
 module.exports = {
   validateActive,
   validateAddImage,
   validateAmenity,
+  validateCode,
+  validateDate,
+  validateDateRange,
   validateHotelInfo,
   validateHotelAddress,
   validateHotelLocation,
   validatePassword,
-  validatePasswords,
   validatePrice,
+  validatePasswords,
+  validateReservationId,
+  validateRequired,
   validateType,
+  validateUnitTypeInformation,
   validateWallet
 }

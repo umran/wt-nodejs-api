@@ -7,7 +7,7 @@ const { validatePassword,
         validateHotelLocation
       } = require('../../helpers/validators')
 const { handle } = require('../../../errors')
-const HotelManager = require('../../../libs/HotelManager.js')
+const HotelManager = require('../../../wt-js-libs/dist/node/HotelManager.js')
 const config = require('../../../config.js')
 
 hotelsRouter.get('/hotels/:address', async (req, res, next) => {

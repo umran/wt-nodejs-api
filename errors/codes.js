@@ -11,9 +11,17 @@ module.exports = {
     short: 'Amenity is required.',
     long: `Body must include "amenity"`
   },
+  missingCode: {
+    short: 'Currency code is required.',
+    long: 'Body must include "code". These codes are 3 digits long.'
+  },
   missingCountry: {
     short: 'Country is required.',
     long: `Body must include "country"`
+  },
+  missingDate: {
+    short: 'Date is required.',
+    long: `Body must include "date"`
   },
   missingDescription: {
     short: 'Description is required.',
@@ -35,6 +43,14 @@ module.exports = {
     short: 'Lonngitude one is required.',
     long: `Body must include "longitude".`
   },
+  missingMaxGuests: {
+    short: 'Maximun guests is required.',
+    long: 'Body must include "maxGuests"'
+  },
+  missingMinGuests: {
+    short: 'Minimun guests is required.',
+    long: 'Body must include "minGuests"'
+  },
   missingName: {
     short: 'Name is required.',
     long: `Body must include "name".`
@@ -47,9 +63,22 @@ module.exports = {
     short: 'A price is required.',
     long: 'Body must include "price".'
   },
+  missingRequired: {
+    short: 'A required is required.',
+    long: 'Body must include an "required".'
+  },
   missingNewPassword: {
     short: 'A new password is required',
     long: `Body must include "newPassword"`
+  },
+  missingRequired: {
+    short: 'A required is required.',
+    long: 'Body must include an "required".'
+
+  },
+  missingReservationId: {
+    short: 'A reservation id is required.',
+    long: 'Body must include an "reservationId".'
   },
   missingTimezone: {
     short: 'A timezone is required.',
