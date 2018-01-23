@@ -23,9 +23,17 @@ module.exports = {
     short: 'Date is required.',
     long: `Body must include "date"`
   },
+  missingDays: {
+    short: 'An amount of days is required.',
+    long: `Body must include "days"`
+  },
   missingDescription: {
     short: 'Description is required.',
     long: `Body must include "description".`
+  },
+  missingFrom: {
+    short: 'From date is required.',
+    long: `Body must include "from".`
   },
   missingLatitude: {
     short: 'Latitude one is required.',
@@ -70,11 +78,6 @@ module.exports = {
   missingNewPassword: {
     short: 'A new password is required',
     long: `Body must include "newPassword"`
-  },
-  missingRequired: {
-    short: 'A required is required.',
-    long: 'Body must include an "required".'
-
   },
   missingReservationId: {
     short: 'A reservation id is required.',
