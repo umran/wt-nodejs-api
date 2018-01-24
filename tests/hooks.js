@@ -60,6 +60,7 @@ async function generateHotel (ownerAddres) {
   const amenity = 5
   const imageUrl = 'test-image.jpeg'
   const defaultPrice = 78
+  const defaultLifPrice = 75
 
   body = JSON.stringify({
     'password': config.get('password'),
@@ -168,6 +169,19 @@ async function generateHotel (ownerAddres) {
     price: defaultPrice
   })
   res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAdress')}/defaultPrice`, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body
+  })
+  body = JSON.stringify({
+    password: config.get('password'),
+    price: defaultLifPrice
+  })
+
+  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAdress')}/defaultLifPrice`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
