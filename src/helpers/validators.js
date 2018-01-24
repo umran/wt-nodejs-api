@@ -114,11 +114,17 @@ function validateDateRange (req, res, next) {
   next()
 }
 
+function validateCost (req, res, next) {
+  const { cost } = req.body
+  if (!cost) return next(handle('missingCost', new Error()))
+  next()
+}
 module.exports = {
   validateActive,
   validateAddImage,
   validateAmenity,
   validateCode,
+  validateCost,
   validateDate,
   validateDateRange,
   validateHotelInfo,
