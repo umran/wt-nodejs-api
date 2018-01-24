@@ -92,4 +92,22 @@ describe('Costs', function () {
     expect(response).to.have.property('status', 200)
     expect(await response.json()).to.have.property('cost', estimatedCost.toString())
   })
+
+  it('GET /balance. Expect 200', async () => {
+    const body = JSON.stringify({
+      cost: 27,
+      account: config.get('user')
+    })
+    let response = await fetch(`http://localhost:3000/balance`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body)
+      },
+      body
+    })
+
+    expect(response).to.have.property('status', 200)
+  })
 })
