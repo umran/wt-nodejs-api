@@ -146,6 +146,26 @@ validateDateRange, async(req, res, next) => {
   }
 })
 
+unitsRouter.post('/hotels/:hotelAddress/units/:unitAddress/lifBook',
+validateDateRange, async(req, res, next) => {
+  const { guest, from, days, account } = req.body
+  const { hotelAddress, unitAddress } = req.params
+  try {
+    const user = new User({
+      account,
+      gasMargin: config.get('gasMargin'),
+      tokenAddress: config.get('tokenAddress'),
+      web3: config.get('web3')
+    })
+    const {transactionHash} = await user.bookWithLif(hotelAddress, unitAddress, from, days, guest)
+    res.status(200).json({
+      txHash: transactionHash
+    })
+  } catch (err) {
+    next(handle('web3', err))
+  }
+})
+
 module.exports = {
   unitsRouter
 }
