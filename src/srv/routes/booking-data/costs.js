@@ -17,6 +17,18 @@ costsRouter.get('/units/:unitAdress/cost', validateDateRange, async (req, res, n
   }
 })
 
+costsRouter.get('/units/:unitAdress/lifCost', validateDateRange, async (req, res, next) => {
+  const { from, days } = req.body
+  const { unitAdress } = req.params
+  try {
+    const data = new BookingData(config.get('web3'))
+    const cost = await data.getLifCost(unitAdress, from, days)
+    res.status(200).json({cost})
+  } catch (err) {
+    next(handle('web3', err))
+  }
+})
+
 module.exports = {
   costsRouter
 }
