@@ -9,7 +9,7 @@ const { AfterEach,
 
 describe('Costs', function () {
   const defaultPrice = 78
-  const defaultLifPrice = 75
+  const defaultLifPrice = 2
   AfterEach()
   BeforeEach()
   Before()

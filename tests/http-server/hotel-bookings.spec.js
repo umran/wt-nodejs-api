@@ -288,7 +288,7 @@ describe('Hotels bookings', function () {
     expect(requests[0]).to.have.property('id')
   })
 
-  it.only('POST /hotels/:hotelAdress/units/:unitAddress/lifBook. Expect 200', async () => {
+  it('POST /hotels/:hotelAdress/units/:unitAddress/lifBook. Expect 200', async () => {
     const guestData = '0123456789ABCDEF'
     const daysAmount = 1
     const fromDate = new Date('10/10/2020')
@@ -308,7 +308,6 @@ describe('Hotels bookings', function () {
       body
     })
     expect(response).to.have.property('status', 200)
-
     response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/bookings`, {
       method: 'GET',
       headers: {
