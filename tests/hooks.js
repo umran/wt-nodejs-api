@@ -212,7 +212,7 @@ async function setUpWallet () {
 async function deployLifContract (deployerAccount, user) {
   const web3 = config.get('web3')
   const lifContract = new web3.eth.Contract(lifData.abi)
-  const resp = await lifContract.deploy({
+  const lifTokenInstance = await lifContract.deploy({
     data: lifData.byteCode,
     arguments: []
   }).send({
@@ -220,8 +220,8 @@ async function deployLifContract (deployerAccount, user) {
     gas: 5000000,
     gasPrice: 1
   })
-  lifContract.options.address = resp._address
-  config.set('tokenAddress', resp._address)
+  lifContract.options.address = lifTokenInstance._address
+  config.set('tokenAddress', lifTokenInstance._address)
   let faucetLifData = lifContract.methods.faucetLif().encodeABI()
   await web3.eth.sendTransaction({
     from: user,
