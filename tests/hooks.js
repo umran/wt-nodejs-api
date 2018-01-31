@@ -220,9 +220,15 @@ async function deployLifContract (deployerAccount, user) {
     gas: 5000000,
     gasPrice: 1
   })
-  lifContract.options.address = resp.contractAddress
-  config.set('tokenAddress', resp.contractAddress)
-  await lifContract.methods.faucetLif().send({from: user, gas: 6000000})
+  lifContract.options.address = resp._address
+  config.set('tokenAddress', resp._address)
+  let faucetLifData = lifContract.methods.faucetLif().encodeABI()
+  await web3.eth.sendTransaction({
+    from: user,
+    to: lifContract.options.address,
+    data: faucetLifData,
+    gas: 5000000
+  })
   const balance = await lifContract.methods.balanceOf(user).call({from: user})
   expect(balance).to.eql('50000000000000000000')
 
