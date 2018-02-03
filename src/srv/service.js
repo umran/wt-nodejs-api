@@ -2,6 +2,8 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const swaggerUi = require('swagger-ui-express')
 const app = express()
+const config = require('../../config')
+
 const { unitTypesRouter } = require('./routes/unit-types')
 const { amenitiesRouter } = require('./routes/amenities')
 const { unitsRouter } = require('./routes/units')
@@ -29,12 +31,12 @@ app.use(costsRouter)
 app.use(bookingRouter)
 
 app.use((err, req, res, next) => {
-  console.error(err)
   res.status(400).json({
     code: err.code,
     short: err.short,
     long: err.long
   })
+  if (config.get('log')) console.error(err)
 })
 
 app.use('/', (req, res) => {

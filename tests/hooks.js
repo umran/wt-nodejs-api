@@ -16,6 +16,7 @@ let server
 
 const Before = () => (
   before(async function () {
+    config.set('log', false)
     config.set('password', 'test123')
     config.set('web3Provider', 'http://localhost:8545')
     config.updateWeb3Provider()

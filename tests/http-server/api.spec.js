@@ -11,25 +11,15 @@ describe('API', function () {
   BeforeEach()
   Before()
   it('GET /', async () => {
-    await fetch('http://localhost:3000/', {
+    let response = await fetch('http://localhost:3000/', {
       method: 'GET'
     })
-      .then((res) => {
-        expect(res).to.be.ok
-      })
-      .catch(e => {
-        expect(e).to.not.exist
-      })
+    expect(response).to.be.ok
   })
   it('GET /docs', async () => {
-    await fetch('http://localhost:3000/docs', {
+    let response = await fetch('http://localhost:3000/docs', {
       method: 'GET'
     })
-      .then((res) => {
-        expect(res).to.be.ok
-      })
-      .catch(e => {
-        expect(e).to.not.exist
-      })
+    expect(response).to.be.ok
   })
 })
