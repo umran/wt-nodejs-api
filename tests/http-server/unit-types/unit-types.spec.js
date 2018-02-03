@@ -338,6 +338,33 @@ describe('Unit types', function () {
       expect(response).to.have.property('status', 400)
       expect(res).to.have.property('code', '#missingAmenity')
     })
+    it('DELETE /hotels/:address/unitTypes/TYPE_000. Expect 200', async () => {
+      const defaultAmenity = 5
+      const body = JSON.stringify({
+        password: config.get('password')
+      })
+
+      let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/TYPE_000/amenities/${defaultAmenity}`, {
+        method: 'DELETE',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body
+      })
+      expect(response).to.have.property('status', 200)
+      response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(body)
+        },
+        body
+      })
+      const {hotel} = await response.json()
+      expect(hotel.unitTypes['TYPE_000'].amenities).to.not.include(defaultAmenity)
+    })
     it('DELETE /hotels/:address/unitTypes/TYPE_000. Expect 400 #missingPassword', async () => {
       const body = JSON.stringify({})
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/TYPE_000/amenities/5`, {
