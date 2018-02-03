@@ -18,7 +18,7 @@ describe('Unit', function () {
     const body = JSON.stringify({
       type: 'TYPE_001'
     })
-    await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes`, {
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -26,12 +26,10 @@ describe('Unit', function () {
       },
       body
     })
-      .then(async response => {
-        expect(response).to.be.ok
-        const res = await response.json()
-        expect(response).to.have.property('status', 400)
-        expect(res).to.have.property('code', '#missingPassword')
-      })
+    expect(response).to.be.ok
+    const res = await response.json()
+    expect(response).to.have.property('status', 400)
+    expect(res).to.have.property('code', '#missingPassword')
   })
 
   it('POST /hotels/:address/unitTypes/:type/images. Expect 200', async () => {

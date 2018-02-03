@@ -45,7 +45,7 @@ describe('amenities', function () {
     const body = JSON.stringify({
       amenity: 5
     })
-    await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/TYPE_000/amenities`, {
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/TYPE_000/amenities`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -53,19 +53,17 @@ describe('amenities', function () {
       },
       body
     })
-      .then(async response => {
-        expect(response).to.be.ok
-        const res = await response.json()
-        expect(response).to.have.property('status', 400)
-        expect(res).to.have.property('code', '#missingPassword')
-      })
+    expect(response).to.be.ok
+    const res = await response.json()
+    expect(response).to.have.property('status', 400)
+    expect(res).to.have.property('code', '#missingPassword')
   })
 
   it('POST /hotels/:address/unitTypes/amenities. Expect 400 #missingAmenity', async () => {
     const body = JSON.stringify({
       password: config.get('password')
     })
-    await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/TYPE_000/amenities`, {
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/TYPE_000/amenities`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -73,16 +71,14 @@ describe('amenities', function () {
       },
       body
     })
-      .then(async response => {
-        expect(response).to.be.ok
-        const res = await response.json()
-        expect(response).to.have.property('status', 400)
-        expect(res).to.have.property('code', '#missingAmenity')
-      })
+    expect(response).to.be.ok
+    const res = await response.json()
+    expect(response).to.have.property('status', 400)
+    expect(res).to.have.property('code', '#missingAmenity')
   })
   it('DELETE /hotels/:address/unitTypes/TYPE_000. Expect 400 #missingPassword', async () => {
     const body = JSON.stringify({})
-    await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/TYPE_000/amenities/5`, {
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/TYPE_000/amenities/5`, {
       method: 'DELETE',
       headers: {
         'Accept': 'application/json',
@@ -90,11 +86,9 @@ describe('amenities', function () {
       },
       body
     })
-      .then(async response => {
-        expect(response).to.be.ok
-        const res = await response.json()
-        expect(response).to.have.property('status', 400)
-        expect(res).to.have.property('code', '#missingPassword')
-      })
+    expect(response).to.be.ok
+    const res = await response.json()
+    expect(response).to.have.property('status', 400)
+    expect(res).to.have.property('code', '#missingPassword')
   })
 })
