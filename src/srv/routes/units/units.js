@@ -1,16 +1,16 @@
 const express = require('express')
 const unitsRouter = express.Router()
-const config = require('../../../config.js')
-const { loadAccount } = require('../../helpers/crypto')
+const config = require('../../../../config.js')
+const { loadAccount } = require('../../../helpers/crypto')
 const { validatePassword,
         validateActive,
         validateDate,
-        validateDateRange } = require('../../helpers/validators')
+        validateDateRange } = require('../../../helpers/validators')
 
-const { handle } = require('../../../errors')
-const HotelManager = require('../../../wt-js-libs/dist/node/HotelManager.js')
-const BookingData = require('../../../wt-js-libs/dist/node/BookingData.js')
-const User = require('../../../wt-js-libs/dist/node/User.js')
+const { handle } = require('../../../../errors')
+const HotelManager = require('../../../../wt-js-libs/dist/node/HotelManager.js')
+const BookingData = require('../../../../wt-js-libs/dist/node/BookingData.js')
+const User = require('../../../../wt-js-libs/dist/node/User.js')
 
 unitsRouter.post('/hotels/:address/unitTypes/:type/units', validatePassword, async (req, res, next) => {
   const { password } = req.body
@@ -39,7 +39,8 @@ unitsRouter.post('/hotels/:address/unitTypes/:type/units', validatePassword, asy
 unitsRouter.delete([
   '/hotels/:address/unitTypes/:type/units/:unit',
   '/hotels/:address/units/:unit'
-], validatePassword, async (req, res, next) => {
+], validatePassword,
+async (req, res, next) => {
   const { password } = req.body
   const { address, unit } = req.params
   let ownerAccount = {}
