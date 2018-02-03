@@ -27,7 +27,6 @@ validatePassword, validateRequired, async(req, res, next) => {
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
     const { logs } = await hotelManager.setRequireConfirmation(address, !!required)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
-    context.owner = undefined
     res.status(200).json({
       txHash: logs[0].transactionHash
     })

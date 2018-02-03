@@ -30,7 +30,6 @@ async (req, res, next) => {
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
     await hotelManager.setDefaultPrice(address, unit, price)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
-    context.owner = undefined
     res.status(200).json({
       txHash: true// logs[0].transactionHash
     })
@@ -59,7 +58,6 @@ async (req, res, next) => {
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
     const {logs} = await hotelManager.setDefaultLifPrice(address, unit, price)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
-    context.owner = undefined
     res.status(200).json({
       txHash: logs[0].transactionHash
     })
@@ -88,7 +86,6 @@ async (req, res, next) => {
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
     await hotelManager.setCurrencyCode(address, unit, code)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
-    context.owner = undefined
     res.status(200).json({
       txHash: true// logs[0].transactionHash
     })

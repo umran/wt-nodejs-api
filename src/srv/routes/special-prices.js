@@ -29,7 +29,6 @@ async (req, res, next) => {
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
     const {transactionHash} = await hotelManager.setUnitSpecialLifPrice(address, unit, price, from, days)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
-    context.owner = undefined
     res.status(200).json({
       txHash: transactionHash
     })
@@ -58,7 +57,6 @@ async (req, res, next) => {
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
     const {transactionHash} = await hotelManager.setUnitSpecialPrice(address, unit, price, from, days)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
-    context.owner = undefined
     res.status(200).json({
       txHash: transactionHash
     })
