@@ -2,10 +2,10 @@
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai')
 const fetch = require('node-fetch')
-const config = require('../../config.js')
+const config = require('../../../config.js')
 const { AfterEach,
         BeforeEach,
-        Before } = require('../hooks.js')
+        Before } = require('../../hooks.js')
 
 describe('Hotel images', function () {
   AfterEach()
