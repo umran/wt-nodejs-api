@@ -2,12 +2,12 @@
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai')
 const fetch = require('node-fetch')
-const config = require('../../config.js')
+const config = require('../../../config.js')
 const { AfterEach,
         BeforeEach,
-        Before } = require('../hooks.js')
+        Before } = require('../../hooks.js')
 
-describe('Unit', function () {
+describe('Units', function () {
   AfterEach()
   BeforeEach()
   Before()
@@ -42,7 +42,6 @@ describe('Unit', function () {
     const unit = hotel.units[unitAdress]
     expect(unit).to.have.property('unitType', unitType)
   })
-
   it('DELETE /hotels/:hotelAddress/unitTypes/:unitType/units/:unitAddress. Expect 200 ', async () => {
     const body = JSON.stringify({
       'password': config.get('password')
@@ -70,7 +69,6 @@ describe('Unit', function () {
     const hotel = hotels[config.get('testAddress')]
     expect(hotel.units).to.not.have.property(config.get('unitAdress'))
   })
-
   it('GET /units/:unit/reservation. Expect 200 ', async () => {
     const body = JSON.stringify({
       date: Math.round(new Date('10/10/2020').getTime() / 86400000)
@@ -92,7 +90,6 @@ describe('Unit', function () {
     expect(reservation).to.have.property('specialLifPrice')
     expect(reservation).to.have.property('bookedBy')
   })
-
   it('GET /units/:unitAdress/available. Expect 200', async () => {
     const days = 5
     const body = JSON.stringify({
@@ -113,7 +110,6 @@ describe('Unit', function () {
     expect(response).to.have.property('status', 200)
     expect(await response.json()).to.have.property('available', true)
   })
-
   it('GET /units/:unitAdress/available. Expect 400 #missingDays', async () => {
     const body = JSON.stringify({
       from: new Date('10/10/2020')
