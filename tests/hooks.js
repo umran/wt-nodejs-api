@@ -5,6 +5,7 @@ const fetch = require('node-fetch')
 const config = require('../config.js')
 const utils = require('../wt-js-libs/libs/utils/index')
 const { app } = require('../src/srv/service')
+const lifData = require('./lifContract')
 const gasMargin = 1.5
 const addressZero = '0x0000000000000000000000000000000000000000000000000000000000000000'
 let index
@@ -15,6 +16,7 @@ let server
 
 const Before = () => (
   before(async function () {
+    config.set('log', false)
     config.set('password', 'test123')
     config.set('web3Provider', 'http://localhost:8545')
     config.updateWeb3Provider()
@@ -42,6 +44,7 @@ const BeforeEach = () => (
     server = await app.listen(3000)
     await setUpWallet()
     await generateHotel(daoAccount)
+    await deployLifContract(daoAccount, config.get('user'), index)
   })
 )
 const AfterEach = () => (
@@ -60,6 +63,7 @@ async function generateHotel (ownerAddres) {
   const amenity = 5
   const imageUrl = 'test-image.jpeg'
   const defaultPrice = 78
+  const defaultLifPrice = 2
 
   body = JSON.stringify({
     'password': config.get('password'),
@@ -175,6 +179,19 @@ async function generateHotel (ownerAddres) {
     },
     body
   })
+  body = JSON.stringify({
+    password: config.get('password'),
+    price: defaultLifPrice
+  })
+
+  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAdress')}/defaultLifPrice`, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body
+  })
 }
 
 async function setUpWallet () {
@@ -191,6 +208,43 @@ async function setUpWallet () {
     },
     body
   })
+}
+
+async function deployLifContract (deployerAccount, user) {
+  const web3 = config.get('web3')
+  const lifContract = new web3.eth.Contract(lifData.abi)
+  const lifTokenInstance = await lifContract.deploy({
+    data: lifData.byteCode,
+    arguments: []
+  }).send({
+    from: deployerAccount,
+    gas: 5000000,
+    gasPrice: 1
+  })
+  lifContract.options.address = lifTokenInstance._address
+  config.set('tokenAddress', lifTokenInstance._address)
+  let faucetLifData = lifContract.methods.faucetLif().encodeABI()
+  await web3.eth.sendTransaction({
+    from: user,
+    to: lifContract.options.address,
+    data: faucetLifData,
+    gas: 5000000
+  })
+  const balance = await lifContract.methods.balanceOf(user).call({from: user})
+  expect(balance).to.eql('50000000000000000000')
+
+  const setLifData = await index.methods
+    .setLifToken(lifContract.options.address)
+    .encodeABI()
+
+  const setLifOptions = {
+    from: deployerAccount,
+    to: index.options.address,
+    gas: 5000000,
+    data: setLifData
+  }
+
+  await web3.eth.sendTransaction(setLifOptions)
 }
 
 module.exports = {
