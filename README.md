@@ -131,8 +131,10 @@ fetch(`http://localhost:3000/hotels/0x3...b/images`, {
 ```
 
 #### Hotel address
+Each hotel must have an address, this id updated with a POST message
+
 ```bash
-curl -X POST "http://localhost:3000/hotels/0x0...0/images" \
+curl -X POST "http://localhost:3000/hotels/0x0...0/address" \
   -H  "accept: application/json" -H  "Content-Type: application/json" \
   -d "{  \"password\": \"secret\",  \"lineOne\": \"Fake street 123\", \
   \"lineTwo\": \"Springfield\",  \"zipCode\": \"C1414\", \
@@ -271,8 +273,25 @@ all the available units.
 
 #### Unit default prices
 To set a default lif price, we must
-(TBA)
 
+```bash
+curl -X PUT "http://localhost:3000/hotels/0x0...1/units/0x2...1/defaultLifPrice" \
+  -H  "accept: application/json" -H  "Content-Type: application/json" \
+  -d "{  \"password\": \"secret\",  \"price\": 30}"
+```
+```javascript
+fetch(`http://localhost:3000/hotels/0x0..1/units/0x2...1/defaultLifPrice`, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+  body: {
+      password: 'secret',
+      price: 30
+  }
+})
+```
 We can set a default fiat price trough
 
 ```bash
@@ -313,7 +332,28 @@ fetch(`http://localhost:3000/hotels/0x0...1/units/0x2..1/currencyCode`, {
 })
 ```
 #### Unit special prices
-(TBA)
+Sometimes, we want an special price for our units. This can be done!
+```bash
+curl -X PUT "http://localhost:3000/hotels/0x0...1/units/0x2...1/active" \
+  -H  "accept: application/json" -H  "Content-Type: application/json" \
+  -d "{  \"password\": \"secret\",  \"price\": 71, \"days\": 7, \
+    \"from\":\"2020-10-10T03:00:00.000Z\"}"
+```
+```javascript
+let response = await fetch(`http://localhost:3000/hotels/0x0...1/units/0x2...1/specialLifPrice`, {
+  method: 'POST',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  },
+  body: {
+    password: 'secret',
+    price: 71,
+    days: 7,
+    from: new Date('10/10/2020')
+  }
+})
+```
 
 #### Unit - Active/Inactive
 We can set an unit as inactive or inactive for a period of time.
@@ -332,6 +372,99 @@ fetch(`http://localhost:3000/hotels/0x0..1/units/0x2...1/active`, {
   body: {
       password: 'secret',
       active: false
+  }
+})
+```
+
+### Booking
+As users, we want to book a unit
+
+```bash
+curl -X PUT "http://localhost:3000/hotels/0x0...1/units/0x2...1/book" \
+  -H  "accept: application/json" -H  "Content-Type: application/json" \
+  -d "{  \"account\": \"0x3...a\",  \"guest\": \"string\",  \"days\": 8, \
+   \"from\": \"2020-10-10T03:00:00.000Z\"}"
+```
+
+```javascript
+await fetch(`http://localhost:3000/hotels/0x0...1/units/0x2...1/book`, {
+  method: 'POST',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  },
+  body : {
+    account: '0x3...a',
+    guest: guestData,
+    days: 8,
+    from: new Date('10/10/2020')
+  }
+})
+```
+When the tx is mined. Depending on the Hotel configuration. We can see the
+request as a pending requests or a confirmed booking.
+
+#### Requests and bookings
+The view pending request
+
+```bash
+curl -X GET "http://localhost:3000/hotels/0x0...1/requests" \
+  -H  "accept: application/json" -H  "Content-Type: application/json" \
+  -d "{  \"block\": \"27\"}"
+```
+
+```javascript
+fetch(`http://localhost:3000/hotels/0x0...1/requests`, {
+  method: 'GET',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    'Content-Length': Buffer.byteLength(body)
+  },
+  body: {
+    block: 27
+  }
+})
+```
+and, to confirm. We can skip this step if we had configured the hotel to
+auto confirm request
+
+```bash
+curl -X POST "http://localhost:3000/hotels/0x0...1/confirmBooking" \
+  -H  "accept: application/json" -H  "Content-Type: application/json" \
+  -d "{  \"password\": \"secret\",  \"reservationId\": \"id_123\"}"
+```
+```javascript
+fetch(`http://localhost:3000/hotels/0x0...1/requests`, {
+  method: 'GET',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    'Content-Length': Buffer.byteLength(body)
+  },
+  body: {
+    password: 'secret',
+    reservationId: 'id_123'
+  }
+})
+
+```
+Finally, to see the confirmed booking.
+```bash
+curl -X GET "http://localhost:3000/hotels/0x0...1/bookings" \
+  -H  "accept: application/json" -H  "Content-Type: application/json" \
+  -d "{  \"block\": \"27\"}"
+```
+```javascript
+fetch(`http://localhost:3000/hotels/0x0...1/bookings`, {
+  method: 'GET',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+    'Content-Length': Buffer.byteLength(body)
+  },
+  body: {
+    block: 27
   }
 })
 ```
