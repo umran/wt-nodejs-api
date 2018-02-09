@@ -1,4 +1,20 @@
 const {handle} = require('../../errors')
+const config = require('../../config')
+
+function validateWhiteList (req, res, next) {
+  const whiteList = config.get('whiteList')
+  let ip = req.ip ||
+            req.headers['x-forwarded-for'] ||
+            req.connection.remoteAddress ||
+            req.socket.remoteAddress ||
+            req.connection.socket.remoteAddress
+
+  if (ip.substr(0, 7) == "::ffff:") ip = ip.substr(7)
+  if (whiteList.indexOf(ip) === -1) return next(handle('whiteList', new Error()))
+
+  next()
+}
+
 function validatePasswords (req, res, next) {
   const { password, newPassword } = req.body
   if (!password) return next(handle('missingPassword', new Error()))
@@ -137,5 +153,6 @@ module.exports = {
   validateRequired,
   validateType,
   validateUnitTypeInformation,
-  validateWallet
+  validateWallet,
+  validateWhiteList
 }
