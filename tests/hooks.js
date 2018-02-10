@@ -34,6 +34,7 @@ const Before = () => (
 )
 const BeforeEach = () => (
   beforeEach(async function () {
+    config.set('whiteList',["127.0.0.1"])
     index = await utils.deployIndex({
       owner: daoAccount,
       gasMargin: gasMargin,

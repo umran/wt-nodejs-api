@@ -106,5 +106,9 @@ module.exports = {
   missingZipCode: {
     short: 'Zip code is required.',
     long: 'Body must include "zipCode".'
+  },
+  whiteList: {
+    short: 'IP is not whitelisted.',
+    long: 'IP must be in the whitelist. Please contact the administrator.'
   }
 }
