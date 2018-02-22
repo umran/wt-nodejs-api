@@ -34,5 +34,8 @@
     "ethereumjs-testrpc": "3.9.2",
     "mocha": "^4.0.1",
     "node-fetch": "^1.7.3"
+  },
+  "engines": {
+    "node": "8.9.4"
   }
 }
