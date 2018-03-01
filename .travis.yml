@@ -1,0 +1,5 @@
+language: node_js
+notifications:
+  email: false
+before_install:
+- cd wt-js-libs && npm i && cd ..
