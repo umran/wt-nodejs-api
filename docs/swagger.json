@@ -1825,7 +1825,9 @@
             "schema": {
               "required": [
                 "password",
-                "price"
+                "price",
+                "from",
+                "days"
               ],
               "properties": {
                 "password": {
@@ -1834,6 +1836,14 @@
                 },
                 "price": {
                   "description": "Special price.",
+                  "type": "number"
+                },
+                "from": {
+                  "description": "Initla date.",
+                  "type": "Date"
+                },
+                "dats": {
+                  "description": "Amount of days.",
                   "type": "number"
                 }
               }
@@ -1884,7 +1894,9 @@
             "schema": {
               "required": [
                 "password",
-                "price"
+                "price",
+                "from",
+                "days"
               ],
               "properties": {
                 "password": {
@@ -1893,6 +1905,14 @@
                 },
                 "price": {
                   "description": "Special price.",
+                  "type": "number"
+                },
+                "from": {
+                  "description": "Initla date.",
+                  "type": "Date"
+                },
+                "dats": {
+                  "description": "Amount of days.",
                   "type": "number"
                 }
               }
