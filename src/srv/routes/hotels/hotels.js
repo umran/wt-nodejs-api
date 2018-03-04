@@ -57,15 +57,15 @@ hotelsRouter.get('/hotels', validatePassword, async (req, res, next) => {
   }
 })
 
-hotelsRouter.get('/hotels/:address', async (req, res, next) => {
-  const { address } = req.params
+hotelsRouter.get('/hotels/:hotelAddress', async (req, res, next) => {
+  const { hotelAddress } = req.params
   try {
     const hotelManager = new HotelManager({
       indexAddress: config.get('indexAddress'),
       gasMargin: config.get('gasMargin'),
       web3: config.get('web3')
     })
-    const hotel = await hotelManager.getHotel(address)
+    const hotel = await hotelManager.getHotel(hotelAddress)
     res.status(200).json({
       hotel
     })
@@ -74,9 +74,9 @@ hotelsRouter.get('/hotels/:address', async (req, res, next) => {
   }
 })
 
-hotelsRouter.delete('/hotels/:address', validatePassword, async (req, res, next) => {
+hotelsRouter.delete('/hotels/:hotelAddress', validatePassword, async (req, res, next) => {
   const { password } = req.body
-  const { address } = req.params
+  const { hotelAddress } = req.params
   let ownerAccount = {}
   try {
     ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
@@ -90,7 +90,7 @@ hotelsRouter.delete('/hotels/:address', validatePassword, async (req, res, next)
       gasMargin: config.get('gasMargin'),
       web3: config.get('web3')
     })
-    const { transactionHash } = await hotelManager.removeHotel(address)
+    const { transactionHash } = await hotelManager.removeHotel(hotelAddress)
     res.status(204).json({
       txHash: transactionHash
     })
@@ -99,9 +99,9 @@ hotelsRouter.delete('/hotels/:address', validatePassword, async (req, res, next)
   }
 })
 
-hotelsRouter.put('/hotels/:address', validateHotelInfo, async (req, res, next) => {
+hotelsRouter.put('/hotels/:hotelAddress', validateHotelInfo, async (req, res, next) => {
   const { password, name, description } = req.body
-  const { address } = req.params
+  const { hotelAddress } = req.params
   let ownerAccount = {}
   try {
     ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
@@ -112,7 +112,7 @@ hotelsRouter.put('/hotels/:address', validateHotelInfo, async (req, res, next) =
       web3: config.get('web3')
     })
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.changeHotelInfo(address, name, description)
+    const { logs } = await hotelManager.changeHotelInfo(hotelAddress, name, description)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash
@@ -122,9 +122,9 @@ hotelsRouter.put('/hotels/:address', validateHotelInfo, async (req, res, next) =
   }
 })
 
-hotelsRouter.put('/hotels/:address/address', validatePassword, validateHotelAddress, async (req, res, next) => {
+hotelsRouter.put('/hotels/:hotelAddress/address', validatePassword, validateHotelAddress, async (req, res, next) => {
   const { password, lineOne, lineTwo, zipCode, country } = req.body
-  const { address } = req.params
+  const { hotelAddress } = req.params
   let ownerAccount = {}
   try {
     ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
@@ -135,7 +135,7 @@ hotelsRouter.put('/hotels/:address/address', validatePassword, validateHotelAddr
       web3: config.get('web3')
     })
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.changeHotelAddress(address, lineOne, lineTwo, zipCode, country)
+    const { logs } = await hotelManager.changeHotelAddress(hotelAddress, lineOne, lineTwo, zipCode, country)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash
@@ -145,9 +145,9 @@ hotelsRouter.put('/hotels/:address/address', validatePassword, validateHotelAddr
   }
 })
 
-hotelsRouter.put('/hotels/:address/location', validatePassword, validateHotelLocation, async (req, res, next) => {
+hotelsRouter.put('/hotels/:hotelAddress/location', validatePassword, validateHotelLocation, async (req, res, next) => {
   const { password, timezone, latitude, longitude } = req.body
-  const { address } = req.params
+  const { hotelAddress } = req.params
   let ownerAccount = {}
   try {
     ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
@@ -158,7 +158,7 @@ hotelsRouter.put('/hotels/:address/location', validatePassword, validateHotelLoc
       web3: config.get('web3')
     })
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.changeHotelLocation(address, timezone, latitude, longitude)
+    const { logs } = await hotelManager.changeHotelLocation(hotelAddress, timezone, latitude, longitude)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash
@@ -168,9 +168,9 @@ hotelsRouter.put('/hotels/:address/location', validatePassword, validateHotelLoc
   }
 })
 
-hotelsRouter.post('/hotels/:address/images', validatePassword, validateAddImage, async (req, res, next) => {
+hotelsRouter.post('/hotels/:hotelAddress/images', validatePassword, validateAddImage, async (req, res, next) => {
   const { password, url } = req.body
-  const { address } = req.params
+  const { hotelAddress } = req.params
   let ownerAccount = {}
   try {
     ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
@@ -181,7 +181,7 @@ hotelsRouter.post('/hotels/:address/images', validatePassword, validateAddImage,
       web3: config.get('web3')
     })
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.addImageHotel(address, url)
+    const { logs } = await hotelManager.addImageHotel(hotelAddress, url)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash
@@ -191,8 +191,8 @@ hotelsRouter.post('/hotels/:address/images', validatePassword, validateAddImage,
   }
 })
 
-hotelsRouter.get('/hotels/:address/images', async (req, res, next) => {
-  const { address } = req.params
+hotelsRouter.get('/hotels/:hotelAddress/images', async (req, res, next) => {
+  const { hotelAddress } = req.params
   try {
     const images = []
     const context = {
@@ -200,7 +200,7 @@ hotelsRouter.get('/hotels/:address/images', async (req, res, next) => {
       gasMargin: config.get('gasMargin'),
       web3: config.get('web3')
     }
-    const hotelInstance = Utils.getInstance('Hotel', address, context)
+    const hotelInstance = Utils.getInstance('Hotel', hotelAddress, context)
     const totalImages = await hotelInstance.methods.getImagesLength().call()
     for (var i = 0; i < totalImages; i++) {
       images.push(await hotelInstance.methods.images(i).call())
@@ -213,8 +213,8 @@ hotelsRouter.get('/hotels/:address/images', async (req, res, next) => {
   }
 })
 
-hotelsRouter.delete('/hotels/:address/images/:id', validatePassword, async (req, res, next) => {
-  const { address, id } = req.params
+hotelsRouter.delete('/hotels/:hotelAddress/images/:id', validatePassword, async (req, res, next) => {
+  const { hotelAddress, id } = req.params
   const { password } = req.body
   let ownerAccount = {}
   try {
@@ -226,12 +226,12 @@ hotelsRouter.delete('/hotels/:address/images/:id', validatePassword, async (req,
       web3: config.get('web3')
     })
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const hotel = await hotelManager.getHotel(address)
+    const hotel = await hotelManager.getHotel(hotelAddress)
     const response = {
       txHash: '0x0000000000000000000000000000000000000000000000000000000000000000'
     }
     if (hotel.images.length > id) {
-      const { logs } = await hotelManager.removeImageHotel(address, id)
+      const { logs } = await hotelManager.removeImageHotel(hotelAddress, id)
       response.txHash = logs[0].transactionHash
     }
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)

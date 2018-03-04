@@ -35,7 +35,7 @@ describe('Units prices', function () {
       expect(response).to.have.property('status', 200)
       expect(await response.json()).to.have.property('cost', estimatedCost.toString())
     })
-    it('POST /hotels/:address/units/:unit/defaultLifPrice. Expect 200', async () => {
+    it('POST /hotels/:hotelAddress/units/:unit/defaultLifPrice. Expect 200', async () => {
       const price = 78
       const body = JSON.stringify({
         password: config.get('password'),
@@ -63,7 +63,7 @@ describe('Units prices', function () {
       const { hotel } = await response.json()
       expect(hotel.units[config.get('unitAdress')]).to.have.property('defaultLifPrice', price)
     })
-    it('POST /hotels/:address/units/:unit/defaultLifPrice. Expect 400 #missingPassword', async () => {
+    it('POST /hotels/:hotelAddress/units/:unit/defaultLifPrice. Expect 400 #missingPassword', async () => {
       const price = 78
       const body = JSON.stringify({
         price
@@ -80,7 +80,7 @@ describe('Units prices', function () {
       const resp = await response.json()
       expect(resp).to.have.property('code', '#missingPassword')
     })
-    it('POST /hotels/:address/units/:unit/defaultLifPrice. Expect 400 #missingPrice', async () => {
+    it('POST /hotels/:hotelAddress/units/:unit/defaultLifPrice. Expect 400 #missingPrice', async () => {
       const body = JSON.stringify({
         password: config.get('password')
       })
@@ -96,7 +96,7 @@ describe('Units prices', function () {
       const resp = await response.json()
       expect(resp).to.have.property('code', '#missingPrice')
     })
-    it('POST /hotels/:address/units/:unit/specialLifPrice. Expect 200', async () => {
+    it('POST /hotels/:hotelAddress/units/:unit/specialLifPrice. Expect 200', async () => {
       const specialLifPrice = 70
       let body = JSON.stringify({
         password: config.get('password'),
@@ -129,7 +129,7 @@ describe('Units prices', function () {
       const { reservation } = await response.json()
       expect(reservation).to.have.property('specialLifPrice', specialLifPrice.toString())
     })
-    it('POST /hotels/:address/units/:unit/specialLifPrice. Expect 400 #missingPassword', async () => {
+    it('POST /hotels/:hotelAddress/units/:unit/specialLifPrice. Expect 400 #missingPassword', async () => {
       const specialLifPrice = 70
       let body = JSON.stringify({
         price: specialLifPrice,
@@ -223,7 +223,7 @@ describe('Units prices', function () {
       expect(response).to.have.property('status', 400)
       expect(await response.json()).to.have.property('code', '#missingFrom')
     })
-    it('POST /hotels/:address/units/:unit/defaultPrice. Expect 200', async () => {
+    it('POST /hotels/:hotelAddress/units/:unit/defaultPrice. Expect 200', async () => {
       const price = 78
       const body = JSON.stringify({
         password: config.get('password'),
@@ -251,7 +251,7 @@ describe('Units prices', function () {
       const { hotel } = await response.json()
       expect(hotel.units[config.get('unitAdress')]).to.have.property('defaultPrice', price.toFixed(2))
     })
-    it('POST /hotels/:address/units/:unit/defaultPrice. Expect 400 #missingPassword', async () => {
+    it('POST /hotels/:hotelAddress/units/:unit/defaultPrice. Expect 400 #missingPassword', async () => {
       const price = 7
       const body = JSON.stringify({
         price
@@ -269,7 +269,7 @@ describe('Units prices', function () {
       const res = await response.json()
       expect(res).to.have.property('code', '#missingPassword')
     })
-    it('POST /hotels/:address/units/:unit/defaultPrice. Expect 400 ##missingPrice', async () => {
+    it('POST /hotels/:hotelAddress/units/:unit/defaultPrice. Expect 400 ##missingPrice', async () => {
       const body = JSON.stringify({
         password: config.get('password')
       })
@@ -286,7 +286,7 @@ describe('Units prices', function () {
       const res = await response.json()
       expect(res).to.have.property('code', '#missingPrice')
     })
-    it('POST /hotels/:address/units/:unit/currencyCode. Expect 200', async () => {
+    it('POST /hotels/:hotelAddress/units/:unit/currencyCode. Expect 200', async () => {
       const body = JSON.stringify({
         password: config.get('password'),
         code: 948
@@ -313,7 +313,7 @@ describe('Units prices', function () {
       const { hotel } = await response.json()
       expect(hotel.units[config.get('unitAdress')]).to.have.property('currencyCode', 'CHW')
     })
-    it('POST /hotels/:address/units/:unit/currencyCode. Expect 400 #missingPassword', async () => {
+    it('POST /hotels/:hotelAddress/units/:unit/currencyCode. Expect 400 #missingPassword', async () => {
       const body = JSON.stringify({
         code: 948
       })
@@ -330,7 +330,7 @@ describe('Units prices', function () {
       const resp = await response.json()
       expect(resp).to.have.property('code', '#missingPassword')
     })
-    it('POST /hotels/:address/units/:unit/currencyCode. Expect 400 #missingCode', async () => {
+    it('POST /hotels/:hotelAddress/units/:unit/currencyCode. Expect 400 #missingCode', async () => {
       const body = JSON.stringify({
         password: config.get('password')
       })
@@ -347,7 +347,7 @@ describe('Units prices', function () {
       const resp = await response.json()
       expect(resp).to.have.property('code', '#missingCode')
     })
-    it('POST /hotels/:address/units/:unit/specialPrice. Expect 200', async () => {
+    it('POST /hotels/:hotelAddress/units/:unit/specialPrice. Expect 200', async () => {
       const specialPrice = 70
       let body = JSON.stringify({
         password: config.get('password'),
@@ -380,7 +380,7 @@ describe('Units prices', function () {
       const { reservation } = await response.json()
       expect(reservation).to.have.property('specialPrice', specialPrice.toFixed(2))
     })
-    it('POST /hotels/:address/units/:unit/specialPrice. Expect 400 #missingPassword', async () => {
+    it('POST /hotels/:hotelAddress/units/:unit/specialPrice. Expect 400 #missingPassword', async () => {
       const specialPrice = 70
       let body = JSON.stringify({
         price: specialPrice,

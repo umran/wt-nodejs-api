@@ -12,7 +12,7 @@ describe('Units', function () {
   BeforeEach()
   Before()
   const unitType = 'TYPE_000'
-  it('POST /hotels/:address/unitTypes/:type/units. Expect 200', async () => {
+  it('POST /hotels/:hotelAddress/unitTypes/:type/units. Expect 200', async () => {
     const body = JSON.stringify({
       'password': config.get('password')
     })

@@ -12,9 +12,9 @@ const HotelManager = require('../../../../wt-js-libs/dist/node/HotelManager.js')
 const BookingData = require('../../../../wt-js-libs/dist/node/BookingData.js')
 const User = require('../../../../wt-js-libs/dist/node/User.js')
 
-unitsRouter.post('/hotels/:address/unitTypes/:type/units', validatePassword, async (req, res, next) => {
+unitsRouter.post('/hotels/:hotelAddress/unitTypes/:type/units', validatePassword, async (req, res, next) => {
   const { password } = req.body
-  const { address, type } = req.params
+  const {hotelAddress, type } = req.params
   let ownerAccount = {}
   try {
     let context = {
@@ -26,7 +26,7 @@ unitsRouter.post('/hotels/:address/unitTypes/:type/units', validatePassword, asy
     context.owner = ownerAccount.address
     const hotelManager = new HotelManager(context)
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.addUnit(address, type)
+    const { logs } = await hotelManager.addUnit(hotelAddress, type)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash
@@ -37,12 +37,12 @@ unitsRouter.post('/hotels/:address/unitTypes/:type/units', validatePassword, asy
 })
 
 unitsRouter.delete([
-  '/hotels/:address/unitTypes/:type/units/:unit',
-  '/hotels/:address/units/:unit'
+  '/hotels/:hotelAddress/unitTypes/:type/units/:unit',
+  '/hotels/:hotelAddress/units/:unit'
 ], validatePassword,
 async (req, res, next) => {
   const { password } = req.body
-  const { address, unit } = req.params
+  const {hotelAddress, unit } = req.params
   let ownerAccount = {}
   try {
     let context = {
@@ -54,7 +54,7 @@ async (req, res, next) => {
     context.owner = ownerAccount.address
     const hotelManager = new HotelManager(context)
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.removeUnit(address, unit)
+    const { logs } = await hotelManager.removeUnit(hotelAddress, unit)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash
@@ -65,12 +65,12 @@ async (req, res, next) => {
 })
 
 unitsRouter.put([
-  '/hotels/:address/unitTypes/:type/units/:unit/active',
-  '/hotels/:address/units/:unit/active'
+  '/hotels/:hotelAddress/unitTypes/:type/units/:unit/active',
+  '/hotels/:hotelAddress/units/:unit/active'
 ], validatePassword, validateActive,
 async (req, res, next) => {
   const { password, active } = req.body
-  const { address, unit } = req.params
+  const {hotelAddress, unit } = req.params
   let ownerAccount = {}
   try {
     let context = {
@@ -82,7 +82,7 @@ async (req, res, next) => {
     context.owner = ownerAccount.address
     const hotelManager = new HotelManager(context)
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const {logs} = await hotelManager.setUnitActive(address, unit, active)
+    const {logs} = await hotelManager.setUnitActive(hotelAddress, unit, active)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash

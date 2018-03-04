@@ -11,10 +11,10 @@ const BookingData = require('../../../../wt-js-libs/dist/node/BookingData.js')
 
 const config = require('../../../../config.js')
 
-hotelBookingRouter.put('/hotels/:address/confirmation',
+hotelBookingRouter.put('/hotels/:hotelAddress/confirmation',
 validatePassword, validateRequired, async(req, res, next) => {
   const { password, required } = req.body
-  const { address } = req.params
+  const {hotelAddress } = req.params
   let ownerAccount = {}
   try {
     let context = {
@@ -26,7 +26,7 @@ validatePassword, validateRequired, async(req, res, next) => {
     context.owner = ownerAccount.address
     const hotelManager = new HotelManager(context)
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.setRequireConfirmation(address, !!required)
+    const { logs } = await hotelManager.setRequireConfirmation(hotelAddress, !!required)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash
@@ -61,11 +61,11 @@ async (req, res, next) => {
   }
 })
 
-hotelBookingRouter.post('/hotels/:address/confirmBooking',
+hotelBookingRouter.post('/hotels/:hotelAddress/confirmBooking',
 validatePassword, validateReservationId,
 async(req, res, next) => {
   const { password, reservationId } = req.body
-  const { address } = req.params
+  const {hotelAddress } = req.params
   let ownerAccount = {}
   try {
     let context = {
@@ -77,7 +77,7 @@ async(req, res, next) => {
     context.owner = ownerAccount.address
     const hotelManager = new HotelManager(context)
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.confirmBooking(address, reservationId)
+    const { logs } = await hotelManager.confirmBooking(hotelAddress, reservationId)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash
