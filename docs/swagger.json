@@ -996,7 +996,7 @@
 
       }
     },
-    "/hotels/{hotelAddress}/unitTypes/{type}": {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}": {
       "delete": {
         "tags": [ "Unit types" ],
         "summary": "remove unity type from hotel.",
@@ -1122,7 +1122,7 @@
         }
       }
     },
-    "/hotels/{hotelAddress}/unitTypes/{type}/images": {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/images": {
       "post": {
         "tags": [ "Unit types" ],
         "summary": "Add image to unit type",
@@ -1180,7 +1180,7 @@
         }
       }
     },
-    "/hotels/{hotelAddress}/unitTypes/{type}/images/{index}": {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/images/{index}": {
       "delete": {
         "tags": [ "Unit types" ],
         "summary": "Remove image from unit type",
@@ -1240,7 +1240,7 @@
         }
       }
     },
-    "/hotels/{hotelAddress}/unitTypes/{type}/amenities": {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/amenities": {
       "post": {
         "tags": [ "Unit types" ],
         "summary": "Create amenities.",
@@ -1299,7 +1299,7 @@
         }
       }
     },
-    "/hotels/{hotelAddress}/unitTypes/{type}/amenities/{amenity}": {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/amenities/{amenity}": {
       "delete": {
         "tags": [ "Unit types" ],
         "summary": "remove amenity.",
@@ -1360,7 +1360,7 @@
         }
       }
     },
-    "/hotels/{hotelAddress}/unitTypes/{type}/units": {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/units": {
       "post": {
         "tags": [ "Units" ],
         "summary": "Create units.",
@@ -1414,7 +1414,7 @@
         }
       }
     },
-    "/hotels/{hotelAddress}/unitTypes/{type}/units/{unitAddress}" : {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/units/{unitAddress}" : {
       "delete": {
         "tags": [ "Units" ],
         "summary": "remove unit.",
@@ -1475,7 +1475,7 @@
         }
       }
     },
-    "/hotels/{hotelAddress}/unitTypes/{type}/units/{unitAddress}/active" : {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/units/{unitAddress}/active" : {
       "put": {
         "tags": [ "Units" ],
         "summary": "Active status.",

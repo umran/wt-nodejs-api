@@ -91,9 +91,9 @@ module.exports = {
     short: 'A timezone is required.',
     long: 'Body must include an "timezone".'
   },
-  missingType: {
-    short: 'Type is required.',
-    long: `Body must include "type".`
+  missingUnitType: {
+    short: 'Unit type is required.',
+    long: `Body must include "unitType".`
   },
   missingUrl: {
     short: 'An url is required.',

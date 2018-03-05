@@ -3,7 +3,7 @@ const unitTypesRouter = express.Router()
 const config = require('../../../../config.js')
 const { loadAccount } = require('../../../helpers/crypto')
 const { validatePassword,
-        validateType,
+        validateUnitType,
         validateAddImage,
         validateUnitTypeInformation,
         validateAmenity } = require('../../../helpers/validators')
@@ -28,8 +28,8 @@ unitTypesRouter.get('/hotels/:hotelAddress/unitTypes', async (req, res, next) =>
   }
 })
 
-unitTypesRouter.post('/hotels/:hotelAddress/unitTypes', validateType, validatePassword, async (req, res, next) => {
-  const { password, type } = req.body
+unitTypesRouter.post('/hotels/:hotelAddress/unitTypes', validateUnitType, validatePassword, async (req, res, next) => {
+  const { password, unitType } = req.body
   const {hotelAddress } = req.params
   let ownerAccount = {}
   try {
@@ -41,7 +41,7 @@ unitTypesRouter.post('/hotels/:hotelAddress/unitTypes', validateType, validatePa
       web3: config.get('web3')
     })
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.addUnitType(hotelAddress, type)
+    const { logs } = await hotelManager.addUnitType(hotelAddress, unitType)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash
@@ -51,9 +51,9 @@ unitTypesRouter.post('/hotels/:hotelAddress/unitTypes', validateType, validatePa
   }
 })
 
-unitTypesRouter.delete('/hotels/:hotelAddress/unitTypes/:type', validatePassword, async (req, res, next) => {
+unitTypesRouter.delete('/hotels/:hotelAddress/unitTypes/:unitType', validatePassword, async (req, res, next) => {
   const { password } = req.body
-  const { hotelAddress, type } = req.params
+  const { hotelAddress, unitType } = req.params
   let ownerAccount = {}
   try {
     ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
@@ -64,7 +64,7 @@ unitTypesRouter.delete('/hotels/:hotelAddress/unitTypes/:type', validatePassword
       web3: config.get('web3')
     })
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.removeUnitType(hotelAddress, type)
+    const { logs } = await hotelManager.removeUnitType(hotelAddress, unitType)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash
@@ -74,9 +74,9 @@ unitTypesRouter.delete('/hotels/:hotelAddress/unitTypes/:type', validatePassword
   }
 })
 
-unitTypesRouter.put('/hotels/:hotelAddress/unitTypes/:type', validateUnitTypeInformation, validatePassword, async (req, res, next) => {
+unitTypesRouter.put('/hotels/:hotelAddress/unitTypes/:unitType', validateUnitTypeInformation, validatePassword, async (req, res, next) => {
   const { password, description, minGuests, maxGuests, price } = req.body
-  const { hotelAddress, type } = req.params
+  const { hotelAddress, unitType } = req.params
   let ownerAccount = {}
   try {
     ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
@@ -87,7 +87,7 @@ unitTypesRouter.put('/hotels/:hotelAddress/unitTypes/:type', validateUnitTypeInf
       web3: config.get('web3')
     })
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.editUnitType(hotelAddress, type, description, minGuests, maxGuests, price)
+    const { logs } = await hotelManager.editUnitType(hotelAddress, unitType, description, minGuests, maxGuests, price)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash
@@ -97,9 +97,9 @@ unitTypesRouter.put('/hotels/:hotelAddress/unitTypes/:type', validateUnitTypeInf
   }
 })
 
-unitTypesRouter.post('/hotels/:hotelAddress/unitTypes/:type/images', validatePassword, validateAddImage, async (req, res, next) => {
+unitTypesRouter.post('/hotels/:hotelAddress/unitTypes/:unitType/images', validatePassword, validateAddImage, async (req, res, next) => {
   const { password, url } = req.body
-  const { hotelAddress, type } = req.params
+  const { hotelAddress, unitType } = req.params
   let ownerAccount = {}
   try {
     ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
@@ -110,7 +110,7 @@ unitTypesRouter.post('/hotels/:hotelAddress/unitTypes/:type/images', validatePas
       web3: config.get('web3')
     })
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.addImageUnitType(hotelAddress, type, url)
+    const { logs } = await hotelManager.addImageUnitType(hotelAddress, unitType, url)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash
@@ -120,8 +120,8 @@ unitTypesRouter.post('/hotels/:hotelAddress/unitTypes/:type/images', validatePas
   }
 })
 
-unitTypesRouter.delete('/hotels/:hotelAddress/unitTypes/:type/images/:id', validatePassword, async (req, res, next) => {
-  const { hotelAddress, id, type } = req.params
+unitTypesRouter.delete('/hotels/:hotelAddress/unitTypes/:unitType/images/:id', validatePassword, async (req, res, next) => {
+  const { hotelAddress, id, unitType } = req.params
   const { password } = req.body
   let ownerAccount = {}
   try {
@@ -133,7 +133,7 @@ unitTypesRouter.delete('/hotels/:hotelAddress/unitTypes/:type/images/:id', valid
       web3: config.get('web3')
     })
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.removeImageUnitType(hotelAddress, type, id)
+    const { logs } = await hotelManager.removeImageUnitType(hotelAddress, unitType, id)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(204).json({
       txHash: logs[0].transactionHash
@@ -143,9 +143,9 @@ unitTypesRouter.delete('/hotels/:hotelAddress/unitTypes/:type/images/:id', valid
   }
 })
 
-unitTypesRouter.post('/hotels/:hotelAddress/unitTypes/:type/amenities', validateAmenity, validatePassword, async (req, res, next) => {
+unitTypesRouter.post('/hotels/:hotelAddress/unitTypes/:unitType/amenities', validateAmenity, validatePassword, async (req, res, next) => {
   const { password, amenity } = req.body
-  const { hotelAddress, type } = req.params
+  const { hotelAddress, unitType } = req.params
   let ownerAccount = {}
   try {
     ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
@@ -156,7 +156,7 @@ unitTypesRouter.post('/hotels/:hotelAddress/unitTypes/:type/amenities', validate
       web3: config.get('web3')
     })
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.addAmenity(hotelAddress, type, amenity)
+    const { logs } = await hotelManager.addAmenity(hotelAddress, unitType, amenity)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash
@@ -166,9 +166,9 @@ unitTypesRouter.post('/hotels/:hotelAddress/unitTypes/:type/amenities', validate
   }
 })
 
-unitTypesRouter.delete('/hotels/:hotelAddress/unitTypes/:type/amenities/:amenity', validatePassword, async (req, res, next) => {
+unitTypesRouter.delete('/hotels/:hotelAddress/unitTypes/:unitType/amenities/:amenity', validatePassword, async (req, res, next) => {
   const { password } = req.body
-  const { hotelAddress, type, amenity } = req.params
+  const { hotelAddress, unitType, amenity } = req.params
   let ownerAccount = {}
   try {
     ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password)
@@ -179,7 +179,7 @@ unitTypesRouter.delete('/hotels/:hotelAddress/unitTypes/:type/amenities/:amenity
       web3: config.get('web3')
     })
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.removeAmenity(hotelAddress, type, amenity)
+    const { logs } = await hotelManager.removeAmenity(hotelAddress, unitType, amenity)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash

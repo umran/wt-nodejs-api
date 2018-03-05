@@ -15,7 +15,7 @@ describe('Unit types', function () {
   const imageUrl = 'picture.jpg'
   it('POST /hotels/:hotelAddress/unitTypes. Expect 400 #missingPassword', async () => {
     const body = JSON.stringify({
-      type: 'TYPE_001'
+      unitType: 'TYPE_001'
     })
     let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes`, {
       method: 'POST',
@@ -30,7 +30,7 @@ describe('Unit types', function () {
     expect(response).to.have.property('status', 400)
     expect(res).to.have.property('code', '#missingPassword')
   })
-  it('PUT /hotels/:hotelAddress/unitTypes/:type. Expect 200', async () => {
+  it('PUT /hotels/:hotelAddress/unitTypes/:unitType. Expect 200', async () => {
     const description = 'Rural family cabin'
     const minGuests = 1
     const maxGuests = 5
@@ -67,7 +67,7 @@ describe('Unit types', function () {
     expect(hotel.unitTypes[unitType].info).to.have.property('maxGuests', maxGuests)
     expect(hotel.unitTypes[unitType].info).to.have.property('price', price)
   })
-  it('PUT /hotels/:hotelAddress/unitTypes/:type. Expect 400 #missingPassword', async () => {
+  it('PUT /hotels/:hotelAddress/unitTypes/:unitType. Expect 400 #missingPassword', async () => {
     const description = 'Rural family cabin'
     const minGuests = 1
     const maxGuests = 5
@@ -91,7 +91,7 @@ describe('Unit types', function () {
     const resp = await response.json()
     expect(resp).to.have.property('code', '#missingPassword')
   })
-  it('PUT /hotels/:hotelAddress/unitTypes/:type. Expect 400 #missingDescription', async () => {
+  it('PUT /hotels/:hotelAddress/unitTypes/:unitType. Expect 400 #missingDescription', async () => {
     const minGuests = 1
     const maxGuests = 5
     const price = '15'
@@ -114,7 +114,7 @@ describe('Unit types', function () {
     const resp = await response.json()
     expect(resp).to.have.property('code', '#missingDescription')
   })
-  it('PUT /hotels/:hotelAddress/unitTypes/:type. Expect 400 #missingMinGuests', async () => {
+  it('PUT /hotels/:hotelAddress/unitTypes/:unitType. Expect 400 #missingMinGuests', async () => {
     const description = 'Rural family cabin'
     const maxGuests = 5
     const price = '15'
@@ -137,7 +137,7 @@ describe('Unit types', function () {
     const resp = await response.json()
     expect(resp).to.have.property('code', '#missingMinGuests')
   })
-  it('PUT /hotels/:hotelAddress/unitTypes/:type. Expect 400 #missingMaxGuests', async () => {
+  it('PUT /hotels/:hotelAddress/unitTypes/:unitType. Expect 400 #missingMaxGuests', async () => {
     const description = 'Rural family cabin'
     const minGuests = 1
     const price = '15'
@@ -160,7 +160,7 @@ describe('Unit types', function () {
     const resp = await response.json()
     expect(resp).to.have.property('code', '#missingMaxGuests')
   })
-  it('PUT /hotels/:hotelAddress/unitTypes/:type. Expect 400 #missingPrice', async () => {
+  it('PUT /hotels/:hotelAddress/unitTypes/:unitType. Expect 400 #missingPrice', async () => {
     const description = 'Rural family cabin'
     const minGuests = 1
     const maxGuests = 5
@@ -184,7 +184,7 @@ describe('Unit types', function () {
     expect(resp).to.have.property('code', '#missingPrice')
   })
   describe('Unit types images', function () {
-    it('POST /hotels/:hotelAddress/unitTypes/:type/images. Expect 200', async () => {
+    it('POST /hotels/:hotelAddress/unitTypes/:unitType/images. Expect 200', async () => {
       const body = JSON.stringify({
         'password': config.get('password'),
         'url': imageUrl
@@ -211,7 +211,7 @@ describe('Unit types', function () {
       const {hotel} = await response.json()
       expect(hotel.unitTypes[unitType].images).to.include(imageUrl)
     })
-    it('POST /hotels/:hotelAddress/unitTypes/:type/images. Expect 400 #missingPassword', async () => {
+    it('POST /hotels/:hotelAddress/unitTypes/:unitType/images. Expect 400 #missingPassword', async () => {
       const body = JSON.stringify({
         'url': imageUrl
       })
@@ -227,7 +227,7 @@ describe('Unit types', function () {
       const res = await response.json()
       expect(res).to.have.property('code', '#missingPassword')
     })
-    it('POST /hotels/:hotelAddress/unitTypes/:type/images. Expect 400 #missingUrl', async () => {
+    it('POST /hotels/:hotelAddress/unitTypes/:unitType/images. Expect 400 #missingUrl', async () => {
       const body = JSON.stringify({
         'password': config.get('password')
       })

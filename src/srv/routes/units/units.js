@@ -12,9 +12,9 @@ const HotelManager = require('../../../../wt-js-libs/dist/node/HotelManager.js')
 const BookingData = require('../../../../wt-js-libs/dist/node/BookingData.js')
 const User = require('../../../../wt-js-libs/dist/node/User.js')
 
-unitsRouter.post('/hotels/:hotelAddress/unitTypes/:type/units', validatePassword, async (req, res, next) => {
+unitsRouter.post('/hotels/:hotelAddress/unitTypes/:unitType/units', validatePassword, async (req, res, next) => {
   const { password } = req.body
-  const {hotelAddress, type } = req.params
+  const {hotelAddress, unitType } = req.params
   let ownerAccount = {}
   try {
     let context = {
@@ -26,7 +26,7 @@ unitsRouter.post('/hotels/:hotelAddress/unitTypes/:type/units', validatePassword
     context.owner = ownerAccount.address
     const hotelManager = new HotelManager(context)
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.addUnit(hotelAddress, type)
+    const { logs } = await hotelManager.addUnit(hotelAddress, unitType)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash
@@ -37,7 +37,7 @@ unitsRouter.post('/hotels/:hotelAddress/unitTypes/:type/units', validatePassword
 })
 
 unitsRouter.delete([
-  '/hotels/:hotelAddress/unitTypes/:type/units/:unitAddress',
+  '/hotels/:hotelAddress/unitTypes/:unitType/units/:unitAddress',
   '/hotels/:hotelAddress/units/:unitAddress'
 ], validatePassword,
 async (req, res, next) => {
@@ -65,7 +65,7 @@ async (req, res, next) => {
 })
 
 unitsRouter.put([
-  '/hotels/:hotelAddress/unitTypes/:type/units/:unitAddress/active',
+  '/hotels/:hotelAddress/unitTypes/:unitType/units/:unitAddress/active',
   '/hotels/:hotelAddress/units/:unitAddress/active'
 ], validatePassword, validateActive,
 async (req, res, next) => {

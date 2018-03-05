@@ -15,7 +15,7 @@ const BookingData = require('../../../../wt-js-libs/dist/node/BookingData.js')
 const config = require('../../../../config.js')
 
 pricesRouter.post([
-  '/hotels/:hotelAddress/unitTypes/:type/units/:unitAddress/defaultPrice',
+  '/hotels/:hotelAddress/unitTypes/:unitType/units/:unitAddress/defaultPrice',
   '/hotels/:hotelAddress/units/:unitAddress/defaultPrice'
 ], validatePassword, validatePrice,
 async (req, res, next) => {
@@ -43,7 +43,7 @@ async (req, res, next) => {
 })
 
 pricesRouter.post([
-  '/hotels/:hotelAddress/unitTypes/:type/units/:unitAddress/defaultLifPrice',
+  '/hotels/:hotelAddress/unitTypes/:unitType/units/:unitAddress/defaultLifPrice',
   '/hotels/:hotelAddress/units/:unitAddress/defaultLifPrice'
 ], validatePassword, validatePrice,
 async (req, res, next) => {
@@ -71,7 +71,7 @@ async (req, res, next) => {
 })
 
 pricesRouter.post([
-  '/hotels/:hotelAddress/unitTypes/:type/units/:unitAddress/currencyCode',
+  '/hotels/:hotelAddress/unitTypes/:unitType/units/:unitAddress/currencyCode',
   '/hotels/:hotelAddress/units/:unitAddress/currencyCode'
 ], validatePassword, validateCode,
 async (req, res, next) => {
@@ -98,7 +98,7 @@ async (req, res, next) => {
   }
 })
 pricesRouter.post([
-  '/hotels/:hotelAddress/unitTypes/:type/units/:unitAddress/specialLifPrice',
+  '/hotels/:hotelAddress/unitTypes/:unitType/units/:unitAddress/specialLifPrice',
   '/hotels/:hotelAddress/units/:unitAddress/specialLifPrice'
 ], validatePassword, validatePrice,
 async (req, res, next) => {
@@ -126,7 +126,7 @@ async (req, res, next) => {
 })
 
 pricesRouter.post([
-  '/hotels/:hotelAddress/unitTypes/:type/units/:unitAddress/specialPrice',
+  '/hotels/:hotelAddress/unitTypes/:unitType/units/:unitAddress/specialPrice',
   '/hotels/:hotelAddress/units/:unitAddress/specialPrice'
 ], validatePassword, validatePrice,
 async (req, res, next) => {

@@ -97,7 +97,7 @@ async function generateHotel (ownerAddres) {
   config.set('testAddress', hotelAddresses[0])
   body = JSON.stringify({
     'password': config.get('password'),
-    type: unitTypeName
+    unitType: unitTypeName
   })
   res = await fetch(`http://localhost:3000/hotels/${hotelAddresses[0]}/unitTypes`, {
     method: 'POST',
@@ -107,7 +107,6 @@ async function generateHotel (ownerAddres) {
     },
     body
   })
-
   body = JSON.stringify({
     'password': config.get('password'),
     amenity
