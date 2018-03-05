@@ -130,7 +130,7 @@ describe('Hotels bookings', function () {
         from: fromDate
       })
 
-      response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAdress')}/book`, {
+      response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/book`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -160,7 +160,7 @@ describe('Hotels bookings', function () {
       expect(requests[0]).to.have.property('guestData', guestData)
       expect(requests[0]).to.have.property('daysAmount', daysAmount.toString())
       expect(Date.parse(requests[0].fromDate)).to.eql(Date.parse(fromDate))
-      expect(requests[0]).to.have.property('unit', config.get('unitAdress'))
+      expect(requests[0]).to.have.property('unit', config.get('unitAddress'))
       expect(requests[0]).to.have.property('from', config.get('user'))
       expect(requests[0]).to.have.property('id')
     })
@@ -200,7 +200,7 @@ describe('Hotels bookings', function () {
         days: daysAmount,
         from: fromDate
       })
-      response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAdress')}/book`, {
+      response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/book`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -222,7 +222,7 @@ describe('Hotels bookings', function () {
       expect(requests[0]).to.have.property('guestData', guestData)
       expect(requests[0]).to.have.property('daysAmount', daysAmount.toString())
       expect(Date.parse(requests[0].fromDate)).to.eql(Date.parse(fromDate))
-      expect(requests[0]).to.have.property('unit', config.get('unitAdress'))
+      expect(requests[0]).to.have.property('unit', config.get('unitAddress'))
       expect(requests[0]).to.have.property('from', config.get('user'))
       expect(requests[0]).to.have.property('id')
     })

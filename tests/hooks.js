@@ -163,16 +163,16 @@ async function generateHotel (ownerAddres) {
   expect(hotel).to.have.property('unitTypeNames')
   expect(hotel.unitTypeNames).to.include(unitTypeName)
   expect(hotel.unitTypes[unitTypeName].amenities).to.include(amenity)
-  const unitAdress = hotel.unitAddresses[unitAddresses.length - 1]
-  config.set('unitAdress', unitAdress)
-  expect(hotel.units[unitAdress]).to.have.property('unitType', unitTypeName)
+  const unitAddress = hotel.unitAddresses[unitAddresses.length - 1]
+  config.set('unitAddress', unitAddress)
+  expect(hotel.units[unitAddress]).to.have.property('unitType', unitTypeName)
   expect(hotel.unitTypes[unitTypeName].images).to.include(imageUrl)
 
   body = JSON.stringify({
     password: config.get('password'),
     price: defaultPrice
   })
-  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAdress')}/defaultPrice`, {
+  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/defaultPrice`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -185,7 +185,7 @@ async function generateHotel (ownerAddres) {
     price: defaultLifPrice
   })
 
-  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAdress')}/defaultLifPrice`, {
+  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/defaultLifPrice`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',

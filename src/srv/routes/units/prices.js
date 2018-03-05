@@ -15,12 +15,12 @@ const BookingData = require('../../../../wt-js-libs/dist/node/BookingData.js')
 const config = require('../../../../config.js')
 
 pricesRouter.post([
-  '/hotels/:hotelAddress/unitTypes/:type/units/:unit/defaultPrice',
-  '/hotels/:hotelAddress/units/:unit/defaultPrice'
+  '/hotels/:hotelAddress/unitTypes/:type/units/:unitAddress/defaultPrice',
+  '/hotels/:hotelAddress/units/:unitAddress/defaultPrice'
 ], validatePassword, validatePrice,
 async (req, res, next) => {
   const { password, price } = req.body
-  const {hotelAddress, unit } = req.params
+  const {hotelAddress, unitAddress } = req.params
   let ownerAccount = {}
   try {
     let context = {
@@ -32,7 +32,7 @@ async (req, res, next) => {
     context.owner = ownerAccount.address
     const hotelManager = new HotelManager(context)
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    await hotelManager.setDefaultPrice(hotelAddress, unit, price)
+    await hotelManager.setDefaultPrice(hotelAddress, unitAddress, price)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: true// logs[0].transactionHash
@@ -43,12 +43,12 @@ async (req, res, next) => {
 })
 
 pricesRouter.post([
-  '/hotels/:hotelAddress/unitTypes/:type/units/:unit/defaultLifPrice',
-  '/hotels/:hotelAddress/units/:unit/defaultLifPrice'
+  '/hotels/:hotelAddress/unitTypes/:type/units/:unitAddress/defaultLifPrice',
+  '/hotels/:hotelAddress/units/:unitAddress/defaultLifPrice'
 ], validatePassword, validatePrice,
 async (req, res, next) => {
   const { password, price } = req.body
-  const {hotelAddress, unit } = req.params
+  const {hotelAddress, unitAddress } = req.params
   let ownerAccount = {}
   try {
     let context = {
@@ -60,7 +60,7 @@ async (req, res, next) => {
     context.owner = ownerAccount.address
     const hotelManager = new HotelManager(context)
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const {logs} = await hotelManager.setDefaultLifPrice(hotelAddress, unit, price)
+    const {logs} = await hotelManager.setDefaultLifPrice(hotelAddress, unitAddress, price)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash
@@ -71,12 +71,12 @@ async (req, res, next) => {
 })
 
 pricesRouter.post([
-  '/hotels/:hotelAddress/unitTypes/:type/units/:unit/currencyCode',
-  '/hotels/:hotelAddress/units/:unit/currencyCode'
+  '/hotels/:hotelAddress/unitTypes/:type/units/:unitAddress/currencyCode',
+  '/hotels/:hotelAddress/units/:unitAddress/currencyCode'
 ], validatePassword, validateCode,
 async (req, res, next) => {
   const { password, code } = req.body
-  const {hotelAddress, unit } = req.params
+  const {hotelAddress, unitAddress } = req.params
   let ownerAccount = {}
   try {
     let context = {
@@ -88,7 +88,7 @@ async (req, res, next) => {
     context.owner = ownerAccount.address
     const hotelManager = new HotelManager(context)
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    await hotelManager.setCurrencyCode(hotelAddress, unit, code)
+    await hotelManager.setCurrencyCode(hotelAddress, unitAddress, code)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: true// logs[0].transactionHash
@@ -98,12 +98,12 @@ async (req, res, next) => {
   }
 })
 pricesRouter.post([
-  '/hotels/:hotelAddress/unitTypes/:type/units/:unit/specialLifPrice',
-  '/hotels/:hotelAddress/units/:unit/specialLifPrice'
+  '/hotels/:hotelAddress/unitTypes/:type/units/:unitAddress/specialLifPrice',
+  '/hotels/:hotelAddress/units/:unitAddress/specialLifPrice'
 ], validatePassword, validatePrice,
 async (req, res, next) => {
   const { password, price, from, days } = req.body
-  const {hotelAddress, unit } = req.params
+  const {hotelAddress, unitAddress } = req.params
   let ownerAccount = {}
   try {
     let context = {
@@ -115,7 +115,7 @@ async (req, res, next) => {
     context.owner = ownerAccount.address
     const hotelManager = new HotelManager(context)
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const {transactionHash} = await hotelManager.setUnitSpecialLifPrice(hotelAddress, unit, price, from, days)
+    const {transactionHash} = await hotelManager.setUnitSpecialLifPrice(hotelAddress, unitAddress, price, from, days)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: transactionHash
@@ -126,12 +126,12 @@ async (req, res, next) => {
 })
 
 pricesRouter.post([
-  '/hotels/:hotelAddress/unitTypes/:type/units/:unit/specialPrice',
-  '/hotels/:hotelAddress/units/:unit/specialPrice'
+  '/hotels/:hotelAddress/unitTypes/:type/units/:unitAddress/specialPrice',
+  '/hotels/:hotelAddress/units/:unitAddress/specialPrice'
 ], validatePassword, validatePrice,
 async (req, res, next) => {
   const { password, price, from, days } = req.body
-  const {hotelAddress, unit } = req.params
+  const {hotelAddress, unitAddress } = req.params
   let ownerAccount = {}
   try {
     let context = {
@@ -143,7 +143,7 @@ async (req, res, next) => {
     context.owner = ownerAccount.address
     const hotelManager = new HotelManager(context)
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const {transactionHash} = await hotelManager.setUnitSpecialPrice(hotelAddress, unit, price, from, days)
+    const {transactionHash} = await hotelManager.setUnitSpecialPrice(hotelAddress, unitAddress, price, from, days)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: transactionHash
@@ -153,24 +153,24 @@ async (req, res, next) => {
   }
 })
 
-pricesRouter.get('/units/:unitAdress/cost', validateDateRange, async (req, res, next) => {
+pricesRouter.get('/units/:unitAddress/cost', validateDateRange, async (req, res, next) => {
   const { from, days } = req.body
-  const { unitAdress } = req.params
+  const { unitAddress } = req.params
   try {
     const data = new BookingData(config.get('web3'))
-    const cost = await data.getCost(unitAdress, from, days)
+    const cost = await data.getCost(unitAddress, from, days)
     res.status(200).json({cost})
   } catch (err) {
     next(handle('web3', err))
   }
 })
 
-pricesRouter.get('/units/:unitAdress/lifCost', validateDateRange, async (req, res, next) => {
+pricesRouter.get('/units/:unitAddress/lifCost', validateDateRange, async (req, res, next) => {
   const { from, days } = req.body
-  const { unitAdress } = req.params
+  const { unitAddress } = req.params
   try {
     const data = new BookingData(config.get('web3'))
-    const cost = await data.getLifCost(unitAdress, from, days)
+    const cost = await data.getLifCost(unitAddress, from, days)
     res.status(200).json({cost})
   } catch (err) {
     next(handle('web3', err))

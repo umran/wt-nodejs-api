@@ -23,7 +23,7 @@ describe('Units books', function () {
       days: daysAmount,
       from: fromDate
     })
-    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAdress')}/book`, {
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/book`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -47,7 +47,7 @@ describe('Units books', function () {
     expect(bookings[0]).to.have.property('guestData', guestData)
     expect(bookings[0]).to.have.property('daysAmount', daysAmount.toString())
     expect(Date.parse(bookings[0].fromDate)).to.eql(Date.parse(fromDate))
-    expect(bookings[0]).to.have.property('unit', config.get('unitAdress'))
+    expect(bookings[0]).to.have.property('unit', config.get('unitAddress'))
     expect(bookings[0]).to.have.property('from', config.get('user'))
     expect(bookings[0]).to.have.property('id')
   })
@@ -58,7 +58,7 @@ describe('Units books', function () {
       guest: guestData,
       days: 5
     })
-    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAdress')}/book`, {
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/book`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -80,7 +80,7 @@ describe('Units books', function () {
       days: daysAmount,
       from: fromDate
     })
-    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAdress')}/lifBook`, {
+    let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/lifBook`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -103,7 +103,7 @@ describe('Units books', function () {
     expect(bookings[0]).to.have.property('guestData', guestData)
     expect(bookings[0]).to.have.property('daysAmount', daysAmount.toString())
     expect(Date.parse(bookings[0].fromDate)).to.eql(Date.parse(fromDate))
-    expect(bookings[0]).to.have.property('unit', config.get('unitAdress'))
+    expect(bookings[0]).to.have.property('unit', config.get('unitAddress'))
     expect(bookings[0]).to.have.property('from', config.get('user'))
     expect(bookings[0]).to.have.property('id')
   })
