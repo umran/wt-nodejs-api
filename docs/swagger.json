@@ -1842,7 +1842,7 @@
                   "description": "Initla date.",
                   "type": "Date"
                 },
-                "dats": {
+                "days": {
                   "description": "Amount of days.",
                   "type": "number"
                 }
@@ -1911,7 +1911,7 @@
                   "description": "Initla date.",
                   "type": "Date"
                 },
-                "dats": {
+                "days": {
                   "description": "Amount of days.",
                   "type": "number"
                 }
