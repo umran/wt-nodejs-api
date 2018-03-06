@@ -12,7 +12,7 @@ describe('Hotels bookings', function () {
   BeforeEach()
   Before()
   describe('Confirm request', function () {
-    it('POST /hotels/:address/confirmation. Expect 200', async () => {
+    it('POST /hotels/:hotelAddress/confirmation. Expect 200', async () => {
       const body = JSON.stringify({
         password: config.get('password'),
         required: true
@@ -38,7 +38,7 @@ describe('Hotels bookings', function () {
       const { hotel } = await response.json()
       expect(hotel).to.have.property('waitConfirmation', true)
     })
-    it('POST /hotels/:address/confirmation. Expect 400 #missingPassword', async () => {
+    it('POST /hotels/:hotelAddress/confirmation. Expect 400 #missingPassword', async () => {
       const body = JSON.stringify({
         required: '123'
       })
@@ -55,7 +55,7 @@ describe('Hotels bookings', function () {
       const res = await response.json()
       expect(res).to.have.property('code', '#missingPassword')
     })
-    it('POST /hotels/:address/confirmation. Expect 400 #missingRequired', async () => {
+    it('POST /hotels/:hotelAddress/confirmation. Expect 400 #missingRequired', async () => {
       const body = JSON.stringify({
         password: config.get('password')
       })
@@ -130,7 +130,7 @@ describe('Hotels bookings', function () {
         from: fromDate
       })
 
-      response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAdress')}/book`, {
+      response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/book`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -160,7 +160,7 @@ describe('Hotels bookings', function () {
       expect(requests[0]).to.have.property('guestData', guestData)
       expect(requests[0]).to.have.property('daysAmount', daysAmount.toString())
       expect(Date.parse(requests[0].fromDate)).to.eql(Date.parse(fromDate))
-      expect(requests[0]).to.have.property('unit', config.get('unitAdress'))
+      expect(requests[0]).to.have.property('unit', config.get('unitAddress'))
       expect(requests[0]).to.have.property('from', config.get('user'))
       expect(requests[0]).to.have.property('id')
     })
@@ -200,7 +200,7 @@ describe('Hotels bookings', function () {
         days: daysAmount,
         from: fromDate
       })
-      response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAdress')}/book`, {
+      response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/book`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -222,7 +222,7 @@ describe('Hotels bookings', function () {
       expect(requests[0]).to.have.property('guestData', guestData)
       expect(requests[0]).to.have.property('daysAmount', daysAmount.toString())
       expect(Date.parse(requests[0].fromDate)).to.eql(Date.parse(fromDate))
-      expect(requests[0]).to.have.property('unit', config.get('unitAdress'))
+      expect(requests[0]).to.have.property('unit', config.get('unitAddress'))
       expect(requests[0]).to.have.property('from', config.get('user'))
       expect(requests[0]).to.have.property('id')
     })

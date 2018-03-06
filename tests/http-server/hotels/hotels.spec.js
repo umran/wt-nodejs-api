@@ -121,7 +121,7 @@ describe('Hotels', function () {
     expect(response).to.be.ok
     expect(response).to.have.property('status', 200)
   })
-  it('GET /hotels/:address. Expect 200', async () => {
+  it('GET /hotels/:hotelAddress. Expect 200', async () => {
     const response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}`, {
       method: 'GET',
       headers: {
@@ -135,7 +135,7 @@ describe('Hotels', function () {
     expect(hotel).to.have.property('name', 'Test Hotel')
     expect(hotel).to.have.property('description', 'Test Hotel desccription')
   })
-  it('PUT /hotels/:address. Expect 200 ', async () => {
+  it('PUT /hotels/:hotelAddress. Expect 200 ', async () => {
     const name = 'WT Hotel'
     const description = 'Best hotel for developers.'
 
@@ -175,7 +175,7 @@ describe('Hotels', function () {
     expect(hotel).to.have.property('name', name)
     expect(hotel).to.have.property('description', description)
   })
-  it('PUT /hotels/:address. Expect 400 #missingPassword', async () => {
+  it('PUT /hotels/:hotelAddress. Expect 400 #missingPassword', async () => {
     const name = 'WT Hotel'
     const description = 'Best hotel for developers.'
 
@@ -197,7 +197,7 @@ describe('Hotels', function () {
     const res = await response.json()
     expect(res).to.have.property('code', '#missingPassword')
   })
-  it('PUT /hotels/:address. Expect 400 #missingName', async () => {
+  it('PUT /hotels/:hotelAddress. Expect 400 #missingName', async () => {
     const description = 'Best hotel for developers.'
 
     let body = JSON.stringify({
@@ -218,7 +218,7 @@ describe('Hotels', function () {
     const res = await response.json()
     expect(res).to.have.property('code', '#missingName')
   })
-  it('PUT /hotels/:address . Expect 400 #missingDescription', async () => {
+  it('PUT /hotels/:hotelAddress . Expect 400 #missingDescription', async () => {
     const name = 'WT Hotel'
 
     let body = JSON.stringify({
@@ -239,7 +239,7 @@ describe('Hotels', function () {
     const res = await response.json()
     expect(res).to.have.property('code', '#missingDescription')
   })
-  it('DELETE /hotels/:address. Expect 204', async () => {
+  it('DELETE /hotels/:hotelAddress. Expect 204', async () => {
     const body = JSON.stringify({
       password: config.get('password')
     })
@@ -267,7 +267,7 @@ describe('Hotels', function () {
     const hotels = await response.json()
     expect(hotels).to.be.null
   })
-  it('DELETE /hotels/:address. Expect 400 #missingPassword', async () => {
+  it('DELETE /hotels/:hotelAddress. Expect 400 #missingPassword', async () => {
     const body = JSON.stringify({})
     const response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}`, {
       method: 'DELETE',
@@ -283,7 +283,7 @@ describe('Hotels', function () {
     expect(res).to.have.property('code', '#missingPassword')
   })
   describe('Hotel address', function () {
-    it('PUT /hotels/:address/address. Expect 200 ', async () => {
+    it('PUT /hotels/:hotelAddress/address. Expect 200 ', async () => {
       const lineOne = 'Address'
       const lineTwo = 'State, city and address'
       const zipCode = 'c1414'
@@ -328,7 +328,7 @@ describe('Hotels', function () {
       expect(hotel).to.have.property('zip', zipCode)
       expect(hotel).to.have.property('country', country)
     })
-    it('PUT /hotels/:address/address. Expect 400 #missingPassword', async () => {
+    it('PUT /hotels/:hotelAddress/address. Expect 400 #missingPassword', async () => {
       const lineOne = 'Address'
       const lineTwo = 'State, city and address'
       const zipCode = 'c1414'
@@ -353,7 +353,7 @@ describe('Hotels', function () {
       const res = await response.json()
       expect(res).to.have.property('code', '#missingPassword')
     })
-    it('PUT /hotels/:address/address. Expect 400 #missingLineOne', async () => {
+    it('PUT /hotels/:hotelAddress/address. Expect 400 #missingLineOne', async () => {
       const lineTwo = 'State, city and address'
       const zipCode = 'c1414'
       const country = 'Arg'
@@ -377,7 +377,7 @@ describe('Hotels', function () {
       const res = await response.json()
       expect(res).to.have.property('code', '#missingLineOne')
     })
-    it('PUT /hotels/:address/address. Expect 400 missingLineTwo', async () => {
+    it('PUT /hotels/:hotelAddress/address. Expect 400 missingLineTwo', async () => {
       const lineOne = 'Address'
       const zipCode = 'c1414'
       const country = 'Arg'
@@ -401,7 +401,7 @@ describe('Hotels', function () {
       const res = await response.json()
       expect(res).to.have.property('code', '#missingLineTwo')
     })
-    it('PUT /hotels/:address/address. Expect 400 #missingZipCode', async () => {
+    it('PUT /hotels/:hotelAddress/address. Expect 400 #missingZipCode', async () => {
       const lineOne = 'Address'
       const lineTwo = 'State, city and address'
       const country = 'Arg'
@@ -425,7 +425,7 @@ describe('Hotels', function () {
       const res = await response.json()
       expect(res).to.have.property('code', '#missingZipCode')
     })
-    it('PUT /hotels/:address/address. Expect 400 #missingCountry ', async () => {
+    it('PUT /hotels/:hotelAddress/address. Expect 400 #missingCountry ', async () => {
       const lineOne = 'Address'
       const lineTwo = 'State, city and address'
       const zipCode = 'c1414'
@@ -451,7 +451,7 @@ describe('Hotels', function () {
     })
   })
   describe('Hotel location', function () {
-    it('PUT /hotels/:address/location. Expect 200 ', async () => {
+    it('PUT /hotels/:hotelAddress/location. Expect 200 ', async () => {
       const timezone = 3
       const latitude = 38.002281
       const longitude = 57.557541
@@ -493,7 +493,7 @@ describe('Hotels', function () {
       expect(hotel).to.have.property('latitude', latitude.toString())
       expect(hotel).to.have.property('longitude', longitude.toString())
     })
-    it('PUT /hotels/:address/location. Expect 400 #missingPassword', async () => {
+    it('PUT /hotels/:hotelAddress/location. Expect 400 #missingPassword', async () => {
       const timezone = 3
       const latitude = 38.002281
       const longitude = 57.557541
@@ -516,7 +516,7 @@ describe('Hotels', function () {
       const res = await response.json()
       expect(res).to.have.property('code', '#missingPassword')
     })
-    it('PUT /hotels/:address/location. Expect 400 #missingTimezone', async () => {
+    it('PUT /hotels/:hotelAddress/location. Expect 400 #missingTimezone', async () => {
       const latitude = 38.002281
       const longitude = 57.557541
       let body = JSON.stringify({
@@ -538,7 +538,7 @@ describe('Hotels', function () {
       const res = await response.json()
       expect(res).to.have.property('code', '#missingTimezone')
     })
-    it('PUT /hotels/:address/location. Expect 400 #missingLatitude', async () => {
+    it('PUT /hotels/:hotelAddress/location. Expect 400 #missingLatitude', async () => {
       const timezone = 3
       const longitude = 57.557541
       let body = JSON.stringify({
@@ -560,7 +560,7 @@ describe('Hotels', function () {
       const res = await response.json()
       expect(res).to.have.property('code', '#missingLatitude')
     })
-    it('PUT /hotels/:address/location. Expect 400 #missingLongitude', async () => {
+    it('PUT /hotels/:hotelAddress/location. Expect 400 #missingLongitude', async () => {
       const timezone = 3
       const latitude = 38.002281
       let body = JSON.stringify({
@@ -584,7 +584,7 @@ describe('Hotels', function () {
     })
   })
   describe('Hotel images', function () {
-    it('POST /hotels/:address/images. Expect 200', async () => {
+    it('POST /hotels/:hotelAddress/images. Expect 200', async () => {
       const body = JSON.stringify({
         'password': config.get('password'),
         'url': imageUrl
@@ -612,7 +612,7 @@ describe('Hotels', function () {
       const hotel = hotels[config.get('testAddress')]
       expect(hotel.images).to.include(imageUrl)
     })
-    it('POST /hotels/:address/images. Expect 400 #missingPassword', async () => {
+    it('POST /hotels/:hotelAddress/images. Expect 400 #missingPassword', async () => {
       const body = JSON.stringify({
         'url': 'http://images.com/123'
       })
@@ -630,7 +630,7 @@ describe('Hotels', function () {
       expect(response).to.have.property('status', 400)
       expect(res).to.have.property('code', '#missingPassword')
     })
-    it('POST /hotels/:address/images. Expect 400 #missingUrl', async () => {
+    it('POST /hotels/:hotelAddress/images. Expect 400 #missingUrl', async () => {
       const body = JSON.stringify({
         'password': config.get('password')
       })
@@ -648,7 +648,7 @@ describe('Hotels', function () {
       expect(response).to.have.property('status', 400)
       expect(res).to.have.property('code', '#missingUrl')
     })
-    it('DELETE /hotels/:address/images/:id. Expect 200', async () => {
+    it('DELETE /hotels/:hotelAddress/images/:id. Expect 200', async () => {
       const body = JSON.stringify({
         'password': config.get('password')
       })
@@ -677,7 +677,7 @@ describe('Hotels', function () {
       const hotel = hotels[config.get('testAddress')]
       expect(hotel.images).to.not.include(imageUrl)
     })
-    it('DELETE /hotels/:address/images/:id/0. Expect 400 #missingPassword', async () => {
+    it('DELETE /hotels/:hotelAddress/images/:id/0. Expect 400 #missingPassword', async () => {
       const body = JSON.stringify({})
 
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/images/0`, {

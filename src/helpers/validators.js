@@ -43,9 +43,9 @@ function validateAddImage (req, res, next) {
   next()
 }
 
-function validateType (req, res, next) {
-  const { type } = req.body
-  if (!type) return next(handle('missingType', new Error()))
+function validateUnitType (req, res, next) {
+  const { unitType } = req.body
+  if (!unitType) return next(handle('missingUnitType', new Error()))
   next()
 }
 
@@ -151,7 +151,7 @@ module.exports = {
   validatePasswords,
   validateReservationId,
   validateRequired,
-  validateType,
+  validateUnitType,
   validateUnitTypeInformation,
   validateWallet,
   validateWhiteList

@@ -13,9 +13,9 @@ describe('Unit types', function () {
   Before()
   const unitType = 'TYPE_000'
   const imageUrl = 'picture.jpg'
-  it('POST /hotels/:address/unitTypes. Expect 400 #missingPassword', async () => {
+  it('POST /hotels/:hotelAddress/unitTypes. Expect 400 #missingPassword', async () => {
     const body = JSON.stringify({
-      type: 'TYPE_001'
+      unitType: 'TYPE_001'
     })
     let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes`, {
       method: 'POST',
@@ -30,7 +30,7 @@ describe('Unit types', function () {
     expect(response).to.have.property('status', 400)
     expect(res).to.have.property('code', '#missingPassword')
   })
-  it('PUT /hotels/:address/unitTypes/:type. Expect 200', async () => {
+  it('PUT /hotels/:hotelAddress/unitTypes/:unitType. Expect 200', async () => {
     const description = 'Rural family cabin'
     const minGuests = 1
     const maxGuests = 5
@@ -67,7 +67,7 @@ describe('Unit types', function () {
     expect(hotel.unitTypes[unitType].info).to.have.property('maxGuests', maxGuests)
     expect(hotel.unitTypes[unitType].info).to.have.property('price', price)
   })
-  it('PUT /hotels/:address/unitTypes/:type. Expect 400 #missingPassword', async () => {
+  it('PUT /hotels/:hotelAddress/unitTypes/:unitType. Expect 400 #missingPassword', async () => {
     const description = 'Rural family cabin'
     const minGuests = 1
     const maxGuests = 5
@@ -91,7 +91,7 @@ describe('Unit types', function () {
     const resp = await response.json()
     expect(resp).to.have.property('code', '#missingPassword')
   })
-  it('PUT /hotels/:address/unitTypes/:type. Expect 400 #missingDescription', async () => {
+  it('PUT /hotels/:hotelAddress/unitTypes/:unitType. Expect 400 #missingDescription', async () => {
     const minGuests = 1
     const maxGuests = 5
     const price = '15'
@@ -114,7 +114,7 @@ describe('Unit types', function () {
     const resp = await response.json()
     expect(resp).to.have.property('code', '#missingDescription')
   })
-  it('PUT /hotels/:address/unitTypes/:type. Expect 400 #missingMinGuests', async () => {
+  it('PUT /hotels/:hotelAddress/unitTypes/:unitType. Expect 400 #missingMinGuests', async () => {
     const description = 'Rural family cabin'
     const maxGuests = 5
     const price = '15'
@@ -137,7 +137,7 @@ describe('Unit types', function () {
     const resp = await response.json()
     expect(resp).to.have.property('code', '#missingMinGuests')
   })
-  it('PUT /hotels/:address/unitTypes/:type. Expect 400 #missingMaxGuests', async () => {
+  it('PUT /hotels/:hotelAddress/unitTypes/:unitType. Expect 400 #missingMaxGuests', async () => {
     const description = 'Rural family cabin'
     const minGuests = 1
     const price = '15'
@@ -160,7 +160,7 @@ describe('Unit types', function () {
     const resp = await response.json()
     expect(resp).to.have.property('code', '#missingMaxGuests')
   })
-  it('PUT /hotels/:address/unitTypes/:type. Expect 400 #missingPrice', async () => {
+  it('PUT /hotels/:hotelAddress/unitTypes/:unitType. Expect 400 #missingPrice', async () => {
     const description = 'Rural family cabin'
     const minGuests = 1
     const maxGuests = 5
@@ -184,7 +184,7 @@ describe('Unit types', function () {
     expect(resp).to.have.property('code', '#missingPrice')
   })
   describe('Unit types images', function () {
-    it('POST /hotels/:address/unitTypes/:type/images. Expect 200', async () => {
+    it('POST /hotels/:hotelAddress/unitTypes/:unitType/images. Expect 200', async () => {
       const body = JSON.stringify({
         'password': config.get('password'),
         'url': imageUrl
@@ -211,7 +211,7 @@ describe('Unit types', function () {
       const {hotel} = await response.json()
       expect(hotel.unitTypes[unitType].images).to.include(imageUrl)
     })
-    it('POST /hotels/:address/unitTypes/:type/images. Expect 400 #missingPassword', async () => {
+    it('POST /hotels/:hotelAddress/unitTypes/:unitType/images. Expect 400 #missingPassword', async () => {
       const body = JSON.stringify({
         'url': imageUrl
       })
@@ -227,7 +227,7 @@ describe('Unit types', function () {
       const res = await response.json()
       expect(res).to.have.property('code', '#missingPassword')
     })
-    it('POST /hotels/:address/unitTypes/:type/images. Expect 400 #missingUrl', async () => {
+    it('POST /hotels/:hotelAddress/unitTypes/:unitType/images. Expect 400 #missingUrl', async () => {
       const body = JSON.stringify({
         'password': config.get('password')
       })
@@ -243,7 +243,7 @@ describe('Unit types', function () {
       const res = await response.json()
       expect(res).to.have.property('code', '#missingUrl')
     })
-    it('DELETE /hotels/:address/unitTypes/TYPE_000/images/:id. Expect 200', async () => {
+    it('DELETE /hotels/:hotelAddress/unitTypes/TYPE_000/images/:id. Expect 200', async () => {
       const body = JSON.stringify({
         password: config.get('password')
       })
@@ -274,7 +274,7 @@ describe('Unit types', function () {
     })
   })
   describe('Unit types amenities', function () {
-    it('POST /hotels/:address/unitTypes/TYPE_000/amenities. Expect 200', async () => {
+    it('POST /hotels/:hotelAddress/unitTypes/TYPE_000/amenities. Expect 200', async () => {
       const amenity = 7
       const body = JSON.stringify({
         'password': config.get('password'),
@@ -304,7 +304,7 @@ describe('Unit types', function () {
       const hotel = hotels[config.get('testAddress')]
       expect(hotel.unitTypes['TYPE_000'].amenities).to.include(amenity)
     })
-    it('POST /hotels/:address/unitTypes/TYPE_000/amenities. Expect 400 #missingPassword', async () => {
+    it('POST /hotels/:hotelAddress/unitTypes/TYPE_000/amenities. Expect 400 #missingPassword', async () => {
       const body = JSON.stringify({
         amenity: 5
       })
@@ -321,7 +321,7 @@ describe('Unit types', function () {
       expect(response).to.have.property('status', 400)
       expect(res).to.have.property('code', '#missingPassword')
     })
-    it('POST /hotels/:address/unitTypes/amenities. Expect 400 #missingAmenity', async () => {
+    it('POST /hotels/:hotelAddress/unitTypes/amenities. Expect 400 #missingAmenity', async () => {
       const body = JSON.stringify({
         password: config.get('password')
       })
@@ -338,7 +338,7 @@ describe('Unit types', function () {
       expect(response).to.have.property('status', 400)
       expect(res).to.have.property('code', '#missingAmenity')
     })
-    it('DELETE /hotels/:address/unitTypes/TYPE_000. Expect 200', async () => {
+    it('DELETE /hotels/:hotelAddress/unitTypes/TYPE_000. Expect 200', async () => {
       const defaultAmenity = 5
       const body = JSON.stringify({
         password: config.get('password')
@@ -365,7 +365,7 @@ describe('Unit types', function () {
       const {hotel} = await response.json()
       expect(hotel.unitTypes['TYPE_000'].amenities).to.not.include(defaultAmenity)
     })
-    it('DELETE /hotels/:address/unitTypes/TYPE_000. Expect 400 #missingPassword', async () => {
+    it('DELETE /hotels/:hotelAddress/unitTypes/TYPE_000. Expect 400 #missingPassword', async () => {
       const body = JSON.stringify({})
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/TYPE_000/amenities/5`, {
         method: 'DELETE',

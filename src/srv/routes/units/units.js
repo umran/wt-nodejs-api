@@ -12,9 +12,9 @@ const HotelManager = require('../../../../wt-js-libs/dist/node/HotelManager.js')
 const BookingData = require('../../../../wt-js-libs/dist/node/BookingData.js')
 const User = require('../../../../wt-js-libs/dist/node/User.js')
 
-unitsRouter.post('/hotels/:address/unitTypes/:type/units', validatePassword, async (req, res, next) => {
+unitsRouter.post('/hotels/:hotelAddress/unitTypes/:unitType/units', validatePassword, async (req, res, next) => {
   const { password } = req.body
-  const { address, type } = req.params
+  const {hotelAddress, unitType } = req.params
   let ownerAccount = {}
   try {
     let context = {
@@ -26,7 +26,7 @@ unitsRouter.post('/hotels/:address/unitTypes/:type/units', validatePassword, asy
     context.owner = ownerAccount.address
     const hotelManager = new HotelManager(context)
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.addUnit(address, type)
+    const { logs } = await hotelManager.addUnit(hotelAddress, unitType)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash
@@ -37,12 +37,12 @@ unitsRouter.post('/hotels/:address/unitTypes/:type/units', validatePassword, asy
 })
 
 unitsRouter.delete([
-  '/hotels/:address/unitTypes/:type/units/:unit',
-  '/hotels/:address/units/:unit'
+  '/hotels/:hotelAddress/unitTypes/:unitType/units/:unitAddress',
+  '/hotels/:hotelAddress/units/:unitAddress'
 ], validatePassword,
 async (req, res, next) => {
   const { password } = req.body
-  const { address, unit } = req.params
+  const {hotelAddress, unitAddress } = req.params
   let ownerAccount = {}
   try {
     let context = {
@@ -54,7 +54,7 @@ async (req, res, next) => {
     context.owner = ownerAccount.address
     const hotelManager = new HotelManager(context)
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const { logs } = await hotelManager.removeUnit(address, unit)
+    const { logs } = await hotelManager.removeUnit(hotelAddress, unitAddress)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash
@@ -65,12 +65,12 @@ async (req, res, next) => {
 })
 
 unitsRouter.put([
-  '/hotels/:address/unitTypes/:type/units/:unit/active',
-  '/hotels/:address/units/:unit/active'
+  '/hotels/:hotelAddress/unitTypes/:unitType/units/:unitAddress/active',
+  '/hotels/:hotelAddress/units/:unitAddress/active'
 ], validatePassword, validateActive,
 async (req, res, next) => {
   const { password, active } = req.body
-  const { address, unit } = req.params
+  const {hotelAddress, unitAddress } = req.params
   let ownerAccount = {}
   try {
     let context = {
@@ -82,7 +82,7 @@ async (req, res, next) => {
     context.owner = ownerAccount.address
     const hotelManager = new HotelManager(context)
     hotelManager.web3.eth.accounts.wallet.add(ownerAccount)
-    const {logs} = await hotelManager.setUnitActive(address, unit, active)
+    const {logs} = await hotelManager.setUnitActive(hotelAddress, unitAddress, active)
     hotelManager.web3.eth.accounts.wallet.remove(ownerAccount)
     res.status(200).json({
       txHash: logs[0].transactionHash
@@ -92,9 +92,9 @@ async (req, res, next) => {
   }
 })
 
-unitsRouter.get('/units/:unit/reservation', validateDate, async (req, res, next) => {
+unitsRouter.get('/units/:unitAddress/reservation', validateDate, async (req, res, next) => {
   const { date } = req.body
-  const { unit } = req.params
+  const { unitAddress } = req.params
   try {
     let context = {
       indexAddress: config.get('indexAddress'),
@@ -102,7 +102,7 @@ unitsRouter.get('/units/:unit/reservation', validateDate, async (req, res, next)
       web3: config.get('web3')
     }
     const hotelManager = new HotelManager(context)
-    const reservation = await hotelManager.getReservation(unit, date)
+    const reservation = await hotelManager.getReservation(unitAddress, date)
     res.status(200).json({
       reservation
     })
@@ -111,12 +111,12 @@ unitsRouter.get('/units/:unit/reservation', validateDate, async (req, res, next)
   }
 })
 
-unitsRouter.get('/units/:unitAdress/available', validateDateRange, async (req, res, next) => {
+unitsRouter.get('/units/:unitAddress/available', validateDateRange, async (req, res, next) => {
   const { from, days } = req.body
-  const { unitAdress } = req.params
+  const { unitAddress } = req.params
   try {
     const data = new BookingData(config.get('web3'))
-    const available = await data.unitIsAvailable(unitAdress, from, days)
+    const available = await data.unitIsAvailable(unitAddress, from, days)
     res.status(200).json({available})
   } catch (err) {
     next(handle('web3', err))
