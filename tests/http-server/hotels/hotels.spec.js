@@ -1,697 +1,697 @@
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
-const { expect } = require('chai')
-const fetch = require('node-fetch')
-const config = require('../../../config.js')
+const { expect } = require('chai');
+const fetch = require('node-fetch');
+const config = require('../../../config.js');
 const { AfterEach,
-        BeforeEach,
-        Before } = require('../../hooks.js')
+  BeforeEach,
+  Before } = require('../../hooks.js');
 
 describe('Hotels', function () {
-  AfterEach()
-  BeforeEach()
-  Before()
-  const imageUrl = 'test.jpg'
+  AfterEach();
+  BeforeEach();
+  Before();
+  const imageUrl = 'test.jpg';
   it('POST /hotels. Expect 200', async () => {
-    const hotelName = 'Test Hotel'
-    const hotelDesc = 'Natural and charming atmosphere'
+    const hotelName = 'Test Hotel';
+    const hotelDesc = 'Natural and charming atmosphere';
     const body = JSON.stringify({
       'password': config.get('password'),
       'description': hotelDesc,
-      'name': hotelName
-    })
+      'name': hotelName,
+    });
     let response = await fetch('http://localhost:3000/hotels', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body
-    })
-    expect(response).to.have.property('status', 200)
+      body,
+    });
+    expect(response).to.have.property('status', 200);
 
     response = await fetch('http://localhost:3000/hotels', {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(body)
+        'Content-Length': Buffer.byteLength(body),
       },
-      body
-    })
+      body,
+    });
 
-    const hotels = await response.json()
-    let hotelAddresses = Object.keys(hotels)
-    const hotel = hotels[hotelAddresses[hotelAddresses.length - 1]]
-    expect(hotel).to.have.property('name', hotelName)
-    expect(hotel).to.have.property('description', hotelDesc)
-  })
+    const hotels = await response.json();
+    let hotelAddresses = Object.keys(hotels);
+    const hotel = hotels[hotelAddresses[hotelAddresses.length - 1]];
+    expect(hotel).to.have.property('name', hotelName);
+    expect(hotel).to.have.property('description', hotelDesc);
+  });
   it('POST /hotels. Expect 400 #missingPassword', async () => {
     const body = JSON.stringify({
       'name': 'string',
-      'description': 'string'
-    })
+      'description': 'string',
+    });
     let response = await fetch('http://localhost:3000/hotels', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body
-    })
-    expect(response).to.be.ok
-    expect(response).to.have.property('status', 400)
-    const res = await response.json()
-    expect(res).to.have.property('code', '#missingPassword')
-  })
+      body,
+    });
+    expect(response).to.be.ok;
+    expect(response).to.have.property('status', 400);
+    const res = await response.json();
+    expect(res).to.have.property('code', '#missingPassword');
+  });
   it('POST /hotels. Expect 400 #missingName', async () => {
     const body = JSON.stringify({
       'password': config.get('password'),
-      'description': 'string'
-    })
+      'description': 'string',
+    });
 
     let response = await fetch('http://localhost:3000/hotels', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: body
-    })
-    expect(response).to.be.ok
-    expect(response).to.have.property('status', 400)
-    const res = await response.json()
-    expect(res).to.have.property('code', '#missingName')
-  })
+      body: body,
+    });
+    expect(response).to.be.ok;
+    expect(response).to.have.property('status', 400);
+    const res = await response.json();
+    expect(res).to.have.property('code', '#missingName');
+  });
   it('POST /hotels. Expect 400 #missingDescription', async () => {
     const body = JSON.stringify({
       'password': config.get('password'),
-      'name': 'string'
-    })
+      'name': 'string',
+    });
 
     let response = await fetch('http://localhost:3000/hotels', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body
-    })
-    expect(response).to.be.ok
-    expect(response).to.have.property('status', 400)
-    const res = await response.json()
-    expect(res).to.have.property('code', '#missingDescription')
-  })
+      body,
+    });
+    expect(response).to.be.ok;
+    expect(response).to.have.property('status', 400);
+    const res = await response.json();
+    expect(res).to.have.property('code', '#missingDescription');
+  });
   it('GET /hotels. Expect 200', async () => {
     const body = JSON.stringify({
       'password': config.get('password'),
       'description': 'string',
-      'name': 'name'
-    })
+      'name': 'name',
+    });
 
     let response = await fetch('http://localhost:3000/hotels', {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(body)
+        'Content-Length': Buffer.byteLength(body),
       },
-      body
-    })
-    expect(response).to.be.ok
-    expect(response).to.have.property('status', 200)
-  })
-  it('GET /hotels/:address. Expect 200', async () => {
+      body,
+    });
+    expect(response).to.be.ok;
+    expect(response).to.have.property('status', 200);
+  });
+  it('GET /hotels/:hotelAddress. Expect 200', async () => {
     const response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    })
-    expect(response).to.be.ok
-    expect(response).to.have.property('status', 200)
-    const { hotel } = await response.json()
-    expect(hotel).to.have.property('name', 'Test Hotel')
-    expect(hotel).to.have.property('description', 'Test Hotel desccription')
-  })
-  it('PUT /hotels/:address. Expect 200 ', async () => {
-    const name = 'WT Hotel'
-    const description = 'Best hotel for developers.'
+        'Content-Type': 'application/json',
+      },
+    });
+    expect(response).to.be.ok;
+    expect(response).to.have.property('status', 200);
+    const { hotel } = await response.json();
+    expect(hotel).to.have.property('name', 'Test Hotel');
+    expect(hotel).to.have.property('description', 'Test Hotel desccription');
+  });
+  it('PUT /hotels/:hotelAddress. Expect 200 ', async () => {
+    const name = 'WT Hotel';
+    const description = 'Best hotel for developers.';
 
     let body = JSON.stringify({
       password: config.get('password'),
       name,
-      description
-    })
+      description,
+    });
 
     let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}`, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body
-    })
-    expect(response).to.be.ok
-    expect(response).to.have.property('status', 200)
+      body,
+    });
+    expect(response).to.be.ok;
+    expect(response).to.have.property('status', 200);
     body = JSON.stringify({
-      password: config.get('password')
-    })
+      password: config.get('password'),
+    });
     response = await fetch('http://localhost:3000/hotels', {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(body)
+        'Content-Length': Buffer.byteLength(body),
       },
-      body
-    })
-    expect(response).to.be.ok
-    expect(response).to.have.property('status', 200)
-    const hotels = await response.json()
-    let hotelAddresses = Object.keys(hotels)
-    const hotel = hotels[hotelAddresses[hotelAddresses.length - 1]]
-    expect(hotel).to.have.property('name', name)
-    expect(hotel).to.have.property('description', description)
-  })
-  it('PUT /hotels/:address. Expect 400 #missingPassword', async () => {
-    const name = 'WT Hotel'
-    const description = 'Best hotel for developers.'
+      body,
+    });
+    expect(response).to.be.ok;
+    expect(response).to.have.property('status', 200);
+    const hotels = await response.json();
+    let hotelAddresses = Object.keys(hotels);
+    const hotel = hotels[hotelAddresses[hotelAddresses.length - 1]];
+    expect(hotel).to.have.property('name', name);
+    expect(hotel).to.have.property('description', description);
+  });
+  it('PUT /hotels/:hotelAddress. Expect 400 #missingPassword', async () => {
+    const name = 'WT Hotel';
+    const description = 'Best hotel for developers.';
 
     let body = JSON.stringify({
       name,
-      description
-    })
+      description,
+    });
 
     let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}`, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body
-    })
-    expect(response).to.be.ok
-    expect(response).to.have.property('status', 400)
-    const res = await response.json()
-    expect(res).to.have.property('code', '#missingPassword')
-  })
-  it('PUT /hotels/:address. Expect 400 #missingName', async () => {
-    const description = 'Best hotel for developers.'
+      body,
+    });
+    expect(response).to.be.ok;
+    expect(response).to.have.property('status', 400);
+    const res = await response.json();
+    expect(res).to.have.property('code', '#missingPassword');
+  });
+  it('PUT /hotels/:hotelAddress. Expect 400 #missingName', async () => {
+    const description = 'Best hotel for developers.';
 
     let body = JSON.stringify({
       password: config.get('password'),
-      description
-    })
+      description,
+    });
 
     let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}`, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body
-    })
-    expect(response).to.be.ok
-    expect(response).to.have.property('status', 400)
-    const res = await response.json()
-    expect(res).to.have.property('code', '#missingName')
-  })
-  it('PUT /hotels/:address . Expect 400 #missingDescription', async () => {
-    const name = 'WT Hotel'
+      body,
+    });
+    expect(response).to.be.ok;
+    expect(response).to.have.property('status', 400);
+    const res = await response.json();
+    expect(res).to.have.property('code', '#missingName');
+  });
+  it('PUT /hotels/:hotelAddress . Expect 400 #missingDescription', async () => {
+    const name = 'WT Hotel';
 
     let body = JSON.stringify({
       password: config.get('password'),
-      name
-    })
+      name,
+    });
 
     let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}`, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body
-    })
-    expect(response).to.be.ok
-    expect(response).to.have.property('status', 400)
-    const res = await response.json()
-    expect(res).to.have.property('code', '#missingDescription')
-  })
-  it('DELETE /hotels/:address. Expect 204', async () => {
+      body,
+    });
+    expect(response).to.be.ok;
+    expect(response).to.have.property('status', 400);
+    const res = await response.json();
+    expect(res).to.have.property('code', '#missingDescription');
+  });
+  it('DELETE /hotels/:hotelAddress. Expect 204', async () => {
     const body = JSON.stringify({
-      password: config.get('password')
-    })
+      password: config.get('password'),
+    });
     let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}`, {
       method: 'DELETE',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body
-    })
-    expect(response).to.be.ok
-    expect(response).to.have.property('status', 204)
+      body,
+    });
+    expect(response).to.be.ok;
+    expect(response).to.have.property('status', 204);
     response = await fetch('http://localhost:3000/hotels', {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(body)
+        'Content-Length': Buffer.byteLength(body),
       },
-      body
-    })
-    expect(response).to.be.ok
-    expect(response).to.have.property('status', 200)
-    const hotels = await response.json()
-    expect(hotels).to.be.null
-  })
-  it('DELETE /hotels/:address. Expect 400 #missingPassword', async () => {
-    const body = JSON.stringify({})
+      body,
+    });
+    expect(response).to.be.ok;
+    expect(response).to.have.property('status', 200);
+    const hotels = await response.json();
+    expect(hotels).to.be.null;
+  });
+  it('DELETE /hotels/:hotelAddress. Expect 400 #missingPassword', async () => {
+    const body = JSON.stringify({});
     const response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}`, {
       method: 'DELETE',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body
-    })
-    expect(response).to.be.ok
-    expect(response).to.have.property('status', 400)
-    const res = await response.json()
-    expect(res).to.have.property('code', '#missingPassword')
-  })
+      body,
+    });
+    expect(response).to.be.ok;
+    expect(response).to.have.property('status', 400);
+    const res = await response.json();
+    expect(res).to.have.property('code', '#missingPassword');
+  });
   describe('Hotel address', function () {
-    it('PUT /hotels/:address/address. Expect 200 ', async () => {
-      const lineOne = 'Address'
-      const lineTwo = 'State, city and address'
-      const zipCode = 'c1414'
-      const country = 'Arg'
+    it('PUT /hotels/:hotelAddress/address. Expect 200 ', async () => {
+      const lineOne = 'Address';
+      const lineTwo = 'State, city and address';
+      const zipCode = 'c1414';
+      const country = 'Arg';
       let body = JSON.stringify({
         password: config.get('password'),
         lineOne,
         lineTwo,
         zipCode,
-        country
-      })
+        country,
+      });
 
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/address`, {
         method: 'PUT',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body
-      })
-      expect(response).to.be.ok
-      expect(response).to.have.property('status', 200)
+        body,
+      });
+      expect(response).to.be.ok;
+      expect(response).to.have.property('status', 200);
       body = JSON.stringify({
-        password: config.get('password')
-      })
+        password: config.get('password'),
+      });
       response = await fetch('http://localhost:3000/hotels', {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(body)
+          'Content-Length': Buffer.byteLength(body),
         },
-        body
-      })
-      expect(response).to.be.ok
-      expect(response).to.have.property('status', 200)
-      const hotels = await response.json()
-      let hotelAddresses = Object.keys(hotels)
-      const hotel = hotels[hotelAddresses[hotelAddresses.length - 1]]
-      expect(hotel).to.have.property('lineOne', lineOne)
-      expect(hotel).to.have.property('lineTwo', lineTwo)
-      expect(hotel).to.have.property('zip', zipCode)
-      expect(hotel).to.have.property('country', country)
-    })
-    it('PUT /hotels/:address/address. Expect 400 #missingPassword', async () => {
-      const lineOne = 'Address'
-      const lineTwo = 'State, city and address'
-      const zipCode = 'c1414'
-      const country = 'Arg'
+        body,
+      });
+      expect(response).to.be.ok;
+      expect(response).to.have.property('status', 200);
+      const hotels = await response.json();
+      let hotelAddresses = Object.keys(hotels);
+      const hotel = hotels[hotelAddresses[hotelAddresses.length - 1]];
+      expect(hotel).to.have.property('lineOne', lineOne);
+      expect(hotel).to.have.property('lineTwo', lineTwo);
+      expect(hotel).to.have.property('zip', zipCode);
+      expect(hotel).to.have.property('country', country);
+    });
+    it('PUT /hotels/:hotelAddress/address. Expect 400 #missingPassword', async () => {
+      const lineOne = 'Address';
+      const lineTwo = 'State, city and address';
+      const zipCode = 'c1414';
+      const country = 'Arg';
       let body = JSON.stringify({
         lineOne,
         lineTwo,
         zipCode,
-        country
-      })
+        country,
+      });
 
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/address`, {
         method: 'PUT',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body
-      })
-      expect(response).to.be.ok
-      expect(response).to.have.property('status', 400)
-      const res = await response.json()
-      expect(res).to.have.property('code', '#missingPassword')
-    })
-    it('PUT /hotels/:address/address. Expect 400 #missingLineOne', async () => {
-      const lineTwo = 'State, city and address'
-      const zipCode = 'c1414'
-      const country = 'Arg'
+        body,
+      });
+      expect(response).to.be.ok;
+      expect(response).to.have.property('status', 400);
+      const res = await response.json();
+      expect(res).to.have.property('code', '#missingPassword');
+    });
+    it('PUT /hotels/:hotelAddress/address. Expect 400 #missingLineOne', async () => {
+      const lineTwo = 'State, city and address';
+      const zipCode = 'c1414';
+      const country = 'Arg';
       let body = JSON.stringify({
         password: config.get('password'),
         lineTwo,
         zipCode,
-        country
-      })
+        country,
+      });
 
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/address`, {
         method: 'PUT',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body
-      })
-      expect(response).to.be.ok
-      expect(response).to.have.property('status', 400)
-      const res = await response.json()
-      expect(res).to.have.property('code', '#missingLineOne')
-    })
-    it('PUT /hotels/:address/address. Expect 400 missingLineTwo', async () => {
-      const lineOne = 'Address'
-      const zipCode = 'c1414'
-      const country = 'Arg'
+        body,
+      });
+      expect(response).to.be.ok;
+      expect(response).to.have.property('status', 400);
+      const res = await response.json();
+      expect(res).to.have.property('code', '#missingLineOne');
+    });
+    it('PUT /hotels/:hotelAddress/address. Expect 400 missingLineTwo', async () => {
+      const lineOne = 'Address';
+      const zipCode = 'c1414';
+      const country = 'Arg';
       let body = JSON.stringify({
         password: config.get('password'),
         lineOne,
         zipCode,
-        country
-      })
+        country,
+      });
 
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/address`, {
         method: 'PUT',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body
-      })
-      expect(response).to.be.ok
-      expect(response).to.have.property('status', 400)
-      const res = await response.json()
-      expect(res).to.have.property('code', '#missingLineTwo')
-    })
-    it('PUT /hotels/:address/address. Expect 400 #missingZipCode', async () => {
-      const lineOne = 'Address'
-      const lineTwo = 'State, city and address'
-      const country = 'Arg'
+        body,
+      });
+      expect(response).to.be.ok;
+      expect(response).to.have.property('status', 400);
+      const res = await response.json();
+      expect(res).to.have.property('code', '#missingLineTwo');
+    });
+    it('PUT /hotels/:hotelAddress/address. Expect 400 #missingZipCode', async () => {
+      const lineOne = 'Address';
+      const lineTwo = 'State, city and address';
+      const country = 'Arg';
       let body = JSON.stringify({
         password: config.get('password'),
         lineOne,
         lineTwo,
-        country
-      })
+        country,
+      });
 
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/address`, {
         method: 'PUT',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body
-      })
-      expect(response).to.be.ok
-      expect(response).to.have.property('status', 400)
-      const res = await response.json()
-      expect(res).to.have.property('code', '#missingZipCode')
-    })
-    it('PUT /hotels/:address/address. Expect 400 #missingCountry ', async () => {
-      const lineOne = 'Address'
-      const lineTwo = 'State, city and address'
-      const zipCode = 'c1414'
+        body,
+      });
+      expect(response).to.be.ok;
+      expect(response).to.have.property('status', 400);
+      const res = await response.json();
+      expect(res).to.have.property('code', '#missingZipCode');
+    });
+    it('PUT /hotels/:hotelAddress/address. Expect 400 #missingCountry ', async () => {
+      const lineOne = 'Address';
+      const lineTwo = 'State, city and address';
+      const zipCode = 'c1414';
       let body = JSON.stringify({
         password: config.get('password'),
         lineOne,
         lineTwo,
-        zipCode
-      })
+        zipCode,
+      });
 
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/address`, {
         method: 'PUT',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body
-      })
-      expect(response).to.be.ok
-      expect(response).to.have.property('status', 400)
-      const res = await response.json()
-      expect(res).to.have.property('code', '#missingCountry')
-    })
-  })
+        body,
+      });
+      expect(response).to.be.ok;
+      expect(response).to.have.property('status', 400);
+      const res = await response.json();
+      expect(res).to.have.property('code', '#missingCountry');
+    });
+  });
   describe('Hotel location', function () {
-    it('PUT /hotels/:address/location. Expect 200 ', async () => {
-      const timezone = 3
-      const latitude = 38.002281
-      const longitude = 57.557541
+    it('PUT /hotels/:hotelAddress/location. Expect 200 ', async () => {
+      const timezone = 3;
+      const latitude = 38.002281;
+      const longitude = 57.557541;
       let body = JSON.stringify({
         password: config.get('password'),
         timezone,
         latitude,
-        longitude
-      })
+        longitude,
+      });
 
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/location`, {
         method: 'PUT',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body
-      })
-      expect(response).to.be.ok
-      expect(response).to.have.property('status', 200)
+        body,
+      });
+      expect(response).to.be.ok;
+      expect(response).to.have.property('status', 200);
       body = JSON.stringify({
-        password: config.get('password')
-      })
+        password: config.get('password'),
+      });
       response = await fetch('http://localhost:3000/hotels', {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(body)
+          'Content-Length': Buffer.byteLength(body),
         },
-        body
-      })
-      expect(response).to.be.ok
-      expect(response).to.have.property('status', 200)
-      const hotels = await response.json()
-      let hotelAddresses = Object.keys(hotels)
-      const hotel = hotels[hotelAddresses[hotelAddresses.length - 1]]
-      expect(hotel).to.have.property('timezone', timezone)
-      expect(hotel).to.have.property('latitude', latitude.toString())
-      expect(hotel).to.have.property('longitude', longitude.toString())
-    })
-    it('PUT /hotels/:address/location. Expect 400 #missingPassword', async () => {
-      const timezone = 3
-      const latitude = 38.002281
-      const longitude = 57.557541
+        body,
+      });
+      expect(response).to.be.ok;
+      expect(response).to.have.property('status', 200);
+      const hotels = await response.json();
+      let hotelAddresses = Object.keys(hotels);
+      const hotel = hotels[hotelAddresses[hotelAddresses.length - 1]];
+      expect(hotel).to.have.property('timezone', timezone);
+      expect(hotel).to.have.property('latitude', latitude.toString());
+      expect(hotel).to.have.property('longitude', longitude.toString());
+    });
+    it('PUT /hotels/:hotelAddress/location. Expect 400 #missingPassword', async () => {
+      const timezone = 3;
+      const latitude = 38.002281;
+      const longitude = 57.557541;
       let body = JSON.stringify({
         timezone,
         latitude,
-        longitude
-      })
+        longitude,
+      });
 
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/location`, {
         method: 'PUT',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body
-      })
-      expect(response).to.be.ok
-      expect(response).to.have.property('status', 400)
-      const res = await response.json()
-      expect(res).to.have.property('code', '#missingPassword')
-    })
-    it('PUT /hotels/:address/location. Expect 400 #missingTimezone', async () => {
-      const latitude = 38.002281
-      const longitude = 57.557541
+        body,
+      });
+      expect(response).to.be.ok;
+      expect(response).to.have.property('status', 400);
+      const res = await response.json();
+      expect(res).to.have.property('code', '#missingPassword');
+    });
+    it('PUT /hotels/:hotelAddress/location. Expect 400 #missingTimezone', async () => {
+      const latitude = 38.002281;
+      const longitude = 57.557541;
       let body = JSON.stringify({
         password: config.get('password'),
         latitude,
-        longitude
-      })
+        longitude,
+      });
 
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/location`, {
         method: 'PUT',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body
-      })
-      expect(response).to.be.ok
-      expect(response).to.have.property('status', 400)
-      const res = await response.json()
-      expect(res).to.have.property('code', '#missingTimezone')
-    })
-    it('PUT /hotels/:address/location. Expect 400 #missingLatitude', async () => {
-      const timezone = 3
-      const longitude = 57.557541
+        body,
+      });
+      expect(response).to.be.ok;
+      expect(response).to.have.property('status', 400);
+      const res = await response.json();
+      expect(res).to.have.property('code', '#missingTimezone');
+    });
+    it('PUT /hotels/:hotelAddress/location. Expect 400 #missingLatitude', async () => {
+      const timezone = 3;
+      const longitude = 57.557541;
       let body = JSON.stringify({
         password: config.get('password'),
         timezone,
-        longitude
-      })
+        longitude,
+      });
 
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/location`, {
         method: 'PUT',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body
-      })
-      expect(response).to.be.ok
-      expect(response).to.have.property('status', 400)
-      const res = await response.json()
-      expect(res).to.have.property('code', '#missingLatitude')
-    })
-    it('PUT /hotels/:address/location. Expect 400 #missingLongitude', async () => {
-      const timezone = 3
-      const latitude = 38.002281
+        body,
+      });
+      expect(response).to.be.ok;
+      expect(response).to.have.property('status', 400);
+      const res = await response.json();
+      expect(res).to.have.property('code', '#missingLatitude');
+    });
+    it('PUT /hotels/:hotelAddress/location. Expect 400 #missingLongitude', async () => {
+      const timezone = 3;
+      const latitude = 38.002281;
       let body = JSON.stringify({
         password: config.get('password'),
         timezone,
-        latitude
-      })
+        latitude,
+      });
 
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/location`, {
         method: 'PUT',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body
-      })
-      expect(response).to.be.ok
-      expect(response).to.have.property('status', 400)
-      const res = await response.json()
-      expect(res).to.have.property('code', '#missingLongitude')
-    })
-  })
+        body,
+      });
+      expect(response).to.be.ok;
+      expect(response).to.have.property('status', 400);
+      const res = await response.json();
+      expect(res).to.have.property('code', '#missingLongitude');
+    });
+  });
   describe('Hotel images', function () {
-    it('POST /hotels/:address/images. Expect 200', async () => {
+    it('POST /hotels/:hotelAddress/images. Expect 200', async () => {
       const body = JSON.stringify({
         'password': config.get('password'),
-        'url': imageUrl
-      })
+        'url': imageUrl,
+      });
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/images`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body
-      })
-      expect(response).to.have.property('status', 200)
+        body,
+      });
+      expect(response).to.have.property('status', 200);
       response = await fetch('http://localhost:3000/hotels', {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(body)
+          'Content-Length': Buffer.byteLength(body),
         },
-        body
-      })
+        body,
+      });
 
-      const hotels = await response.json()
-      const hotel = hotels[config.get('testAddress')]
-      expect(hotel.images).to.include(imageUrl)
-    })
-    it('POST /hotels/:address/images. Expect 400 #missingPassword', async () => {
+      const hotels = await response.json();
+      const hotel = hotels[config.get('testAddress')];
+      expect(hotel.images).to.include(imageUrl);
+    });
+    it('POST /hotels/:hotelAddress/images. Expect 400 #missingPassword', async () => {
       const body = JSON.stringify({
-        'url': 'http://images.com/123'
-      })
-
-      let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/images`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body
-      })
-      expect(response).to.be.ok
-      const res = await response.json()
-      expect(response).to.have.property('status', 400)
-      expect(res).to.have.property('code', '#missingPassword')
-    })
-    it('POST /hotels/:address/images. Expect 400 #missingUrl', async () => {
-      const body = JSON.stringify({
-        'password': config.get('password')
-      })
+        'url': 'http://images.com/123',
+      });
 
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/images`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body
-      })
-      expect(response).to.be.ok
-      const res = await response.json()
-      expect(response).to.have.property('status', 400)
-      expect(res).to.have.property('code', '#missingUrl')
-    })
-    it('DELETE /hotels/:address/images/:id. Expect 200', async () => {
+        body,
+      });
+      expect(response).to.be.ok;
+      const res = await response.json();
+      expect(response).to.have.property('status', 400);
+      expect(res).to.have.property('code', '#missingPassword');
+    });
+    it('POST /hotels/:hotelAddress/images. Expect 400 #missingUrl', async () => {
       const body = JSON.stringify({
-        'password': config.get('password')
-      })
+        'password': config.get('password'),
+      });
+
+      let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/images`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body,
+      });
+      expect(response).to.be.ok;
+      const res = await response.json();
+      expect(response).to.have.property('status', 400);
+      expect(res).to.have.property('code', '#missingUrl');
+    });
+    it('DELETE /hotels/:hotelAddress/images/:id. Expect 200', async () => {
+      const body = JSON.stringify({
+        'password': config.get('password'),
+      });
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/images/0`, {
         method: 'DELETE',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body
-      })
-      expect(response).to.be.ok
-      expect(response).to.have.property('status', 204)
+        body,
+      });
+      expect(response).to.be.ok;
+      expect(response).to.have.property('status', 204);
 
       response = await fetch('http://localhost:3000/hotels', {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(body)
+          'Content-Length': Buffer.byteLength(body),
         },
-        body
-      })
+        body,
+      });
 
-      const hotels = await response.json()
-      const hotel = hotels[config.get('testAddress')]
-      expect(hotel.images).to.not.include(imageUrl)
-    })
-    it('DELETE /hotels/:address/images/:id/0. Expect 400 #missingPassword', async () => {
-      const body = JSON.stringify({})
+      const hotels = await response.json();
+      const hotel = hotels[config.get('testAddress')];
+      expect(hotel.images).to.not.include(imageUrl);
+    });
+    it('DELETE /hotels/:hotelAddress/images/:id/0. Expect 400 #missingPassword', async () => {
+      const body = JSON.stringify({});
 
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/images/0`, {
         method: 'DELETE',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body
-      })
-      expect(response).to.be.ok
-      const res = await response.json()
-      expect(response).to.have.property('status', 400)
-      expect(res).to.have.property('code', '#missingPassword')
-    })
-  })
-})
+        body,
+      });
+      expect(response).to.be.ok;
+      const res = await response.json();
+      expect(response).to.have.property('status', 400);
+      expect(res).to.have.property('code', '#missingPassword');
+    });
+  });
+});

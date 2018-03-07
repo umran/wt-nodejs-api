@@ -327,7 +327,7 @@
         }
       }
     },
-    "/hotels/{address}":{
+    "/hotels/{hotelAddress}":{
       "get":{
         "tags": [ "Hotel" ],
         "summary": "Get Hotel.",
@@ -462,7 +462,7 @@
         }
       }
     },
-    "/hotels/{address}/address": {
+    "/hotels/{hotelAddress}/address": {
       "put": {
         "tags": [ "Hotel" ],
         "summary": "Hotel's address.",
@@ -530,7 +530,7 @@
         }
       }
     },
-    "/hotels/{address}/confirmBooking": {
+    "/hotels/{hotelAddress}/confirmBooking": {
       "post": {
         "tags": [ "Hotel" ],
         "summary": "Confirm booking.",
@@ -581,7 +581,7 @@
         }
       }
     },
-    "/hotels/{address}/confirmation": {
+    "/hotels/{hotelAddress}/confirmation": {
       "put": {
         "tags": [ "Hotel" ],
         "summary": "Confirm booking.",
@@ -675,7 +675,7 @@
           }
         }
     },
-    "/hotels/{address}/location": {
+    "/hotels/{hotelAddress}/location": {
       "put": {
         "tags": [ "Hotel" ],
         "summary": "Hotel's location.",
@@ -736,7 +736,7 @@
         }
       }
     },
-    "/hotels/{address}/images": {
+    "/hotels/{hotelAddress}/images": {
       "get": {
         "tags": [ "Hotel" ],
         "summary": "Hotel's images.",
@@ -860,7 +860,7 @@
         }
       }
     },
-    "/hotels/{address}/images/{id}": {
+    "/hotels/{hotelAddress}/images/{id}": {
         "delete": {
           "tags": [ "Hotel" ],
           "summary": "remove image from hotel.",
@@ -914,7 +914,7 @@
           }
         }
     },
-    "/hotels/{address}/unitTypes": {
+    "/hotels/{hotelAddress}/unitTypes": {
       "post": {
         "tags": [ "Unit types" ],
         "summary": "Add unit type to hotel",
@@ -996,7 +996,7 @@
 
       }
     },
-    "/hotels/{address}/unitTypes/{type}": {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}": {
       "delete": {
         "tags": [ "Unit types" ],
         "summary": "remove unity type from hotel.",
@@ -1122,7 +1122,7 @@
         }
       }
     },
-    "/hotels/{address}/unitTypes/{type}/images": {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/images": {
       "post": {
         "tags": [ "Unit types" ],
         "summary": "Add image to unit type",
@@ -1180,7 +1180,7 @@
         }
       }
     },
-    "/hotels/{address}/unitTypes/{type}/images/{index}": {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/images/{index}": {
       "delete": {
         "tags": [ "Unit types" ],
         "summary": "Remove image from unit type",
@@ -1240,7 +1240,7 @@
         }
       }
     },
-    "/hotels/{address}/unitTypes/{type}/amenities": {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/amenities": {
       "post": {
         "tags": [ "Unit types" ],
         "summary": "Create amenities.",
@@ -1299,7 +1299,7 @@
         }
       }
     },
-    "/hotels/{address}/unitTypes/{type}/amenities/{amenity}": {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/amenities/{amenity}": {
       "delete": {
         "tags": [ "Unit types" ],
         "summary": "remove amenity.",
@@ -1360,7 +1360,7 @@
         }
       }
     },
-    "/hotels/{address}/unitTypes/{type}/units": {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/units": {
       "post": {
         "tags": [ "Units" ],
         "summary": "Create units.",
@@ -1414,7 +1414,7 @@
         }
       }
     },
-    "/hotels/{address}/unitTypes/{type}/units/{unit}" : {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/units/{unitAddress}" : {
       "delete": {
         "tags": [ "Units" ],
         "summary": "remove unit.",
@@ -1475,7 +1475,7 @@
         }
       }
     },
-    "/hotels/{address}/unitTypes/{type}/units/{unit}/active" : {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/units/{unitAddress}/active" : {
       "put": {
         "tags": [ "Units" ],
         "summary": "Active status.",
@@ -1679,7 +1679,7 @@
         }
       }
     },
-    "/hotels/{address}/units/{unit}/defaultPrice" : {
+    "/hotels/{hotelAddress}/units/{unitAddress}/defaultPrice" : {
       "put": {
         "tags": [ "Units" ],
         "summary": "Set default price.",
@@ -1738,7 +1738,7 @@
         }
       }
     },
-    "/hotels/{address}/units/{unit}/defaultLifPrice" : {
+    "/hotels/{hotelAddress}/units/{unitAddress}/defaultLifPrice" : {
       "post": {
         "tags": [ "Units" ],
         "summary": "Set default Lif price.",
@@ -1797,7 +1797,7 @@
         }
       }
     },
-    "/hotels/{address}/units/{unit}/specialLifPrice" : {
+    "/hotels/{hotelAddress}/units/{unitAddress}/specialLifPrice" : {
       "post": {
         "tags": [ "Units" ],
         "summary": "Set special Lif price.",
@@ -1825,7 +1825,9 @@
             "schema": {
               "required": [
                 "password",
-                "price"
+                "price",
+                "from",
+                "days"
               ],
               "properties": {
                 "password": {
@@ -1834,6 +1836,14 @@
                 },
                 "price": {
                   "description": "Special price.",
+                  "type": "number"
+                },
+                "from": {
+                  "description": "Initla date.",
+                  "type": "Date"
+                },
+                "days": {
+                  "description": "Amount of days.",
                   "type": "number"
                 }
               }
@@ -1856,7 +1866,7 @@
         }
       }
     },
-    "/hotels/{address}/units/{unit}/specialPrice" : {
+    "/hotels/{hotelAddress}/units/{unitAddress}/specialPrice" : {
       "post": {
         "tags": [ "Units" ],
         "summary": "Set special price.",
@@ -1884,7 +1894,9 @@
             "schema": {
               "required": [
                 "password",
-                "price"
+                "price",
+                "from",
+                "days"
               ],
               "properties": {
                 "password": {
@@ -1893,6 +1905,14 @@
                 },
                 "price": {
                   "description": "Special price.",
+                  "type": "number"
+                },
+                "from": {
+                  "description": "Initla date.",
+                  "type": "Date"
+                },
+                "days": {
+                  "description": "Amount of days.",
                   "type": "number"
                 }
               }
@@ -1915,7 +1935,7 @@
         }
       }
     },
-    "/hotels/{address}/units/{unit}/currencyCode" : {
+    "/hotels/{hotelAddress}/units/{unitAddress}/currencyCode" : {
        "post": {
          "tags": [ "Units" ],
          "summary": "Set currency Code.",
@@ -1974,7 +1994,7 @@
          }
        }
      },
-     "/units/{unitAdress}/available":{
+     "/units/{unitAddress}/available":{
          "get":{
            "tags": [ "Units" ],
          "summary": "Unit availability.",
@@ -2029,7 +2049,7 @@
            }
          }
        },
-    "/units/{unit}/cost":{
+    "/units/{unitAddress}/cost":{
         "get":{
           "tags": [ "Units" ],
           "summary": "Get cost",
@@ -2079,7 +2099,7 @@
           }
         }
       },
-      "/units/{unit}/lifCost":{
+      "/units/{unitAddress}/lifCost":{
           "get":{
             "tags": [ "Units" ],
             "summary": "Get Lif costs.",
@@ -2129,7 +2149,7 @@
             }
           }
       },
-      "/units/{unit}/reservations":{
+      "/units/{unitAddress}/reservations":{
             "get":{
               "tags": [ "Units" ],
               "summary": "Get reservations.",
