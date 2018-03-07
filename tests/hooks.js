@@ -4,7 +4,6 @@ const { expect } = require('chai');
 const fetch = require('node-fetch');
 const config = require('../config.js');
 const { web3providerFactory } = require('@windingtree/wt-js-libs');
-const { accounts, deploy } = web3providerFactory.getInstance(config.get('web3'));
 
 const { app } = require('../src/srv/service');
 const lifData = require('./lifContract');
@@ -15,13 +14,14 @@ let fundingSource;
 let daoAccount;
 let ownerAccount;
 let server;
+config.set('web3Provider', 'http://localhost:8545');
+config.updateWeb3Provider();
+const { accounts, deploy } = web3providerFactory.getInstance(config.get('web3'));
 
 const Before = () => (
   before(async function () {
     config.set('log', false);
     config.set('password', 'test123');
-    config.set('web3Provider', 'http://localhost:8545');
-    config.updateWeb3Provider();
     config.set('privateKeyDir', 'keys/test.json');
     const wallet = await config.get('web3').eth.accounts.wallet.create(3);
     const createdAccounts = await config.get('web3').eth.getAccounts();
@@ -29,9 +29,9 @@ const Before = () => (
     ownerAccount = wallet['0'].address;
     daoAccount = wallet['1'].address;
     config.set('user', wallet['2'].address);
-    await accounts.fundAccount(fundingSource, ownerAccount, '50', config.get('web3'));
-    await accounts.fundAccount(fundingSource, daoAccount, '50', config.get('web3'));
-    await accounts.fundAccount(fundingSource, config.get('user'), '50', config.get('web3'));
+    await accounts.fundAccount(fundingSource, ownerAccount, '50');
+    await accounts.fundAccount(fundingSource, daoAccount, '50');
+    await accounts.fundAccount(fundingSource, config.get('user'), '50');
   })
 );
 const BeforeEach = () => (
