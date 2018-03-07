@@ -8,9 +8,9 @@ const { validatePassword,
         validateDateRange } = require('../../../helpers/validators')
 
 const { handle } = require('../../../../errors')
-const HotelManager = require('../../../../wt-js-libs/dist/node/HotelManager.js')
-const BookingData = require('../../../../wt-js-libs/dist/node/BookingData.js')
-const User = require('../../../../wt-js-libs/dist/node/User.js')
+const HotelManager = require('@windingtree/wt-js-libs')
+const BookingData = require('@windingtree/wt-js-libs')
+const User = require('@windingtree/wt-js-libs')
 
 unitsRouter.post('/hotels/:address/unitTypes/:type/units', validatePassword, async (req, res, next) => {
   const { password } = req.body

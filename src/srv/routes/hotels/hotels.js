@@ -8,8 +8,8 @@ const { validatePassword,
         validateAddImage
       } = require('../../../helpers/validators')
 const { handle } = require('../../../../errors')
-const HotelManager = require('../../../../wt-js-libs/dist/node/HotelManager.js')
-const Utils = require('../../../../wt-js-libs/dist/node/Utils.js')
+const {HotelManager} = require('@windingtree/wt-js-libs')
+const {Utils} = require('@windingtree/wt-js-libs')
 
 const config = require('../../../../config.js')
 

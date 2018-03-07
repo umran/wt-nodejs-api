@@ -6,8 +6,8 @@ const { validatePassword,
         validateRequired,
         validateReservationId } = require('../../../helpers/validators')
 const { handle } = require('../../../../errors')
-const HotelManager = require('../../../../wt-js-libs/dist/node/HotelManager.js')
-const BookingData = require('../../../../wt-js-libs/dist/node/BookingData.js')
+const {HotelManager} = require('@windingtree/wt-js-libs')
+const {BookingData} = require('@windingtree/wt-js-libs')
 
 const config = require('../../../../config.js')
 

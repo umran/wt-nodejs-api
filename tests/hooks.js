@@ -3,7 +3,9 @@
 const { expect } = require('chai')
 const fetch = require('node-fetch')
 const config = require('../config.js')
-const utils = require('../wt-js-libs/libs/utils/index')
+const {web3providerFactory} = require('@windingtree/wt-js-libs')
+const {accounts, deploy} = web3providerFactory.getInstance(config.get('web3'))
+
 const { app } = require('../src/srv/service')
 const lifData = require('./lifContract')
 const gasMargin = 1.5
@@ -14,6 +16,8 @@ let daoAccount
 let ownerAccount
 let server
 
+
+
 const Before = () => (
   before(async function () {
     config.set('log', false)
@@ -22,20 +26,20 @@ const Before = () => (
     config.updateWeb3Provider()
     config.set('privateKeyDir', 'keys/test.json')
     const wallet = await config.get('web3').eth.accounts.wallet.create(3)
-    const accounts = await config.get('web3').eth.getAccounts()
-    fundingSource = accounts[0]
+    const createdAccounts = await config.get('web3').eth.getAccounts()
+    fundingSource = createdAccounts[0]
     ownerAccount = wallet['0'].address
     daoAccount = wallet['1'].address
     config.set('user', wallet['2'].address)
-    await utils.fundAccount(fundingSource, ownerAccount, '50', config.get('web3'))
-    await utils.fundAccount(fundingSource, daoAccount, '50', config.get('web3'))
-    await utils.fundAccount(fundingSource, config.get('user'), '50', config.get('web3'))
+    await accounts.fundAccount(fundingSource, ownerAccount, '50', config.get('web3'))
+    await accounts.fundAccount(fundingSource, daoAccount, '50', config.get('web3'))
+    await accounts.fundAccount(fundingSource, config.get('user'), '50', config.get('web3'))
   })
 )
 const BeforeEach = () => (
   beforeEach(async function () {
     config.set('whiteList',["127.0.0.1"])
-    index = await utils.deployIndex({
+    index = await deploy.deployIndex({
       owner: daoAccount,
       gasMargin: gasMargin,
       web3: config.get('web3')
@@ -45,7 +49,7 @@ const BeforeEach = () => (
     server = await app.listen(3000)
     await setUpWallet()
     await generateHotel(daoAccount)
-    await deployLifContract(daoAccount, config.get('user'), index)
+    await deploy.deployLifContract(daoAccount, config.get('user'), index)
   })
 )
 const AfterEach = () => (
