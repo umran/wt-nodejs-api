@@ -381,4 +381,67 @@ describe('Unit types', function () {
       expect(res).to.have.property('code', '#missingPassword');
     });
   });
+  describe('Unit type prices', function () {
+    it('POST /hotels/:hotelAddress/units/:unitAddress/currencyCode. Expect 200', async () => {
+      const body = JSON.stringify({
+        password: config.get('password'),
+        code: 948,
+      });
+      let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitType}/currencyCode`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body,
+      });
+      expect(response).to.be.ok;
+      expect(response).to.have.property('status', 200);
+      response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(body),
+        },
+        body,
+      });
+      const { hotel } = await response.json();
+      expect(hotel.unitTypes[unitType]).to.have.property('currencyCode', 'CHW');
+    });
+    it('POST /hotels/:hotelAddress/units/:unitAddress/currencyCode. Expect 400 #missingPassword', async () => {
+      const body = JSON.stringify({
+        code: 948,
+      });
+      let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitType}/currencyCode`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body,
+      });
+      expect(response).to.be.ok;
+      expect(response).to.have.property('status', 400);
+      const resp = await response.json();
+      expect(resp).to.have.property('code', '#missingPassword');
+    });
+    it('POST /hotels/:hotelAddress/units/:unitAddress/currencyCode. Expect 400 #missingCode', async () => {
+      const body = JSON.stringify({
+        password: config.get('password'),
+      });
+      let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitType}/currencyCode`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body,
+      });
+      expect(response).to.be.ok;
+      expect(response).to.have.property('status', 400);
+      const resp = await response.json();
+      expect(resp).to.have.property('code', '#missingCode');
+    });
+  });
 });

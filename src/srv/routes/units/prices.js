@@ -3,7 +3,6 @@ const pricesRouter = express.Router();
 const { loadAccount } = require('../../../helpers/crypto');
 const { validatePassword,
   validatePrice,
-  validateCode,
   validateCost,
   validateDateRange } = require('../../../helpers/validators');
 
@@ -70,33 +69,6 @@ async (req, res, next) => {
   }
 });
 
-pricesRouter.post([
-  '/hotels/:hotelAddress/unitTypes/:unitType/units/:unitAddress/currencyCode',
-  '/hotels/:hotelAddress/units/:unitAddress/currencyCode',
-], validatePassword, validateCode,
-async (req, res, next) => {
-  const { password, code } = req.body;
-  const { hotelAddress, unitAddress } = req.params;
-  let ownerAccount = {};
-  try {
-    let context = {
-      indexAddress: config.get('indexAddress'),
-      gasMargin: config.get('gasMargin'),
-      web3provider: config.get('web3'),
-    };
-    ownerAccount = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
-    context.owner = ownerAccount.address;
-    const hotelManager = new HotelManager(context);
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
-    await hotelManager.setCurrencyCode(hotelAddress, unitAddress, code);
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
-    res.status(200).json({
-      txHash: true, // logs[0].transactionHash
-    });
-  } catch (err) {
-    next(handle('web3', err));
-  }
-});
 pricesRouter.post([
   '/hotels/:hotelAddress/unitTypes/:unitType/units/:unitAddress/specialLifPrice',
   '/hotels/:hotelAddress/units/:unitAddress/specialLifPrice',

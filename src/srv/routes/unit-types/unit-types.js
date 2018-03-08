@@ -6,7 +6,8 @@ const { validatePassword,
   validateUnitType,
   validateAddImage,
   validateUnitTypeInformation,
-  validateAmenity } = require('../../../helpers/validators');
+  validateAmenity,
+  validateCode } = require('../../../helpers/validators');
 
 const { handle } = require('../../../../errors');
 const { HotelManager } = require('@windingtree/wt-js-libs');
@@ -189,6 +190,32 @@ unitTypesRouter.delete('/hotels/:hotelAddress/unitTypes/:unitType/amenities/:ame
     next(handle('web3', err));
   }
 });
+
+unitTypesRouter.post('/hotels/:hotelAddress/unitTypes/:unitType/currencyCode',
+  validatePassword, validateCode,
+  async (req, res, next) => {
+    const { password, code } = req.body;
+    const { hotelAddress, unitType } = req.params;
+    let ownerAccount = {};
+    try {
+      let context = {
+        indexAddress: config.get('indexAddress'),
+        gasMargin: config.get('gasMargin'),
+        web3provider: config.get('web3'),
+      };
+      ownerAccount = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+      context.owner = ownerAccount.address;
+      const hotelManager = new HotelManager(context);
+      hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+      const { logs } = await hotelManager.setCurrencyCode(hotelAddress, unitType, code);
+      hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+      res.status(200).json({
+        txHash: logs[0].transactionHash,
+      });
+    } catch (err) {
+      next(handle('web3', err));
+    }
+  });
 
 module.exports = {
   unitTypesRouter,
