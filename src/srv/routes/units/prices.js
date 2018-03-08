@@ -26,14 +26,14 @@ async (req, res, next) => {
     let context = {
       indexAddress: config.get('indexAddress'),
       gasMargin: config.get('gasMargin'),
-      web3: config.get('web3'),
+      web3provider: config.get('web3'),
     };
-    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+    ownerAccount = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
     context.owner = ownerAccount.address;
     const hotelManager = new HotelManager(context);
-    hotelManager.web3.eth.accounts.wallet.add(ownerAccount);
+    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
     await hotelManager.setDefaultPrice(hotelAddress, unitAddress, price);
-    hotelManager.web3.eth.accounts.wallet.remove(ownerAccount);
+    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: true, // logs[0].transactionHash
     });
@@ -54,14 +54,14 @@ async (req, res, next) => {
     let context = {
       indexAddress: config.get('indexAddress'),
       gasMargin: config.get('gasMargin'),
-      web3: config.get('web3'),
+      web3provider: config.get('web3'),
     };
-    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+    ownerAccount = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
     context.owner = ownerAccount.address;
     const hotelManager = new HotelManager(context);
-    hotelManager.web3.eth.accounts.wallet.add(ownerAccount);
+    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
     const { logs } = await hotelManager.setDefaultLifPrice(hotelAddress, unitAddress, price);
-    hotelManager.web3.eth.accounts.wallet.remove(ownerAccount);
+    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: logs[0].transactionHash,
     });
@@ -82,14 +82,14 @@ async (req, res, next) => {
     let context = {
       indexAddress: config.get('indexAddress'),
       gasMargin: config.get('gasMargin'),
-      web3: config.get('web3'),
+      web3provider: config.get('web3'),
     };
-    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+    ownerAccount = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
     context.owner = ownerAccount.address;
     const hotelManager = new HotelManager(context);
-    hotelManager.web3.eth.accounts.wallet.add(ownerAccount);
+    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
     await hotelManager.setCurrencyCode(hotelAddress, unitAddress, code);
-    hotelManager.web3.eth.accounts.wallet.remove(ownerAccount);
+    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: true, // logs[0].transactionHash
     });
@@ -109,14 +109,14 @@ async (req, res, next) => {
     let context = {
       indexAddress: config.get('indexAddress'),
       gasMargin: config.get('gasMargin'),
-      web3: config.get('web3'),
+      web3provider: config.get('web3'),
     };
-    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+    ownerAccount = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
     context.owner = ownerAccount.address;
     const hotelManager = new HotelManager(context);
-    hotelManager.web3.eth.accounts.wallet.add(ownerAccount);
+    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
     const { transactionHash } = await hotelManager.setUnitSpecialLifPrice(hotelAddress, unitAddress, price, from, days);
-    hotelManager.web3.eth.accounts.wallet.remove(ownerAccount);
+    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: transactionHash,
     });
@@ -137,14 +137,14 @@ async (req, res, next) => {
     let context = {
       indexAddress: config.get('indexAddress'),
       gasMargin: config.get('gasMargin'),
-      web3: config.get('web3'),
+      web3provider: config.get('web3'),
     };
-    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+    ownerAccount = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
     context.owner = ownerAccount.address;
     const hotelManager = new HotelManager(context);
-    hotelManager.web3.eth.accounts.wallet.add(ownerAccount);
+    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
     const { transactionHash } = await hotelManager.setUnitSpecialPrice(hotelAddress, unitAddress, price, from, days);
-    hotelManager.web3.eth.accounts.wallet.remove(ownerAccount);
+    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: transactionHash,
     });
@@ -184,7 +184,7 @@ pricesRouter.get('/balance', validateCost, async (req, res, next) => {
       account,
       gasMargin: config.get('gasMargin'),
       tokenAddress: config.get('tokenAddress'),
-      web3: config.get('web3'),
+      web3provider: config.get('web3'),
     });
     const balance = await user.balanceCheck(cost);
     res.status(200).json({ balance });

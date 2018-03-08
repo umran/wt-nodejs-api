@@ -150,6 +150,7 @@ async function generateHotel (ownerAddres) {
     },
     body,
   });
+
   const hotels = await res.json();
   hotelAddresses = Object.keys(hotels);
   const hotel = hotels[hotelAddresses[0]];

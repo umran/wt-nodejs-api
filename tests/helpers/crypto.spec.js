@@ -13,8 +13,8 @@ describe('Utils test', function () {
   describe('crypto.js', function () {
     it('Create account. Expect ok', async function () {
       config.set('privateKeyDir', 'keys/test.json');
-      await config.get('web3').eth.accounts.wallet.create(3);
-      const wallet = await config.get('web3').eth.accounts.wallet[0].encrypt(password);
+      await config.get('web3').web3.eth.accounts.wallet.create(3);
+      const wallet = await config.get('web3').web3.eth.accounts.wallet[0].encrypt(password);
       storeWallet(wallet);
     });
     it('Load account. Expect ok', async function () {
@@ -25,7 +25,7 @@ describe('Utils test', function () {
       updateAccount(password, newPassword, loadAccount(TEST_ACCOUNT_DIR), UPDATED_TEST_ACCOUNT_DIR);
       let error, account;
       try {
-        account = config.get('web3').eth.accounts.decrypt(loadAccount(UPDATED_TEST_ACCOUNT_DIR), newPassword);
+        account = config.get('web3').web3.eth.accounts.decrypt(loadAccount(UPDATED_TEST_ACCOUNT_DIR), newPassword);
       } catch (e) {
         error = e;
       }

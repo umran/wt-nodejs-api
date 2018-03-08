@@ -20,14 +20,14 @@ hotelBookingRouter.put('/hotels/:hotelAddress/confirmation',
       let context = {
         indexAddress: config.get('indexAddress'),
         gasMargin: config.get('gasMargin'),
-        web3: config.get('web3'),
+        web3provider: config.get('web3'),
       };
-      ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+      ownerAccount = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
       context.owner = ownerAccount.address;
       const hotelManager = new HotelManager(context);
-      hotelManager.web3.eth.accounts.wallet.add(ownerAccount);
+      hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
       const { logs } = await hotelManager.setRequireConfirmation(hotelAddress, !!required);
-      hotelManager.web3.eth.accounts.wallet.remove(ownerAccount);
+      hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
       res.status(200).json({
         txHash: logs[0].transactionHash,
       });
@@ -71,14 +71,14 @@ hotelBookingRouter.post('/hotels/:hotelAddress/confirmBooking',
       let context = {
         indexAddress: config.get('indexAddress'),
         gasMargin: config.get('gasMargin'),
-        web3: config.get('web3'),
+        web3provider: config.get('web3'),
       };
-      ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+      ownerAccount = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
       context.owner = ownerAccount.address;
       const hotelManager = new HotelManager(context);
-      hotelManager.web3.eth.accounts.wallet.add(ownerAccount);
+      hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
       const { logs } = await hotelManager.confirmBooking(hotelAddress, reservationId);
-      hotelManager.web3.eth.accounts.wallet.remove(ownerAccount);
+      hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
       res.status(200).json({
         txHash: logs[0].transactionHash,
       });
