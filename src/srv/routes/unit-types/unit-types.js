@@ -77,7 +77,7 @@ unitTypesRouter.delete('/hotels/:hotelAddress/unitTypes/:unitType', validatePass
 });
 
 unitTypesRouter.put('/hotels/:hotelAddress/unitTypes/:unitType', validateUnitTypeInformation, validatePassword, async (req, res, next) => {
-  const { password, description, minGuests, maxGuests, price } = req.body;
+  const { password, description, minGuests, maxGuests } = req.body;
   const { hotelAddress, unitType } = req.params;
   let ownerAccount = {};
   try {
@@ -89,7 +89,7 @@ unitTypesRouter.put('/hotels/:hotelAddress/unitTypes/:unitType', validateUnitTyp
       web3provider: config.get('web3'),
     });
     hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
-    const { logs } = await hotelManager.editUnitType(hotelAddress, unitType, description, minGuests, maxGuests, price);
+    const { logs } = await hotelManager.editUnitType(hotelAddress, unitType, description, minGuests, maxGuests);
     hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: logs[0].transactionHash,
