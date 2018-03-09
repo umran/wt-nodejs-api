@@ -122,51 +122,39 @@ hotelsRouter.put('/hotels/:hotelAddress', validateHotelInfo, async (req, res, ne
   }
 });
 
-hotelsRouter.put('/hotels/:hotelAddress/address', validatePassword, validateHotelAddress, async (req, res, next) => {
-  const { password, lineOne, lineTwo, zipCode, country } = req.body;
-  const { hotelAddress } = req.params;
-  let ownerAccount = {};
-  try {
-    ownerAccount = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
-    const hotelManager = new HotelManager({
-      indexAddress: config.get('indexAddress'),
-      owner: ownerAccount.address,
-      gasMargin: config.get('gasMargin'),
-      web3: config.get('web3'),
-    });
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
-    const { logs } = await hotelManager.changeHotelAddress(hotelAddress, lineOne, lineTwo, zipCode, country);
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
-    res.status(200).json({
-      txHash: logs[0].transactionHash,
-    });
-  } catch (err) {
-    return next(handle('web3', err));
-  }
-});
-
-hotelsRouter.put('/hotels/:hotelAddress/location', validatePassword, validateHotelLocation, async (req, res, next) => {
-  const { password, timezone, latitude, longitude } = req.body;
-  const { hotelAddress } = req.params;
-  let ownerAccount = {};
-  try {
-    ownerAccount = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
-    const hotelManager = new HotelManager({
-      indexAddress: config.get('indexAddress'),
-      owner: ownerAccount.address,
-      gasMargin: config.get('gasMargin'),
-      web3: config.get('web3'),
-    });
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
-    const { logs } = await hotelManager.changeHotelLocation(hotelAddress, timezone, latitude, longitude);
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
-    res.status(200).json({
-      txHash: logs[0].transactionHash,
-    });
-  } catch (err) {
-    return next(handle('web3', err));
-  }
-});
+hotelsRouter.put('/hotels/:hotelAddress/location', validatePassword, validateHotelAddress, validateHotelLocation,
+  async (req, res, next) => {
+    const { password, lineOne, lineTwo, zipCode, country, timezone, latitude, longitude } = req.body;
+    const { hotelAddress } = req.params;
+    let ownerAccount = {};
+    try {
+      ownerAccount = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+      const hotelManager = new HotelManager({
+        indexAddress: config.get('indexAddress'),
+        owner: ownerAccount.address,
+        gasMargin: config.get('gasMargin'),
+        web3provider: config.get('web3'),
+      });
+      hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+      const { logs } = await hotelManager.changeHotelLocation(
+        hotelAddress,
+        lineOne,
+        lineTwo,
+        zipCode,
+        country,
+        timezone,
+        longitude,
+        latitude
+      );
+      hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+      res.status(200).json({
+        txHash: logs[0].transactionHash,
+      });
+    } catch (err) {
+      console.log(err);
+      return next(handle('web3', err));
+    }
+  });
 
 hotelsRouter.post('/hotels/:hotelAddress/images', validatePassword, validateAddImage, async (req, res, next) => {
   const { password, url } = req.body;
