@@ -73,7 +73,7 @@ pricesRouter.get('/units/:unitAddress/cost', validateDateRange, async (req, res,
   const { from, days } = req.body;
   const { unitAddress } = req.params;
   try {
-    const data = new BookingData(config.get('web3'));
+    const data = new BookingData({ web3provider: config.get('web3') });
     const cost = await data.getCost(unitAddress, from, days);
     res.status(200).json({ cost });
   } catch (err) {
@@ -81,12 +81,12 @@ pricesRouter.get('/units/:unitAddress/cost', validateDateRange, async (req, res,
   }
 });
 
-pricesRouter.get('/units/:unitAddress/lifCost', validateDateRange, async (req, res, next) => {
+pricesRouter.get('/hotels/:hotelAddress/units/:unitAddress/lifCost', validateDateRange, async (req, res, next) => {
   const { from, days } = req.body;
-  const { unitAddress } = req.params;
+  const { hotelAddress, unitAddress } = req.params;
   try {
-    const data = new BookingData(config.get('web3'));
-    const cost = await data.getLifCost(unitAddress, from, days);
+    const data = new BookingData({ web3provider: config.get('web3') });
+    const cost = await data.getLifCost(hotelAddress, unitAddress, from, days);
     res.status(200).json({ cost });
   } catch (err) {
     next(handle('web3', err));

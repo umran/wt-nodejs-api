@@ -14,15 +14,16 @@ describe('Units prices', function () {
   const defaultPrice = 78;
   const defaultLifPrice = 2;
   describe('Units Líf prices', function () {
-    it('GET /units/:unitAddress/lifCosts. Expect 200', async () => {
+    it('GET /hotels/:hotelAddress/units/:unitAddress/lifCost. Expect 200', async () => {
       const days = 5;
       const estimatedCost = defaultLifPrice * days;
       const body = JSON.stringify({
         password: config.get('password'),
         days,
-        from: new Date('10/10/2020'),
+        from: config.get('web3').utils.formatDate(new Date('10/10/2020')),
       });
-      let response = await fetch(`http://localhost:3000/units/${config.get('unitAddress')}/lifCost`, {
+
+      let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/lifCost`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',

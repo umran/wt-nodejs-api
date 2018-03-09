@@ -169,7 +169,7 @@ async function generateHotel (ownerAddres) {
     password: config.get('password'),
     price: defaultPrice,
   });
-  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/defaultPrice`, {
+  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitTypeName}/defaultPrice`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -182,7 +182,7 @@ async function generateHotel (ownerAddres) {
     price: defaultLifPrice,
   });
 
-  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/defaultLifPrice`, {
+  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitTypeName}/defaultLifPrice`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
