@@ -166,7 +166,7 @@ hotelsRouter.post('/hotels/:hotelAddress/images', validatePassword, validateAddI
       indexAddress: config.get('indexAddress'),
       owner: ownerAccount.address,
       gasMargin: config.get('gasMargin'),
-      web3: config.get('web3'),
+      web3provider: config.get('web3'),
     });
     hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
     const { logs } = await hotelManager.addImageHotel(hotelAddress, url);
@@ -186,7 +186,7 @@ hotelsRouter.get('/hotels/:hotelAddress/images', async (req, res, next) => {
     const context = {
       indexAddress: config.get('indexAddress'),
       gasMargin: config.get('gasMargin'),
-      web3: config.get('web3').web3,
+      web3provider: config.get('web3').web3,
     };
     const hotelInstance = Utils.getInstance('Hotel', hotelAddress, context);
     const totalImages = await hotelInstance.methods.getImagesLength().call();
@@ -211,7 +211,7 @@ hotelsRouter.delete('/hotels/:hotelAddress/images/:id', validatePassword, async 
       indexAddress: config.get('indexAddress'),
       owner: ownerAccount.address,
       gasMargin: config.get('gasMargin'),
-      web3: config.get('web3'),
+      web3provider: config.get('web3'),
     });
     hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
     const hotel = await hotelManager.getHotel(hotelAddress);
