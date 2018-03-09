@@ -381,10 +381,9 @@ describe('Unit types', function () {
       expect(res).to.have.property('code', '#missingPassword');
     });
   });
-  describe.only('Unit type prices', function () {
+  describe('Unit type prices', function () {
     const defaultPrice = 78;
-
-    it('POST /hotels/:hotelAddress/units/:unitAddress/currencyCode. Expect 200', async () => {
+    it('POST /hotels/:hotelAddress/unitTypes/:unitType/currencyCode. Expect 200', async () => {
       const body = JSON.stringify({
         password: config.get('password'),
         code: 948,
@@ -411,7 +410,7 @@ describe('Unit types', function () {
       const { hotel } = await response.json();
       expect(hotel.unitTypes[unitType]).to.have.property('currencyCode', 'CHW');
     });
-    it('POST /hotels/:hotelAddress/units/:unitAddress/currencyCode. Expect 400 #missingPassword', async () => {
+    it('POST /hotels/:hotelAddress/unitTypes/:unitType/currencyCode. Expect 400 #missingPassword', async () => {
       const body = JSON.stringify({
         code: 948,
       });
@@ -428,7 +427,7 @@ describe('Unit types', function () {
       const resp = await response.json();
       expect(resp).to.have.property('code', '#missingPassword');
     });
-    it('POST /hotels/:hotelAddress/units/:unitAddress/currencyCode. Expect 400 #missingCode', async () => {
+    it('POST /hotels/:hotelAddress/unitTypes/:unitType/currencyCode. Expect 400 #missingCode', async () => {
       const body = JSON.stringify({
         password: config.get('password'),
       });
@@ -445,7 +444,7 @@ describe('Unit types', function () {
       const resp = await response.json();
       expect(resp).to.have.property('code', '#missingCode');
     });
-    it('POST /hotels/:hotelAddress/units/:unitAddress/defaultPrice. Expect 200', async () => {
+    it('POST /hotels/:hotelAddress/unitTypes/:unitType/defaultPrice. Expect 200', async () => {
       const body = JSON.stringify({
         password: config.get('password'),
         price: defaultPrice,
@@ -472,7 +471,7 @@ describe('Unit types', function () {
       const { hotel } = await response.json();
       expect(hotel.unitTypes[unitType]).to.have.property('defaultPrice', defaultPrice.toFixed(2));
     });
-    it('POST /hotels/:hotelAddress/units/:unitAddress/defaultPrice. Expect 400 #missingPassword', async () => {
+    it('POST /hotels/:hotelAddress/unitTypes/:unitType/defaultPrice. Expect 400 #missingPassword', async () => {
       const body = JSON.stringify({
         price: defaultPrice,
       });
@@ -489,7 +488,7 @@ describe('Unit types', function () {
       const res = await response.json();
       expect(res).to.have.property('code', '#missingPassword');
     });
-    it('POST /hotels/:hotelAddress/units/:unitAddress/defaultPrice. Expect 400 ##missingPrice', async () => {
+    it('POST /hotels/:hotelAddress/unitTypes/:unitType/defaultPrice. Expect 400 ##missingPrice', async () => {
       const body = JSON.stringify({
         password: config.get('password'),
       });
@@ -505,6 +504,67 @@ describe('Unit types', function () {
       expect(response).to.have.property('status', 400);
       const res = await response.json();
       expect(res).to.have.property('code', '#missingPrice');
+    });
+    it('POST /hotels/:hotelAddress/unitTypes/:unitType/defaultLifPrice. Expect 200', async () => {
+      const price = 78;
+      const body = JSON.stringify({
+        password: config.get('password'),
+        price,
+      });
+      let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitType}/defaultLifPrice`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body,
+      });
+      expect(response).to.be.ok;
+      expect(response).to.have.property('status', 200);
+      response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(body),
+        },
+        body,
+      });
+      const { hotel } = await response.json();
+      expect(hotel.unitTypes[unitType]).to.have.property('defaultLifPrice', price);
+    });
+    it('POST /hotels/:hotelAddress/unitTypes/:unitType/defaultLifPrice. Expect 400 #missingPassword', async () => {
+      const price = 78;
+      const body = JSON.stringify({
+        price,
+      });
+      let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitType}/defaultLifPrice`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body,
+      });
+      expect(response).to.have.property('status', 400);
+      const resp = await response.json();
+      expect(resp).to.have.property('code', '#missingPassword');
+    });
+    it('POST /hotels/:hotelAddress/unitTypes/:unitType/defaultLifPrice. Expect 400 #missingPrice', async () => {
+      const body = JSON.stringify({
+        password: config.get('password'),
+      });
+      let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitType}/defaultLifPrice`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body,
+      });
+      expect(response).to.have.property('status', 400);
+      const resp = await response.json();
+      expect(resp).to.have.property('code', '#missingPrice');
     });
   });
 });

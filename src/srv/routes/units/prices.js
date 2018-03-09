@@ -14,34 +14,6 @@ const { BookingData } = require('@windingtree/wt-js-libs');
 const config = require('../../../../config.js');
 
 pricesRouter.post([
-  '/hotels/:hotelAddress/unitTypes/:unitType/units/:unitAddress/defaultLifPrice',
-  '/hotels/:hotelAddress/units/:unitAddress/defaultLifPrice',
-], validatePassword, validatePrice,
-async (req, res, next) => {
-  const { password, price } = req.body;
-  const { hotelAddress, unitAddress } = req.params;
-  let ownerAccount = {};
-  try {
-    let context = {
-      indexAddress: config.get('indexAddress'),
-      gasMargin: config.get('gasMargin'),
-      web3provider: config.get('web3'),
-    };
-    ownerAccount = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
-    context.owner = ownerAccount.address;
-    const hotelManager = new HotelManager(context);
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
-    const { logs } = await hotelManager.setDefaultLifPrice(hotelAddress, unitAddress, price);
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
-    res.status(200).json({
-      txHash: logs[0].transactionHash,
-    });
-  } catch (err) {
-    next(handle('web3', err));
-  }
-});
-
-pricesRouter.post([
   '/hotels/:hotelAddress/unitTypes/:unitType/units/:unitAddress/specialLifPrice',
   '/hotels/:hotelAddress/units/:unitAddress/specialLifPrice',
 ], validatePassword, validatePrice,
