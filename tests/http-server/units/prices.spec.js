@@ -105,7 +105,60 @@ describe('Units prices', function () {
       expect(response).to.have.property('status', 200);
     });
   });
-  describe('Units fiat prices', function () {
+  describe('Unit special prices', function () {
+    it('POST /hotels/:hotelAddress/units/:unitAddress/specialPrice. Expect 200', async () => {
+      const specialPrice = 70;
+      let body = JSON.stringify({
+        password: config.get('password'),
+        price: specialPrice,
+        days: 1,
+        from: new Date('10/10/2020'),
+      });
+      let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/specialPrice`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body,
+      });
+      expect(response).to.have.property('status', 200);
+      body = JSON.stringify({
+        date: Math.round(new Date('10/10/2020').getTime() / 86400000),
+      });
+      response = await fetch(`http://localhost:3000/units/${config.get('unitAddress')}/reservation`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(body),
+        },
+        body,
+      });
+      expect(response).to.have.property('status', 200);
+      const { reservation } = await response.json();
+      expect(reservation).to.have.property('specialPrice', specialPrice.toFixed(2));
+    });
+    it('POST /hotels/:hotelAddress/units/:unitAddress/specialPrice. Expect 400 #missingPassword', async () => {
+      const specialPrice = 70;
+      let body = JSON.stringify({
+        price: specialPrice,
+        days: 1,
+        from: new Date('10/10/2020'),
+      });
+      let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/specialPrice`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body,
+      });
+      expect(response).to.have.property('status', 400);
+      expect(await response.json()).to.have.property('code', '#missingPassword');
+    });
+  });
+  describe('Unit Costs', function () {
     it('GET /units/:unitAddress/costs. Expect 200', async () => {
       const days = 5;
       const estimatedCost = defaultPrice * days;
@@ -162,57 +215,6 @@ describe('Units prices', function () {
 
       expect(response).to.have.property('status', 400);
       expect(await response.json()).to.have.property('code', '#missingFrom');
-    });
-    it('POST /hotels/:hotelAddress/units/:unitAddress/specialPrice. Expect 200', async () => {
-      const specialPrice = 70;
-      let body = JSON.stringify({
-        password: config.get('password'),
-        price: specialPrice,
-        days: 1,
-        from: new Date('10/10/2020'),
-      });
-      let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/specialPrice`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body,
-      });
-      expect(response).to.have.property('status', 200);
-      body = JSON.stringify({
-        date: Math.round(new Date('10/10/2020').getTime() / 86400000),
-      });
-      response = await fetch(`http://localhost:3000/units/${config.get('unitAddress')}/reservation`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(body),
-        },
-        body,
-      });
-      expect(response).to.have.property('status', 200);
-      const { reservation } = await response.json();
-      expect(reservation).to.have.property('specialPrice', specialPrice.toFixed(2));
-    });
-    it('POST /hotels/:hotelAddress/units/:unitAddress/specialPrice. Expect 400 #missingPassword', async () => {
-      const specialPrice = 70;
-      let body = JSON.stringify({
-        price: specialPrice,
-        days: 1,
-        from: new Date('10/10/2020'),
-      });
-      let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/specialPrice`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body,
-      });
-      expect(response).to.have.property('status', 400);
-      expect(await response.json()).to.have.property('code', '#missingPassword');
     });
   });
 });

@@ -32,7 +32,6 @@ unitsRouter.post('/hotels/:hotelAddress/unitTypes/:unitType/units', validatePass
       txHash: logs[0].transactionHash,
     });
   } catch (err) {
-    console.log(err);
     next(handle('web3', err));
   }
 });
