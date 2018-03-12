@@ -115,7 +115,7 @@ unitsRouter.get('/units/:unitAddress/available', validateDateRange, async (req, 
   const { from, days } = req.body;
   const { unitAddress } = req.params;
   try {
-    const data = new BookingData(config.get('web3'));
+    const data = new BookingData({ web3provider: config.get('web3') });
     const available = await data.unitIsAvailable(unitAddress, from, days);
     res.status(200).json({ available });
   } catch (err) {
@@ -134,7 +134,8 @@ unitsRouter.post('/hotels/:hotelAddress/units/:unitAddress/book',
         tokenAddress: config.get('tokenAddress'),
         web3provider: config.get('web3'),
       });
-      const { transactionHash } = await user.book(hotelAddress, unitAddress, from, days, guest);
+      const fromDate = new Date(from);
+      const { transactionHash } = await user.book(hotelAddress, unitAddress, fromDate, days, guest);
       res.status(200).json({
         txHash: transactionHash,
       });
@@ -154,7 +155,8 @@ unitsRouter.post('/hotels/:hotelAddress/units/:unitAddress/lifBook',
         tokenAddress: config.get('tokenAddress'),
         web3provider: config.get('web3'),
       });
-      const { transactionHash } = await user.bookWithLif(hotelAddress, unitAddress, from, days, guest);
+      const fromDate = new Date(from);
+      const { transactionHash } = await user.bookWithLif(hotelAddress, unitAddress, fromDate, days, guest);
       res.status(200).json({
         txHash: transactionHash,
       });

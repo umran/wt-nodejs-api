@@ -40,7 +40,7 @@ hotelBookingRouter.get('/hotels/:hotelAddress/bookings', async (req, res, next) 
   const { block } = req.body;
   const { hotelAddress } = req.params;
   try {
-    const data = new BookingData(config.get('web3'));
+    const data = new BookingData({ web3provider: config.get('web3') });
     const bookings = await data.getBookings(hotelAddress, block);
     res.status(200).json({ bookings });
   } catch (err) {
@@ -53,7 +53,7 @@ hotelBookingRouter.get('/hotels/:hotelAddress/requests',
     const { block } = req.body;
     const { hotelAddress } = req.params;
     try {
-      const data = new BookingData(config.get('web3'));
+      const data = new BookingData({ web3provider: config.get('web3') });
       const requests = await data.getBookingRequests(hotelAddress, block);
       res.status(200).json({ requests });
     } catch (err) {
