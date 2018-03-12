@@ -20,7 +20,7 @@ describe('Units prices', function () {
       const body = JSON.stringify({
         password: config.get('password'),
         days,
-        from: config.get('web3').utils.formatDate(new Date('10/10/2020')),
+        from: config.get('web3provider').utils.formatDate(new Date('10/10/2020')),
       });
 
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/lifCost`, {

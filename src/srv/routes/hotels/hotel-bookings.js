@@ -20,9 +20,9 @@ hotelBookingRouter.put('/hotels/:hotelAddress/confirmation',
       let context = {
         indexAddress: config.get('indexAddress'),
         gasMargin: config.get('gasMargin'),
-        web3provider: config.get('web3'),
+        web3provider: config.get('web3provider'),
       };
-      ownerAccount = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+      ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
       context.owner = ownerAccount.address;
       const hotelManager = new HotelManager(context);
       hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
@@ -40,7 +40,7 @@ hotelBookingRouter.get('/hotels/:hotelAddress/bookings', async (req, res, next) 
   const { block } = req.body;
   const { hotelAddress } = req.params;
   try {
-    const data = new BookingData({ web3provider: config.get('web3') });
+    const data = new BookingData({ web3provider: config.get('web3provider') });
     const bookings = await data.getBookings(hotelAddress, block);
     res.status(200).json({ bookings });
   } catch (err) {
@@ -53,7 +53,7 @@ hotelBookingRouter.get('/hotels/:hotelAddress/requests',
     const { block } = req.body;
     const { hotelAddress } = req.params;
     try {
-      const data = new BookingData({ web3provider: config.get('web3') });
+      const data = new BookingData({ web3provider: config.get('web3provider') });
       const requests = await data.getBookingRequests(hotelAddress, block);
       res.status(200).json({ requests });
     } catch (err) {
@@ -71,9 +71,9 @@ hotelBookingRouter.post('/hotels/:hotelAddress/confirmBooking',
       let context = {
         indexAddress: config.get('indexAddress'),
         gasMargin: config.get('gasMargin'),
-        web3provider: config.get('web3'),
+        web3provider: config.get('web3provider'),
       };
-      ownerAccount = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+      ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
       context.owner = ownerAccount.address;
       const hotelManager = new HotelManager(context);
       hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);

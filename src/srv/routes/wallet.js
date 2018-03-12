@@ -18,7 +18,7 @@ const config = require('../../../config.js');
 walletRouter.post('/wallet', validatePassword, validateWallet, (req, res, next) => {
   const { wallet, password } = req.body;
   try {
-    config.get('web3').web3.eth.accounts.decrypt(wallet, password);
+    config.get('web3provider').web3.eth.accounts.decrypt(wallet, password);
     storeWallet(wallet);
   } catch (err) {
     return next(handle('web3', err));
@@ -30,7 +30,7 @@ walletRouter.get('/wallet', validatePassword, (req, res, next) => {
   const { password } = req.body;
   let wallet;
   try {
-    wallet = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+    wallet = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
   } catch (err) {
     return next(handle('web3', err));
   }
@@ -52,7 +52,7 @@ walletRouter.put('/wallet/password', validatePasswords, (req, res, next) => {
 walletRouter.delete('/wallet', validatePassword, (req, res, next) => {
   const { password } = req.body;
   try {
-    config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+    config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
   } catch (err) {
     return next(handle('web3', err));
   }

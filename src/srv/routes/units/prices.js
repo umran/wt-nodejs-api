@@ -25,9 +25,9 @@ async (req, res, next) => {
     let context = {
       indexAddress: config.get('indexAddress'),
       gasMargin: config.get('gasMargin'),
-      web3provider: config.get('web3'),
+      web3provider: config.get('web3provider'),
     };
-    ownerAccount = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
     context.owner = ownerAccount.address;
     const hotelManager = new HotelManager(context);
     hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
@@ -54,9 +54,9 @@ async (req, res, next) => {
     let context = {
       indexAddress: config.get('indexAddress'),
       gasMargin: config.get('gasMargin'),
-      web3provider: config.get('web3'),
+      web3provider: config.get('web3provider'),
     };
-    ownerAccount = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
     context.owner = ownerAccount.address;
     const hotelManager = new HotelManager(context);
     hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
@@ -75,7 +75,7 @@ pricesRouter.get('/hotels/:hotelAddress/units/:unitAddress/cost', validateDateRa
   const { from, days } = req.body;
   const { hotelAddress, unitAddress } = req.params;
   try {
-    const data = new BookingData({ web3provider: config.get('web3') });
+    const data = new BookingData({ web3provider: config.get('web3provider') });
     const fromDate = new Date(from);
     const cost = await data.getCost(hotelAddress, unitAddress, fromDate, days);
     res.status(200).json({ cost });
@@ -88,7 +88,7 @@ pricesRouter.get('/hotels/:hotelAddress/units/:unitAddress/lifCost', validateDat
   const { from, days } = req.body;
   const { hotelAddress, unitAddress } = req.params;
   try {
-    const data = new BookingData({ web3provider: config.get('web3') });
+    const data = new BookingData({ web3provider: config.get('web3provider') });
     const cost = await data.getLifCost(hotelAddress, unitAddress, from, days);
     res.status(200).json({ cost });
   } catch (err) {
@@ -103,7 +103,7 @@ pricesRouter.get('/balance', validateCost, async (req, res, next) => {
       account,
       gasMargin: config.get('gasMargin'),
       tokenAddress: config.get('tokenAddress'),
-      web3provider: config.get('web3'),
+      web3provider: config.get('web3provider'),
     });
     const balance = await user.balanceCheck(cost);
     res.status(200).json({ balance });

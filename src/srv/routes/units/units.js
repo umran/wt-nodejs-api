@@ -20,9 +20,9 @@ unitsRouter.post('/hotels/:hotelAddress/unitTypes/:unitType/units', validatePass
     let context = {
       indexAddress: config.get('indexAddress'),
       gasMargin: config.get('gasMargin'),
-      web3provider: config.get('web3'),
+      web3provider: config.get('web3provider'),
     };
-    ownerAccount = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
     context.owner = ownerAccount.address;
     const hotelManager = new HotelManager(context);
     hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
@@ -48,9 +48,9 @@ async (req, res, next) => {
     let context = {
       indexAddress: config.get('indexAddress'),
       gasMargin: config.get('gasMargin'),
-      web3provider: config.get('web3'),
+      web3provider: config.get('web3provider'),
     };
-    ownerAccount = config.get('web3').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
     context.owner = ownerAccount.address;
     const hotelManager = new HotelManager(context);
     hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
@@ -76,9 +76,9 @@ async (req, res, next) => {
     let context = {
       indexAddress: config.get('indexAddress'),
       gasMargin: config.get('gasMargin'),
-      web3provider: config.get('web3'),
+      web3provider: config.get('web3provider'),
     };
-    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir'), password));
+    ownerAccount = config.get('web3provider').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir'), password));
     context.owner = ownerAccount.address;
     const hotelManager = new HotelManager(context);
     hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
@@ -99,7 +99,7 @@ unitsRouter.get('/units/:unitAddress/reservation', validateDate, async (req, res
     let context = {
       indexAddress: config.get('indexAddress'),
       gasMargin: config.get('gasMargin'),
-      web3provider: config.get('web3'),
+      web3provider: config.get('web3provider'),
     };
     const hotelManager = new HotelManager(context);
     const reservation = await hotelManager.getReservation(unitAddress, date);
@@ -115,7 +115,7 @@ unitsRouter.get('/hotels/:hotelAddress/units/:unitAddress/available', validateDa
   const { from, days } = req.body;
   const { hotelAddress, unitAddress } = req.params;
   try {
-    const data = new BookingData({ web3provider: config.get('web3') });
+    const data = new BookingData({ web3provider: config.get('web3provider') });
     const fromDate = new Date(from);
     const available = await data.unitIsAvailable(hotelAddress, unitAddress, fromDate, days);
     res.status(200).json({ available });
@@ -133,7 +133,7 @@ unitsRouter.post('/hotels/:hotelAddress/units/:unitAddress/book',
         account,
         gasMargin: config.get('gasMargin'),
         tokenAddress: config.get('tokenAddress'),
-        web3provider: config.get('web3'),
+        web3provider: config.get('web3provider'),
       });
       const fromDate = new Date(from);
       const { transactionHash } = await user.book(hotelAddress, unitAddress, fromDate, days, guest);
@@ -154,7 +154,7 @@ unitsRouter.post('/hotels/:hotelAddress/units/:unitAddress/lifBook',
         account,
         gasMargin: config.get('gasMargin'),
         tokenAddress: config.get('tokenAddress'),
-        web3provider: config.get('web3'),
+        web3provider: config.get('web3provider'),
       });
       const fromDate = new Date(from);
       const { transactionHash } = await user.bookWithLif(hotelAddress, unitAddress, fromDate, days, guest);
