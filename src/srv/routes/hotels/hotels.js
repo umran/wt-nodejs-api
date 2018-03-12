@@ -24,9 +24,9 @@ hotelsRouter.post('/hotels', validateHotelInfo, async (req, res, next) => {
       gasMargin: config.get('gasMargin'),
       web3provider: config.get('web3provider'),
     });
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
     const { logs } = await hotelManager.createHotel(name, description);
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: logs[0].transactionHash,
     });
@@ -111,9 +111,9 @@ hotelsRouter.put('/hotels/:hotelAddress', validateHotelInfo, async (req, res, ne
       gasMargin: config.get('gasMargin'),
       web3provider: config.get('web3provider'),
     });
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
     const { logs } = await hotelManager.changeHotelInfo(hotelAddress, name, description);
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: logs[0].transactionHash,
     });
@@ -135,7 +135,7 @@ hotelsRouter.put('/hotels/:hotelAddress/location', validatePassword, validateHot
         gasMargin: config.get('gasMargin'),
         web3provider: config.get('web3provider'),
       });
-      hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+      config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
       const { logs } = await hotelManager.changeHotelLocation(
         hotelAddress,
         lineOne,
@@ -146,7 +146,7 @@ hotelsRouter.put('/hotels/:hotelAddress/location', validatePassword, validateHot
         longitude,
         latitude
       );
-      hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+      config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
       res.status(200).json({
         txHash: logs[0].transactionHash,
       });
@@ -167,9 +167,9 @@ hotelsRouter.post('/hotels/:hotelAddress/images', validatePassword, validateAddI
       gasMargin: config.get('gasMargin'),
       web3provider: config.get('web3provider'),
     });
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
     const { logs } = await hotelManager.addImageHotel(hotelAddress, url);
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: logs[0].transactionHash,
     });
@@ -212,7 +212,7 @@ hotelsRouter.delete('/hotels/:hotelAddress/images/:id', validatePassword, async 
       gasMargin: config.get('gasMargin'),
       web3provider: config.get('web3provider'),
     });
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
     const hotel = await hotelManager.getHotel(hotelAddress);
     const response = {
       txHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
@@ -221,7 +221,7 @@ hotelsRouter.delete('/hotels/:hotelAddress/images/:id', validatePassword, async 
       const { logs } = await hotelManager.removeImageHotel(hotelAddress, id);
       response.txHash = logs[0].transactionHash;
     }
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(204).json(response);
   } catch (err) {
     return next(handle('web3', err));

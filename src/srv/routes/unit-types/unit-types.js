@@ -42,9 +42,9 @@ unitTypesRouter.post('/hotels/:hotelAddress/unitTypes', validateUnitType, valida
       gasMargin: config.get('gasMargin'),
       web3provider: config.get('web3provider'),
     });
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
     const { logs } = await hotelManager.addUnitType(hotelAddress, unitType);
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: logs[0].transactionHash,
     });
@@ -65,9 +65,9 @@ unitTypesRouter.delete('/hotels/:hotelAddress/unitTypes/:unitType', validatePass
       gasMargin: config.get('gasMargin'),
       web3provider: config.get('web3provider'),
     });
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
     const { logs } = await hotelManager.removeUnitType(hotelAddress, unitType);
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: logs[0].transactionHash,
     });
@@ -88,9 +88,9 @@ unitTypesRouter.put('/hotels/:hotelAddress/unitTypes/:unitType', validateUnitTyp
       gasMargin: config.get('gasMargin'),
       web3provider: config.get('web3provider'),
     });
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
     const { logs } = await hotelManager.editUnitType(hotelAddress, unitType, description, minGuests, maxGuests);
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: logs[0].transactionHash,
     });
@@ -111,9 +111,9 @@ unitTypesRouter.post('/hotels/:hotelAddress/unitTypes/:unitType/images', validat
       gasMargin: config.get('gasMargin'),
       web3provider: config.get('web3provider'),
     });
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
     const { logs } = await hotelManager.addImageUnitType(hotelAddress, unitType, url);
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: logs[0].transactionHash,
     });
@@ -134,9 +134,9 @@ unitTypesRouter.delete('/hotels/:hotelAddress/unitTypes/:unitType/images/:id', v
       gasMargin: config.get('gasMargin'),
       web3provider: config.get('web3provider'),
     });
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
     const { logs } = await hotelManager.removeImageUnitType(hotelAddress, unitType, id);
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(204).json({
       txHash: logs[0].transactionHash,
     });
@@ -157,9 +157,9 @@ unitTypesRouter.post('/hotels/:hotelAddress/unitTypes/:unitType/amenities', vali
       owner: ownerAccount.address,
       web3provider: config.get('web3provider'),
     });
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
     const { logs } = await hotelManager.addAmenity(hotelAddress, unitType, amenity);
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: logs[0].transactionHash,
     });
@@ -180,9 +180,9 @@ unitTypesRouter.delete('/hotels/:hotelAddress/unitTypes/:unitType/amenities/:ame
       gasMargin: config.get('gasMargin'),
       web3provider: config.get('web3provider'),
     });
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
     const { logs } = await hotelManager.removeAmenity(hotelAddress, unitType, amenity);
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: logs[0].transactionHash,
     });
@@ -206,9 +206,9 @@ unitTypesRouter.post('/hotels/:hotelAddress/unitTypes/:unitType/currencyCode',
       ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
       context.owner = ownerAccount.address;
       const hotelManager = new HotelManager(context);
-      hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+      config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
       const { logs } = await hotelManager.setCurrencyCode(hotelAddress, unitType, code);
-      hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+      config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
       res.status(200).json({
         txHash: logs[0].transactionHash,
       });
@@ -232,9 +232,9 @@ unitTypesRouter.post('/hotels/:hotelAddress/unitTypes/:unitType/defaultPrice',
       ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
       context.owner = ownerAccount.address;
       const hotelManager = new HotelManager(context);
-      hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+      config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
       const { logs } = await hotelManager.setDefaultPrice(hotelAddress, unitType, price);
-      hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+      config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
       res.status(200).json({
         txHash: logs[0].transactionHash,
       });
@@ -258,9 +258,9 @@ unitTypesRouter.post('/hotels/:hotelAddress/unitTypes/:unitType/defaultLifPrice'
       ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
       context.owner = ownerAccount.address;
       const hotelManager = new HotelManager(context);
-      hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+      config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
       const { logs } = await hotelManager.setDefaultLifPrice(hotelAddress, unitType, price);
-      hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+      config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
       res.status(200).json({
         txHash: logs[0].transactionHash,
       });

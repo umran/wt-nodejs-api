@@ -25,9 +25,9 @@ unitsRouter.post('/hotels/:hotelAddress/unitTypes/:unitType/units', validatePass
     ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
     context.owner = ownerAccount.address;
     const hotelManager = new HotelManager(context);
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
     const { logs } = await hotelManager.addUnit(hotelAddress, unitType);
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: logs[0].transactionHash,
     });
@@ -53,9 +53,9 @@ async (req, res, next) => {
     ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
     context.owner = ownerAccount.address;
     const hotelManager = new HotelManager(context);
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
     const { logs } = await hotelManager.removeUnit(hotelAddress, unitAddress);
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: logs[0].transactionHash,
     });
@@ -81,9 +81,9 @@ async (req, res, next) => {
     ownerAccount = config.get('web3provider').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir'), password));
     context.owner = ownerAccount.address;
     const hotelManager = new HotelManager(context);
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
     const { logs } = await hotelManager.setUnitActive(hotelAddress, unitAddress, active);
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: logs[0].transactionHash,
     });

@@ -25,9 +25,9 @@ hotelBookingRouter.put('/hotels/:hotelAddress/confirmation',
       ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
       context.owner = ownerAccount.address;
       const hotelManager = new HotelManager(context);
-      hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+      config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
       const { logs } = await hotelManager.setRequireConfirmation(hotelAddress, !!required);
-      hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+      config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
       res.status(200).json({
         txHash: logs[0].transactionHash,
       });
@@ -76,9 +76,9 @@ hotelBookingRouter.post('/hotels/:hotelAddress/confirmBooking',
       ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
       context.owner = ownerAccount.address;
       const hotelManager = new HotelManager(context);
-      hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+      config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
       const { logs } = await hotelManager.confirmBooking(hotelAddress, reservationId);
-      hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+      config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
       res.status(200).json({
         txHash: logs[0].transactionHash,
       });

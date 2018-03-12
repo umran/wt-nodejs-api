@@ -30,10 +30,10 @@ async (req, res, next) => {
     ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
     context.owner = ownerAccount.address;
     const hotelManager = new HotelManager(context);
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
     const fromDate = new Date(from);
     const { transactionHash } = await hotelManager.setUnitSpecialLifPrice(hotelAddress, unitAddress, price, fromDate, days);
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: transactionHash,
     });
@@ -59,10 +59,10 @@ async (req, res, next) => {
     ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
     context.owner = ownerAccount.address;
     const hotelManager = new HotelManager(context);
-    hotelManager.web3provider.web3.eth.accounts.wallet.add(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
     const fromDate = new Date(from);
     const { transactionHash } = await hotelManager.setUnitSpecialPrice(hotelAddress, unitAddress, price, fromDate, days);
-    hotelManager.web3provider.web3.eth.accounts.wallet.remove(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: transactionHash,
     });
