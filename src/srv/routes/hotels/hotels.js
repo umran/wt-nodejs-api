@@ -8,8 +8,7 @@ const { validatePassword,
   validateAddImage,
 } = require('../../../helpers/validators');
 const { handle } = require('../../../../errors');
-const { HotelManager } = require('@windingtree/wt-js-libs');
-const { Utils } = require('@windingtree/wt-js-libs');
+const { HotelManager, Utils } = require('@windingtree/wt-js-libs');
 
 const config = require('../../../../config.js');
 
