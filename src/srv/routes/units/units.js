@@ -111,12 +111,13 @@ unitsRouter.get('/units/:unitAddress/reservation', validateDate, async (req, res
   }
 });
 
-unitsRouter.get('/units/:unitAddress/available', validateDateRange, async (req, res, next) => {
+unitsRouter.get('/hotels/:hotelAddress/units/:unitAddress/available', validateDateRange, async (req, res, next) => {
   const { from, days } = req.body;
-  const { unitAddress } = req.params;
+  const { hotelAddress, unitAddress } = req.params;
   try {
     const data = new BookingData({ web3provider: config.get('web3') });
-    const available = await data.unitIsAvailable(unitAddress, from, days);
+    const fromDate = new Date(from);
+    const available = await data.unitIsAvailable(hotelAddress, unitAddress, fromDate, days);
     res.status(200).json({ available });
   } catch (err) {
     next(handle('web3', err));

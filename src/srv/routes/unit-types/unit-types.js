@@ -164,7 +164,6 @@ unitTypesRouter.post('/hotels/:hotelAddress/unitTypes/:unitType/amenities', vali
       txHash: logs[0].transactionHash,
     });
   } catch (err) {
-    console.log(err);
     next(handle('web3', err));
   }
 });

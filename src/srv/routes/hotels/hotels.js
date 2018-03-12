@@ -151,7 +151,6 @@ hotelsRouter.put('/hotels/:hotelAddress/location', validatePassword, validateHot
         txHash: logs[0].transactionHash,
       });
     } catch (err) {
-      console.log(err);
       return next(handle('web3', err));
     }
   });
