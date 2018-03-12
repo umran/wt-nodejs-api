@@ -159,7 +159,7 @@ describe('Units prices', function () {
     });
   });
   describe('Unit Costs', function () {
-    it('GET /units/:unitAddress/costs. Expect 200', async () => {
+    it('GET hotels/:hotelAddress/units/:unitAddress/costs. Expect 200', async () => {
       const days = 5;
       const estimatedCost = defaultPrice * days;
       const body = JSON.stringify({
@@ -167,7 +167,7 @@ describe('Units prices', function () {
         days,
         from: new Date('10/10/2020'),
       });
-      let response = await fetch(`http://localhost:3000/units/${config.get('unitAddress')}/cost`, {
+      let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/cost`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -180,12 +180,12 @@ describe('Units prices', function () {
       expect(response).to.have.property('status', 200);
       expect(await response.json()).to.have.property('cost', estimatedCost.toFixed(2));
     });
-    it('GET /units/:unitAddress/costs. Expect 400 #missingDays', async () => {
+    it('GET hotels/:hotelAddress/units/:unitAddress/costs. Expect 400 #missingDays', async () => {
       const body = JSON.stringify({
         password: config.get('password'),
         from: new Date('10/10/2020'),
       });
-      let response = await fetch(`http://localhost:3000/units/${config.get('unitAddress')}/cost`, {
+      let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/cost`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -198,12 +198,12 @@ describe('Units prices', function () {
       expect(response).to.have.property('status', 400);
       expect(await response.json()).to.have.property('code', '#missingDays');
     });
-    it('GET /units/:unitAddress/costs. Expect 400 #missingFrom', async () => {
+    it('GET hotels/:hotelAddress/units/:unitAddress/costs. Expect 400 #missingFrom', async () => {
       const body = JSON.stringify({
         password: config.get('password'),
         days: 5,
       });
-      let response = await fetch(`http://localhost:3000/units/${config.get('unitAddress')}/cost`, {
+      let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/cost`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
