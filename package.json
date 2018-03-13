@@ -4,7 +4,7 @@
   "description": " API to interact with the Winding Tree platform",
   "main": "index.js",
   "scripts": {
-    "eslint": "./node_modules/.bin/eslint src/ tests/ --fix",
+    "eslint": "./node_modules/.bin/eslint src/ tests/",
     "test": "npm run eslint && scripts/test.sh",
     "dev": "node ./src/srv/index.js"
   },
