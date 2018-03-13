@@ -488,7 +488,7 @@ describe('Hotels', function () {
       const res = await response.json();
       expect(res).to.have.property('code', '#missingLatitude');
     });
-    it('PUT /hotels/:hotelAddress/location. Expect 400 #missingTimezone ', async () => {
+    it('PUT /hotels/:hotelAddress/location. Expect 400 #missingLatitude ', async () => {
       let body = JSON.stringify({
         password: config.get('password'),
         lineOne,
