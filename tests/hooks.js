@@ -5,7 +5,9 @@ const fetch = require('node-fetch');
 const config = require('../config.js');
 
 const { app } = require('../src/srv/service');
-const lifData = require('./lifContract');
+const lifData = require('@windingtree/lif-token/build/contracts/LifTokenTest.json');
+
+console.log(lifData);
 const gasMargin = 1.5;
 const addressZero = '0x0000000000000000000000000000000000000000000000000000000000000000';
 let index;
@@ -212,7 +214,7 @@ async function deployLifContract (deployerAccount, user) {
   const web3 = config.get('web3provider').web3;
   const lifContract = new web3.eth.Contract(lifData.abi);
   const lifTokenInstance = await lifContract.deploy({
-    data: lifData.byteCode,
+    data: lifData.bytecode,
     arguments: [],
   }).send({
     from: deployerAccount,
