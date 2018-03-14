@@ -488,7 +488,7 @@ describe('Hotels', function () {
       const res = await response.json();
       expect(res).to.have.property('code', '#missingLatitude');
     });
-    it('PUT /hotels/:hotelAddress/location. Expect 400 #missingLatitude ', async () => {
+    it('PUT /hotels/:hotelAddress/location. Expect 400 #missingLongitude', async () => {
       let body = JSON.stringify({
         password: config.get('password'),
         lineOne,
@@ -496,7 +496,7 @@ describe('Hotels', function () {
         zipCode,
         country,
         timezone,
-        longitude,
+        latitude,
       });
 
       let response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/location`, {
@@ -510,7 +510,7 @@ describe('Hotels', function () {
       expect(response).to.be.ok;
       expect(response).to.have.property('status', 400);
       const res = await response.json();
-      expect(res).to.have.property('code', '#missingLatitude');
+      expect(res).to.have.property('code', '#missingLongitude');
     });
   });
   describe('Hotel images', function () {
