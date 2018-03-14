@@ -8,7 +8,7 @@ const { validatePassword,
   validateAddImage,
 } = require('../../../helpers/validators');
 const { handle } = require('../../../../errors');
-const { HotelManager, Utils } = require('@windingtree/wt-js-libs');
+const { HotelManager } = require('@windingtree/wt-js-libs');
 
 const config = require('../../../../config.js');
 
@@ -181,12 +181,7 @@ hotelsRouter.get('/hotels/:hotelAddress/images', async (req, res, next) => {
   const { hotelAddress } = req.params;
   try {
     const images = [];
-    const context = {
-      indexAddress: config.get('indexAddress'),
-      gasMargin: config.get('gasMargin'),
-      web3provider: config.get('web3provider').web3,
-    };
-    const hotelInstance = Utils.getInstance('Hotel', hotelAddress, context);
+    const hotelInstance = config.get('web3provider').contracts.getHotelInstance(hotelAddress);
     const totalImages = await hotelInstance.methods.getImagesLength().call();
     for (var i = 0; i < totalImages; i++) {
       images.push(await hotelInstance.methods.images(i).call());

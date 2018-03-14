@@ -528,19 +528,15 @@ describe('Hotels', function () {
         body,
       });
       expect(response).to.have.property('status', 200);
-      response = await fetch('http://localhost:3000/hotels', {
+      response = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/images`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'Content-Length': Buffer.byteLength(body),
         },
-        body,
       });
-
-      const hotels = await response.json();
-      const hotel = hotels[config.get('testAddress')];
-      expect(hotel.images).to.include(imageUrl);
+      const { images } = await response.json();
+      expect(images).to.include(imageUrl);
     });
     it('POST /hotels/:hotelAddress/images. Expect 400 #missingPassword', async () => {
       const body = JSON.stringify({
