@@ -6,8 +6,7 @@ const { validatePassword,
   validateRequired,
   validateReservationId } = require('../../../helpers/validators');
 const { handle } = require('../../../../errors');
-const HotelManager = require('../../../../wt-js-libs/dist/node/HotelManager.js');
-const BookingData = require('../../../../wt-js-libs/dist/node/BookingData.js');
+const { HotelManager, BookingData } = require('@windingtree/wt-js-libs');
 
 const config = require('../../../../config.js');
 
@@ -20,14 +19,14 @@ hotelBookingRouter.put('/hotels/:hotelAddress/confirmation',
       let context = {
         indexAddress: config.get('indexAddress'),
         gasMargin: config.get('gasMargin'),
-        web3: config.get('web3'),
+        web3provider: config.get('web3provider'),
       };
-      ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+      ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
       context.owner = ownerAccount.address;
       const hotelManager = new HotelManager(context);
-      hotelManager.web3.eth.accounts.wallet.add(ownerAccount);
+      config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
       const { logs } = await hotelManager.setRequireConfirmation(hotelAddress, !!required);
-      hotelManager.web3.eth.accounts.wallet.remove(ownerAccount);
+      config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
       res.status(200).json({
         txHash: logs[0].transactionHash,
       });
@@ -40,7 +39,7 @@ hotelBookingRouter.get('/hotels/:hotelAddress/bookings', async (req, res, next) 
   const { block } = req.body;
   const { hotelAddress } = req.params;
   try {
-    const data = new BookingData(config.get('web3'));
+    const data = new BookingData({ web3provider: config.get('web3provider') });
     const bookings = await data.getBookings(hotelAddress, block);
     res.status(200).json({ bookings });
   } catch (err) {
@@ -53,7 +52,7 @@ hotelBookingRouter.get('/hotels/:hotelAddress/requests',
     const { block } = req.body;
     const { hotelAddress } = req.params;
     try {
-      const data = new BookingData(config.get('web3'));
+      const data = new BookingData({ web3provider: config.get('web3provider') });
       const requests = await data.getBookingRequests(hotelAddress, block);
       res.status(200).json({ requests });
     } catch (err) {
@@ -71,14 +70,14 @@ hotelBookingRouter.post('/hotels/:hotelAddress/confirmBooking',
       let context = {
         indexAddress: config.get('indexAddress'),
         gasMargin: config.get('gasMargin'),
-        web3: config.get('web3'),
+        web3provider: config.get('web3provider'),
       };
-      ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+      ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
       context.owner = ownerAccount.address;
       const hotelManager = new HotelManager(context);
-      hotelManager.web3.eth.accounts.wallet.add(ownerAccount);
+      config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
       const { logs } = await hotelManager.confirmBooking(hotelAddress, reservationId);
-      hotelManager.web3.eth.accounts.wallet.remove(ownerAccount);
+      config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
       res.status(200).json({
         txHash: logs[0].transactionHash,
       });

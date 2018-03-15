@@ -97,11 +97,10 @@ function validateCode (req, res, next) {
 }
 
 function validateUnitTypeInformation (req, res, next) {
-  const { description, minGuests, maxGuests, price } = req.body;
+  const { description, minGuests, maxGuests } = req.body;
   if (!description) return next(handle('missingDescription', new Error()));
   if (!minGuests) return next(handle('missingMinGuests', new Error()));
   if (!maxGuests) return next(handle('missingMaxGuests', new Error()));
-  if (!price) return next(handle('missingPrice', new Error()));
   next();
 }
 

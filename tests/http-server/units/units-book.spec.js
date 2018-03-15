@@ -1,4 +1,3 @@
-
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
@@ -70,7 +69,7 @@ describe('Units books', function () {
     expect(await response.json()).to.have.property('code', '#missingFrom');
   });
   it('POST /hotels/:hotelAdress/units/:unitAddress/lifBook. Expect 200', async () => {
-    const guestData = '0123456789ABCDEF';
+    const guestData = 'guestData';
     const daysAmount = 1;
     const fromDate = new Date('10/10/2020');
 

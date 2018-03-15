@@ -8,9 +8,7 @@ const { validatePassword,
   validateDateRange } = require('../../../helpers/validators');
 
 const { handle } = require('../../../../errors');
-const HotelManager = require('../../../../wt-js-libs/dist/node/HotelManager.js');
-const BookingData = require('../../../../wt-js-libs/dist/node/BookingData.js');
-const User = require('../../../../wt-js-libs/dist/node/User.js');
+const { HotelManager, BookingData, User } = require('@windingtree/wt-js-libs');
 
 unitsRouter.post('/hotels/:hotelAddress/unitTypes/:unitType/units', validatePassword, async (req, res, next) => {
   const { password } = req.body;
@@ -20,14 +18,14 @@ unitsRouter.post('/hotels/:hotelAddress/unitTypes/:unitType/units', validatePass
     let context = {
       indexAddress: config.get('indexAddress'),
       gasMargin: config.get('gasMargin'),
-      web3: config.get('web3'),
+      web3provider: config.get('web3provider'),
     };
-    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
     context.owner = ownerAccount.address;
     const hotelManager = new HotelManager(context);
-    hotelManager.web3.eth.accounts.wallet.add(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
     const { logs } = await hotelManager.addUnit(hotelAddress, unitType);
-    hotelManager.web3.eth.accounts.wallet.remove(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: logs[0].transactionHash,
     });
@@ -48,14 +46,14 @@ async (req, res, next) => {
     let context = {
       indexAddress: config.get('indexAddress'),
       gasMargin: config.get('gasMargin'),
-      web3: config.get('web3'),
+      web3provider: config.get('web3provider'),
     };
-    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
     context.owner = ownerAccount.address;
     const hotelManager = new HotelManager(context);
-    hotelManager.web3.eth.accounts.wallet.add(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
     const { logs } = await hotelManager.removeUnit(hotelAddress, unitAddress);
-    hotelManager.web3.eth.accounts.wallet.remove(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: logs[0].transactionHash,
     });
@@ -76,14 +74,14 @@ async (req, res, next) => {
     let context = {
       indexAddress: config.get('indexAddress'),
       gasMargin: config.get('gasMargin'),
-      web3: config.get('web3'),
+      web3provider: config.get('web3provider'),
     };
-    ownerAccount = config.get('web3').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir'), password));
+    ownerAccount = config.get('web3provider').eth.accounts.decrypt(loadAccount(config.get('privateKeyDir'), password));
     context.owner = ownerAccount.address;
     const hotelManager = new HotelManager(context);
-    hotelManager.web3.eth.accounts.wallet.add(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
     const { logs } = await hotelManager.setUnitActive(hotelAddress, unitAddress, active);
-    hotelManager.web3.eth.accounts.wallet.remove(ownerAccount);
+    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
     res.status(200).json({
       txHash: logs[0].transactionHash,
     });
@@ -99,7 +97,7 @@ unitsRouter.get('/units/:unitAddress/reservation', validateDate, async (req, res
     let context = {
       indexAddress: config.get('indexAddress'),
       gasMargin: config.get('gasMargin'),
-      web3: config.get('web3'),
+      web3provider: config.get('web3provider'),
     };
     const hotelManager = new HotelManager(context);
     const reservation = await hotelManager.getReservation(unitAddress, date);
@@ -111,12 +109,13 @@ unitsRouter.get('/units/:unitAddress/reservation', validateDate, async (req, res
   }
 });
 
-unitsRouter.get('/units/:unitAddress/available', validateDateRange, async (req, res, next) => {
+unitsRouter.get('/hotels/:hotelAddress/units/:unitAddress/available', validateDateRange, async (req, res, next) => {
   const { from, days } = req.body;
-  const { unitAddress } = req.params;
+  const { hotelAddress, unitAddress } = req.params;
   try {
-    const data = new BookingData(config.get('web3'));
-    const available = await data.unitIsAvailable(unitAddress, from, days);
+    const data = new BookingData({ web3provider: config.get('web3provider') });
+    const fromDate = new Date(from);
+    const available = await data.unitIsAvailable(hotelAddress, unitAddress, fromDate, days);
     res.status(200).json({ available });
   } catch (err) {
     next(handle('web3', err));
@@ -132,9 +131,10 @@ unitsRouter.post('/hotels/:hotelAddress/units/:unitAddress/book',
         account,
         gasMargin: config.get('gasMargin'),
         tokenAddress: config.get('tokenAddress'),
-        web3: config.get('web3'),
+        web3provider: config.get('web3provider'),
       });
-      const { transactionHash } = await user.book(hotelAddress, unitAddress, from, days, guest);
+      const fromDate = new Date(from);
+      const { transactionHash } = await user.book(hotelAddress, unitAddress, fromDate, days, guest);
       res.status(200).json({
         txHash: transactionHash,
       });
@@ -152,9 +152,10 @@ unitsRouter.post('/hotels/:hotelAddress/units/:unitAddress/lifBook',
         account,
         gasMargin: config.get('gasMargin'),
         tokenAddress: config.get('tokenAddress'),
-        web3: config.get('web3'),
+        web3provider: config.get('web3provider'),
       });
-      const { transactionHash } = await user.bookWithLif(hotelAddress, unitAddress, from, days, guest);
+      const fromDate = new Date(from);
+      const { transactionHash } = await user.bookWithLif(hotelAddress, unitAddress, fromDate, days, guest);
       res.status(200).json({
         txHash: transactionHash,
       });

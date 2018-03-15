@@ -3,9 +3,11 @@
 const { expect } = require('chai');
 const fetch = require('node-fetch');
 const config = require('../config.js');
-const utils = require('../wt-js-libs/libs/utils/index');
+
 const { app } = require('../src/srv/service');
-const lifData = require('./lifContract');
+const lifData = require('@windingtree/lif-token/build/contracts/LifTokenTest.json');
+
+console.log(lifData);
 const gasMargin = 1.5;
 const addressZero = '0x0000000000000000000000000000000000000000000000000000000000000000';
 let index;
@@ -13,33 +15,29 @@ let fundingSource;
 let daoAccount;
 let ownerAccount;
 let server;
+config.set('web3Provider', 'http://localhost:8545');
+config.updateWeb3Provider();
 
 const Before = () => (
   before(async function () {
     config.set('log', false);
     config.set('password', 'test123');
-    config.set('web3Provider', 'http://localhost:8545');
-    config.updateWeb3Provider();
     config.set('privateKeyDir', 'keys/test.json');
-    const wallet = await config.get('web3').eth.accounts.wallet.create(3);
-    const accounts = await config.get('web3').eth.getAccounts();
-    fundingSource = accounts[0];
+    const wallet = await config.get('web3provider').web3.eth.accounts.wallet.create(3);
+    const createdAccounts = await config.get('web3provider').web3.eth.getAccounts();
+    fundingSource = createdAccounts[0];
     ownerAccount = wallet['0'].address;
     daoAccount = wallet['1'].address;
     config.set('user', wallet['2'].address);
-    await utils.fundAccount(fundingSource, ownerAccount, '50', config.get('web3'));
-    await utils.fundAccount(fundingSource, daoAccount, '50', config.get('web3'));
-    await utils.fundAccount(fundingSource, config.get('user'), '50', config.get('web3'));
+    await config.get('web3provider').accounts.fundAccount(fundingSource, ownerAccount, '50');
+    await config.get('web3provider').accounts.fundAccount(fundingSource, daoAccount, '50');
+    await config.get('web3provider').accounts.fundAccount(fundingSource, config.get('user'), '50');
   })
 );
 const BeforeEach = () => (
   beforeEach(async function () {
     config.set('whiteList', ['127.0.0.1']);
-    index = await utils.deployIndex({
-      owner: daoAccount,
-      gasMargin: gasMargin,
-      web3: config.get('web3'),
-    });
+    index = await config.get('web3provider').deploy.deployIndex(daoAccount, gasMargin);
     expect(index._address).to.not.equal(addressZero);
     config.set('indexAddress', index._address);
     server = await app.listen(3000);
@@ -71,7 +69,7 @@ async function generateHotel (ownerAddres) {
     'description': hotelDesc,
     'name': hotelName,
   });
-  await fetch('http://localhost:3000/hotels', {
+  res = await fetch('http://localhost:3000/hotels', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -154,6 +152,7 @@ async function generateHotel (ownerAddres) {
     },
     body,
   });
+
   const hotels = await res.json();
   hotelAddresses = Object.keys(hotels);
   const hotel = hotels[hotelAddresses[0]];
@@ -172,7 +171,7 @@ async function generateHotel (ownerAddres) {
     password: config.get('password'),
     price: defaultPrice,
   });
-  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/defaultPrice`, {
+  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitTypeName}/defaultPrice`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -185,7 +184,7 @@ async function generateHotel (ownerAddres) {
     price: defaultLifPrice,
   });
 
-  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/units/${config.get('unitAddress')}/defaultLifPrice`, {
+  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitTypeName}/defaultLifPrice`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -196,7 +195,7 @@ async function generateHotel (ownerAddres) {
 }
 
 async function setUpWallet () {
-  const wallet = await config.get('web3').eth.accounts.wallet[0].encrypt(config.get('password'));
+  const wallet = await config.get('web3provider').web3.eth.accounts.wallet[0].encrypt(config.get('password'));
   const body = JSON.stringify({
     'password': config.get('password'),
     wallet,
@@ -212,10 +211,10 @@ async function setUpWallet () {
 }
 
 async function deployLifContract (deployerAccount, user) {
-  const web3 = config.get('web3');
+  const web3 = config.get('web3provider').web3;
   const lifContract = new web3.eth.Contract(lifData.abi);
   const lifTokenInstance = await lifContract.deploy({
-    data: lifData.byteCode,
+    data: lifData.bytecode,
     arguments: [],
   }).send({
     from: deployerAccount,
