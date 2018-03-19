@@ -5,5 +5,5 @@
   "privateKeyDir": "keys/mainKey.json",
   "web3Provider": "https://ropsten.infura.io/WKNyJ0kClh8Ao5LdmO7z",
   "log": true,
-  "whiteList": ["127.0.0.1"]
+  "whiteList": []
 }

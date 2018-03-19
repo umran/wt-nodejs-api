@@ -1,8 +1,9 @@
 const { handle } = require('../../errors');
-const config = require('../../config');
+const config = require('../../config.js');
 
 function validateWhiteList (req, res, next) {
   const whiteList = config.get('whiteList');
+  if (!whiteList.length) return next();
   let ip = req.ip ||
             req.headers['x-forwarded-for'] ||
             req.connection.remoteAddress ||
