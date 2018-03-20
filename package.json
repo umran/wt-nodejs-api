@@ -6,7 +6,9 @@
   "scripts": {
     "eslint": "./node_modules/.bin/eslint src/ tests/",
     "test": "npm run eslint && scripts/test.sh",
-    "dev": "node ./src/srv/index.js"
+    "dev": "node ./src/srv/index.js",
+    "deploy": "now -e NODE_ENV=production --token $NOW_TOKEN --npm --public",
+    "alias": "now alias --token=$NOW_TOKEN"
   },
   "repository": {
     "type": "git",
@@ -45,5 +47,9 @@
   },
   "engines": {
     "node": "8.9.4"
+  },
+  "now": {
+  "name": "wt-nodejs-api",
+  "alias": "wt-nodejs-api"
   }
 }

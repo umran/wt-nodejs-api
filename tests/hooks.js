@@ -7,7 +7,6 @@ const config = require('../config.js');
 const { app } = require('../src/srv/service');
 const lifData = require('@windingtree/lif-token/build/contracts/LifTokenTest.json');
 
-console.log(lifData);
 const gasMargin = 1.5;
 const addressZero = '0x0000000000000000000000000000000000000000000000000000000000000000';
 let index;

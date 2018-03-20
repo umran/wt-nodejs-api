@@ -35,4 +35,15 @@ describe('API', function () {
     const res = await response.json();
     expect(res).to.have.property('code', '#whiteList');
   });
+  it('Allow all ips with empty whiteList', async () => {
+    config.set('whiteList', []);
+    const response = await fetch('http://localhost:3000/', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+    expect(response).to.have.property('status', 200);
+  });
 });
