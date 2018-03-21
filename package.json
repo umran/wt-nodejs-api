@@ -1,11 +1,12 @@
 {
   "name": "wt-nodejs-api",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": " API to interact with the Winding Tree platform",
   "main": "index.js",
   "scripts": {
     "eslint": "./node_modules/.bin/eslint src/ tests/",
     "test": "npm run eslint && scripts/test.sh",
+    "now-start": "npm run dev",
     "dev": "node ./src/srv/index.js",
     "deploy": "now -e NODE_ENV=production --token $NOW_TOKEN --npm --public",
     "alias": "now alias --token=$NOW_TOKEN"
@@ -49,7 +50,7 @@
     "node": "8.9.4"
   },
   "now": {
-  "name": "wt-nodejs-api",
-  "alias": "demo-api.windingtree.com"
+    "name": "wt-nodejs-api",
+    "alias": "demo-api.windingtree.com"
   }
 }
