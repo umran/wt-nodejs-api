@@ -1,9 +1,9 @@
 {
   "gasMargin": 1.5,
-  "indexAddress": "0x787593b0A1020FD796312B5D284Ee64a0947cc52",
+  "indexAddress": "0x09C0AECBA9BBEBCCDAAF3FE8473591A69C4C11BE",
   "port": 3000,
   "privateKeyDir": "keys/mainKey.json",
   "web3Provider": "https://ropsten.infura.io/WKNyJ0kClh8Ao5LdmO7z",
   "log": true,
-  "whiteList": ["127.0.0.1"]
+  "whiteList": []
 }

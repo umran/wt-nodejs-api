@@ -4,8 +4,11 @@
   "description": " API to interact with the Winding Tree platform",
   "main": "index.js",
   "scripts": {
-    "test": "scripts/test.sh",
-    "dev": "node ./src/srv/index.js"
+    "eslint": "./node_modules/.bin/eslint src/ tests/",
+    "test": "npm run eslint && scripts/test.sh",
+    "dev": "node ./src/srv/index.js",
+    "deploy": "now -e NODE_ENV=production --token $NOW_TOKEN --npm --public",
+    "alias": "now alias --token=$NOW_TOKEN"
   },
   "repository": {
     "type": "git",
@@ -24,6 +27,7 @@
   },
   "homepage": "https://github.com/windingtree/wt-nodejs-api#readme",
   "dependencies": {
+    "@windingtree/wt-js-libs": "^0.1.2",
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "swagger-ui-express": "^2.0.11",
@@ -31,11 +35,21 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "eslint": "^4.16.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
     "ethereumjs-testrpc": "3.9.2",
     "mocha": "^4.0.1",
     "node-fetch": "^1.7.3"
   },
   "engines": {
     "node": "8.9.4"
+  },
+  "now": {
+  "name": "wt-nodejs-api",
+  "alias": "demo-api.windingtree.com"
   }
 }

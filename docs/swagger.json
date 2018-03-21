@@ -327,7 +327,7 @@
         }
       }
     },
-    "/hotels/{address}":{
+    "/hotels/{hotelAddress}":{
       "get":{
         "tags": [ "Hotel" ],
         "summary": "Get Hotel.",
@@ -335,7 +335,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
             "description": "Hotel address."
@@ -425,7 +425,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
             "description": "Hotel address."
@@ -462,75 +462,7 @@
         }
       }
     },
-    "/hotels/{address}/address": {
-      "put": {
-        "tags": [ "Hotel" ],
-        "summary": "Hotel's address.",
-        "description": "Change hotel's address",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "address",
-            "type": "string",
-            "required": true,
-            "description": "Hotel address."
-          },
-          {
-            "name": "params",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "required": [
-                "password",
-                "lineOne",
-                "lineTwo",
-                "zipCode",
-                "country"
-              ],
-              "properties": {
-                "password": {
-                  "description": "Current password.",
-                  "type": "string"
-                },
-                "lineOne": {
-                  "description": "street number , street name.",
-                  "type": "string"
-                },
-                "lineTwo": {
-                  "description": "street number , street name.",
-                  "type": "string"
-                },
-                "zipCode": {
-                  "description": "Hotel's zip code.",
-                  "type": "string"
-                },
-                "country": {
-                  "description": "Hotel's country.",
-                  "type": "string"
-                 }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "schema": {
-              "type": "array",
-              "items" : {
-                "type": "string"
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid input",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        }
-      }
-    },
-    "/hotels/{address}/confirmBooking": {
+    "/hotels/{hotelAddress}/confirmBooking": {
       "post": {
         "tags": [ "Hotel" ],
         "summary": "Confirm booking.",
@@ -538,10 +470,10 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
-            "description": "Hotel location."
+            "description": "Hotel address."
           },
           {
             "name": "params",
@@ -581,7 +513,7 @@
         }
       }
     },
-    "/hotels/{address}/confirmation": {
+    "/hotels/{hotelAddress}/confirmation": {
       "put": {
         "tags": [ "Hotel" ],
         "summary": "Confirm booking.",
@@ -589,10 +521,10 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
-            "description": "Hotel location."
+            "description": "Hotel address."
           },
           {
             "name": "params",
@@ -675,7 +607,7 @@
           }
         }
     },
-    "/hotels/{address}/location": {
+    "/hotels/{hotelAddress}/location": {
       "put": {
         "tags": [ "Hotel" ],
         "summary": "Hotel's location.",
@@ -683,10 +615,10 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
-            "description": "Hotel location."
+            "description": "Hotel address."
           },
           {
             "name": "params",
@@ -695,6 +627,10 @@
             "schema": {
               "required": [
                 "password",
+                "lineOne",
+                "lineTwo",
+                "zipCode",
+                "country",
                 "timezon",
                 "latitude",
                 "longitude"
@@ -704,6 +640,22 @@
                   "description": "Current password.",
                   "type": "string"
                 },
+                "lineOne": {
+                  "description": "street number , street name.",
+                  "type": "string"
+                },
+                "lineTwo": {
+                  "description": "street number , street name.",
+                  "type": "string"
+                },
+                "zipCode": {
+                  "description": "Hotel's zip code.",
+                  "type": "string"
+                },
+                "country": {
+                  "description": "Hotel's country.",
+                  "type": "string"
+                 },
                 "latitude": {
                   "description": "Hotels's latitude.",
                   "type": "string"
@@ -736,7 +688,7 @@
         }
       }
     },
-    "/hotels/{address}/images": {
+    "/hotels/{hotelAddress}/images": {
       "get": {
         "tags": [ "Hotel" ],
         "summary": "Hotel's images.",
@@ -744,7 +696,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
             "description": "Hotel address."
@@ -774,7 +726,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
             "description": "Hotel address."
@@ -860,7 +812,7 @@
         }
       }
     },
-    "/hotels/{address}/images/{id}": {
+    "/hotels/{hotelAddress}/images/{id}": {
         "delete": {
           "tags": [ "Hotel" ],
           "summary": "remove image from hotel.",
@@ -868,7 +820,7 @@
           "parameters": [
             {
               "in": "path",
-              "name": "address",
+              "name": "hotelAddress",
               "type": "string",
               "required": true,
               "description": "Hotel address."
@@ -914,7 +866,7 @@
           }
         }
     },
-    "/hotels/{address}/unitTypes": {
+    "/hotels/{hotelAddress}/unitTypes": {
       "post": {
         "tags": [ "Unit types" ],
         "summary": "Add unit type to hotel",
@@ -922,7 +874,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
             "description": "Hotel address."
@@ -971,7 +923,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
             "description": "Hotel address."
@@ -996,7 +948,7 @@
 
       }
     },
-    "/hotels/{address}/unitTypes/{type}": {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}": {
       "delete": {
         "tags": [ "Unit types" ],
         "summary": "remove unity type from hotel.",
@@ -1004,7 +956,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
             "description": "Hotel address."
@@ -1056,7 +1008,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
             "description": "Hotel address."
@@ -1078,8 +1030,7 @@
                 "password",
                 "description",
                 "minGuests",
-                "maxGuests",
-                "price"
+                "maxGuests"
               ],
               "properties": {
                 "password": {
@@ -1097,10 +1048,6 @@
                 "maxGuests": {
                   "description": "Maximun guests allowed.",
                   "type": "number"
-                },
-                "price": {
-                  "description": "Unit type price.",
-                  "type": "string"
                 }
               }
             }
@@ -1108,7 +1055,7 @@
         ],
         "responses": {
           "204": {
-            "description": "Sucefully removed.",
+            "description": "Sucefully updated.",
             "schema": {
               "$ref": "#/definitions/txHash"
             }
@@ -1122,7 +1069,7 @@
         }
       }
     },
-    "/hotels/{address}/unitTypes/{type}/images": {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/images": {
       "post": {
         "tags": [ "Unit types" ],
         "summary": "Add image to unit type",
@@ -1130,7 +1077,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
             "description": "Hotel address."
@@ -1180,7 +1127,7 @@
         }
       }
     },
-    "/hotels/{address}/unitTypes/{type}/images/{index}": {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/images/{index}": {
       "delete": {
         "tags": [ "Unit types" ],
         "summary": "Remove image from unit type",
@@ -1188,7 +1135,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
             "description": "Hotel address."
@@ -1240,7 +1187,7 @@
         }
       }
     },
-    "/hotels/{address}/unitTypes/{type}/amenities": {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/amenities": {
       "post": {
         "tags": [ "Unit types" ],
         "summary": "Create amenities.",
@@ -1248,7 +1195,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
             "description": "Hotel address."
@@ -1299,7 +1246,7 @@
         }
       }
     },
-    "/hotels/{address}/unitTypes/{type}/amenities/{amenity}": {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/amenities/{amenity}": {
       "delete": {
         "tags": [ "Unit types" ],
         "summary": "remove amenity.",
@@ -1307,7 +1254,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
             "description": "Hotel address."
@@ -1360,7 +1307,7 @@
         }
       }
     },
-    "/hotels/{address}/unitTypes/{type}/units": {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/units": {
       "post": {
         "tags": [ "Units" ],
         "summary": "Create units.",
@@ -1368,7 +1315,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
             "description": "Hotel address."
@@ -1414,7 +1361,7 @@
         }
       }
     },
-    "/hotels/{address}/unitTypes/{type}/units/{unit}" : {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/units/{unitAddress}" : {
       "delete": {
         "tags": [ "Units" ],
         "summary": "remove unit.",
@@ -1422,7 +1369,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
             "description": "Hotel address."
@@ -1475,7 +1422,7 @@
         }
       }
     },
-    "/hotels/{address}/unitTypes/{type}/units/{unit}/active" : {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/units/{unitAddress}/active" : {
       "put": {
         "tags": [ "Units" ],
         "summary": "Active status.",
@@ -1483,7 +1430,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
             "description": "Hotel address."
@@ -1679,25 +1626,25 @@
         }
       }
     },
-    "/hotels/{address}/units/{unit}/defaultPrice" : {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/defaultPrice" : {
       "put": {
-        "tags": [ "Units" ],
+        "tags": [ "Unit types" ],
         "summary": "Set default price.",
-        "description": "Set default price for a unit of hotel.",
+        "description": "Set default price for a unit type of hotel.",
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
             "description": "Hotel address."
           },
           {
             "in": "path",
-            "name": "unit",
+            "name": "unitType",
             "type": "string",
             "required": true,
-            "description": "unit address."
+            "description": "unit type name."
           },
           {
             "in": "body",
@@ -1738,25 +1685,25 @@
         }
       }
     },
-    "/hotels/{address}/units/{unit}/defaultLifPrice" : {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/defaultLifPrice" : {
       "post": {
-        "tags": [ "Units" ],
+        "tags": [ "Unit types" ],
         "summary": "Set default Lif price.",
-        "description": "Set default Lif price for a unit of hotel.",
+        "description": "Set default Lif price for a unit type of hotel.",
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
             "description": "Hotel address."
           },
           {
             "in": "path",
-            "name": "unit",
+            "name": "unitType",
             "type": "string",
             "required": true,
-            "description": "unit address."
+            "description": "unit type name."
           },
           {
             "in": "body",
@@ -1797,7 +1744,7 @@
         }
       }
     },
-    "/hotels/{address}/units/{unit}/specialLifPrice" : {
+    "/hotels/{hotelAddress}/units/{unitAddress}/specialLifPrice" : {
       "post": {
         "tags": [ "Units" ],
         "summary": "Set special Lif price.",
@@ -1805,7 +1752,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
             "description": "Hotel address."
@@ -1825,7 +1772,9 @@
             "schema": {
               "required": [
                 "password",
-                "price"
+                "price",
+                "from",
+                "days"
               ],
               "properties": {
                 "password": {
@@ -1834,6 +1783,14 @@
                 },
                 "price": {
                   "description": "Special price.",
+                  "type": "number"
+                },
+                "from": {
+                  "description": "Initla date.",
+                  "type": "Date"
+                },
+                "days": {
+                  "description": "Amount of days.",
                   "type": "number"
                 }
               }
@@ -1856,7 +1813,7 @@
         }
       }
     },
-    "/hotels/{address}/units/{unit}/specialPrice" : {
+    "/hotels/{hotelAddress}/units/{unitAddress}/specialPrice" : {
       "post": {
         "tags": [ "Units" ],
         "summary": "Set special price.",
@@ -1864,7 +1821,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "address",
+            "name": "hotelAddress",
             "type": "string",
             "required": true,
             "description": "Hotel address."
@@ -1884,7 +1841,9 @@
             "schema": {
               "required": [
                 "password",
-                "price"
+                "price",
+                "from",
+                "days"
               ],
               "properties": {
                 "password": {
@@ -1893,6 +1852,14 @@
                 },
                 "price": {
                   "description": "Special price.",
+                  "type": "number"
+                },
+                "from": {
+                  "description": "Initla date.",
+                  "type": "Date"
+                },
+                "days": {
+                  "description": "Amount of days.",
                   "type": "number"
                 }
               }
@@ -1915,15 +1882,15 @@
         }
       }
     },
-    "/hotels/{address}/units/{unit}/currencyCode" : {
+    "/hotels/{hotelAddress}/unitTypes/{unitType}/currencyCode" : {
        "post": {
-         "tags": [ "Units" ],
+         "tags": [ "Unit types" ],
          "summary": "Set currency Code.",
          "description": "Set currency code for a unit of hotel.",
          "parameters": [
            {
              "in": "path",
-             "name": "address",
+             "name": "hotelAddress",
              "type": "string",
              "required": true,
              "description": "Hotel address."
@@ -1974,12 +1941,19 @@
          }
        }
      },
-     "/units/{unitAdress}/available":{
+     "/hotels/{hotelAddress}/units/{unitAddress}/available":{
          "get":{
            "tags": [ "Units" ],
          "summary": "Unit availability.",
            "description": "Get unit availability for a range of days.",
            "parameters": [
+             {
+               "in": "path",
+               "name": "hotelAddress",
+               "type": "string",
+               "required": true,
+               "description": "Hotel address."
+             },
              {
                "in": "path",
                "name": "unit",
@@ -2029,7 +2003,7 @@
            }
          }
        },
-    "/units/{unit}/cost":{
+    "hotels/{hotelAddress}/units/{unitAddress}/cost":{
         "get":{
           "tags": [ "Units" ],
           "summary": "Get cost",
@@ -2041,6 +2015,13 @@
               "type": "string",
               "required": true,
               "description": "Unit address."
+            },
+            {
+              "in": "path",
+              "name": "hotelAddress",
+              "type": "string",
+              "required": true,
+              "description": "Hotel address."
             },
             {
               "name": "body",
@@ -2079,7 +2060,7 @@
           }
         }
       },
-      "/units/{unit}/lifCost":{
+      "hotels/{hotelAddress}/units/{unitAddress}/lifCost":{
           "get":{
             "tags": [ "Units" ],
             "summary": "Get Lif costs.",
@@ -2091,6 +2072,13 @@
                 "type": "string",
                 "required": true,
                 "description": "Unit address."
+              },
+              {
+                "in": "path",
+                "name": "hotelAddress",
+                "type": "string",
+                "required": true,
+                "description": "Hotel address."
               },
               {
                 "name": "body",
@@ -2129,7 +2117,7 @@
             }
           }
       },
-      "/units/{unit}/reservations":{
+      "/units/{unitAddress}/reservations":{
             "get":{
               "tags": [ "Units" ],
               "summary": "Get reservations.",
