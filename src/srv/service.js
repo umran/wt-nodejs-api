@@ -34,10 +34,9 @@ app.use((err, req, res, next) => {
 
 app.use('/', (req, res) => {
   const response = {
+    docs: 'https://github.com/windingtree/wt-nodejs-api/blob/master/README.md',
+    info: 'https://github.com/windingtree/wt-nodejs-api',
     version,
-    service: 'demo-api.windingtree.com',
-    docs: 'https://demo-api.windingtree.com',
-    repository: 'https://github.com/windingtree/wt-nodejs-api',
   };
   res.status(200).json(response);
 });
