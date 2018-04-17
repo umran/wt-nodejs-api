@@ -13,7 +13,7 @@ const {
 } = require('../../helpers/validators');
 
 const { handle } = require('../../errors');
-const config = require('../../config.js');
+const config = require('../../config');
 
 walletRouter.post('/wallet', validatePassword, validateWallet, (req, res, next) => {
   const { wallet, password } = req.body;

@@ -1,5 +1,5 @@
 const { handle } = require('../errors');
-const config = require('../config.js');
+const config = require('../config');
 
 function validateWhiteList (req, res, next) {
   const whiteList = config.get('whiteList');

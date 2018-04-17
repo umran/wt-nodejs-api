@@ -1,17 +1,21 @@
 const fs = require('fs');
 const Web3 = require('web3');
-// tODO unify config
-const CONFIG = require('../config.json');
-const config = require('../config.js');
-const web3 = new Web3(new Web3.providers.HttpProvider(CONFIG.web3Provider));
+const config = require('../config');
+const web3 = new Web3(config.get('web3provider'));
 
 function loadAccount (dir) {
   let privateKeyString = fs.readFileSync(dir, 'utf8');
   return JSON.parse(privateKeyString);
 }
 
-function updateAccount (oldPassword, newPassword, privateKeyJSON, writeTo = CONFIG.privateKeyDir) {
-  if (!newPassword) newPassword = oldPassword;
+function updateAccount (oldPassword, newPassword, privateKeyJSON, writeTo) {
+  if (!newPassword) {
+    newPassword = oldPassword;
+  }
+  if (!writeTo) {
+    config.get('privateKeyDir');
+  }
+
   const { privateKey } = web3.eth.accounts.decrypt(privateKeyJSON, oldPassword);
   const cryptedAccount = web3.eth.accounts.encrypt(privateKey, newPassword);
   fs.writeFileSync(writeTo, JSON.stringify(cryptedAccount), 'utf8');

@@ -1,4 +1,4 @@
-const CONFIG = require('./config.json');
+const CONFIG = require('./configuration');
 const Web3 = require('web3');
 const { web3providerFactory } = require('@windingtree/wt-js-libs');
 

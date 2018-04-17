@@ -9,7 +9,7 @@ const { validatePassword,
 const { handle } = require('../../../errors');
 const { HotelManager, User, BookingData } = require('@windingtree/wt-js-libs');
 
-const config = require('../../../config.js');
+const config = require('../../../config');
 
 pricesRouter.post([
   '/hotels/:hotelAddress/unitTypes/:unitType/units/:unitAddress/specialLifPrice',

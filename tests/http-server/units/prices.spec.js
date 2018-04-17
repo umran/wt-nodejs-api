@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
 const fetch = require('node-fetch');
-const config = require('../../../src/config.js');
+const config = require('../../../src/config');
 const { AfterEach,
   BeforeEach,
   Before } = require('../../hooks.js');

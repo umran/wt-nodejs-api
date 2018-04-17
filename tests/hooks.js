@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
 const fetch = require('node-fetch');
-const config = require('../src/config.js');
+const config = require('../src/config');
 
 const { app } = require('../src/srv/service');
 const lifData = require('@windingtree/lif-token/build/contracts/LifTokenTest.json');

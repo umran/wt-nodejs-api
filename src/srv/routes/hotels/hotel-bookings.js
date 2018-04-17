@@ -8,7 +8,7 @@ const { validatePassword,
 const { handle } = require('../../../errors');
 const { HotelManager, BookingData } = require('@windingtree/wt-js-libs');
 
-const config = require('../../../config.js');
+const config = require('../../../config');
 
 hotelBookingRouter.put('/hotels/:hotelAddress/confirmation',
   validatePassword, validateRequired, async (req, res, next) => {

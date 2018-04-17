@@ -1,6 +1,6 @@
 const express = require('express');
 const unitTypesRouter = express.Router();
-const config = require('../../../config.js');
+const config = require('../../../config');
 const { loadAccount } = require('../../../helpers/crypto');
 const { validatePassword,
   validateUnitType,

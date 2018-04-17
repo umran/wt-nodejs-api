@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
 const { updateAccount, loadAccount, storeWallet } = require('../../src/helpers/crypto');
-const config = require('../../src/config.js');
+const config = require('../../src/config');
 
 const newPassword = 'newPassword1234567890';
 const password = 'test123';
