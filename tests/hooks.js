@@ -57,11 +57,6 @@ async function generateHotel (ownerAddres) {
   let hotelAddresses;
   const hotelName = 'Test Hotel';
   const hotelDesc = 'Test Hotel desccription';
-  const unitTypeName = 'TYPE_000';
-  const amenity = 5;
-  const imageUrl = 'test-image.jpeg';
-  const defaultPrice = 78;
-  const defaultLifPrice = 2;
 
   body = JSON.stringify({
     'password': config.get('password'),
@@ -92,56 +87,6 @@ async function generateHotel (ownerAddres) {
 
   hotelAddresses = Object.keys(await res.json());
   config.set('testAddress', hotelAddresses[0]);
-  body = JSON.stringify({
-    'password': config.get('password'),
-    unitType: unitTypeName,
-  });
-  res = await fetch(`http://localhost:3000/hotels/${hotelAddresses[0]}/unitTypes`, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body,
-  });
-
-  body = JSON.stringify({
-    'password': config.get('password'),
-    amenity,
-  });
-  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitTypeName}/amenities`, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body,
-  });
-
-  body = JSON.stringify({
-    'password': config.get('password'),
-  });
-  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitTypeName}/units`, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body,
-  });
-
-  body = JSON.stringify({
-    'password': config.get('password'),
-    'url': imageUrl,
-  });
-  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitTypeName}/images`, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body,
-  });
   res = await fetch('http://localhost:3000/hotels', {
     method: 'GET',
     headers: {
@@ -155,42 +100,8 @@ async function generateHotel (ownerAddres) {
   const hotels = await res.json();
   hotelAddresses = Object.keys(hotels);
   const hotel = hotels[hotelAddresses[0]];
-  let unitAddresses = Object.keys(hotel.units);
   expect(hotel).to.have.property('name', hotelName);
   expect(hotel).to.have.property('description', hotelDesc);
-  expect(hotel).to.have.property('unitTypeNames');
-  expect(hotel.unitTypeNames).to.include(unitTypeName);
-  expect(hotel.unitTypes[unitTypeName].amenities).to.include(amenity);
-  const unitAddress = hotel.unitAddresses[unitAddresses.length - 1];
-  config.set('unitAddress', unitAddress);
-  expect(hotel.units[unitAddress]).to.have.property('unitType', unitTypeName);
-  expect(hotel.unitTypes[unitTypeName].images).to.include(imageUrl);
-
-  body = JSON.stringify({
-    password: config.get('password'),
-    price: defaultPrice,
-  });
-  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitTypeName}/defaultPrice`, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body,
-  });
-  body = JSON.stringify({
-    password: config.get('password'),
-    price: defaultLifPrice,
-  });
-
-  res = await fetch(`http://localhost:3000/hotels/${config.get('testAddress')}/unitTypes/${unitTypeName}/defaultLifPrice`, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body,
-  });
 }
 
 async function setUpWallet () {
