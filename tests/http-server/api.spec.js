@@ -16,6 +16,10 @@ describe('API', function () {
       method: 'GET',
     });
     expect(response).to.be.ok;
+    const res = await response.json();
+    expect(res).to.have.property('docs');
+    expect(res).to.have.property('info');
+    expect(res).to.have.property('version');
   });
   it('GET /docs', async () => {
     const response = await fetch('http://localhost:3000/docs', {

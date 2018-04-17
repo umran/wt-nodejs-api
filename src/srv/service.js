@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
 const app = express();
 const config = require('../../config');
+const { version } = require('../../package.json');
 
 const { validateWhiteList } = require('../helpers/validators');
 const { walletRouter } = require('./routes/wallet');
@@ -32,8 +33,12 @@ app.use((err, req, res, next) => {
 });
 
 app.use('/', (req, res) => {
-  res.write('WT Nodejs API');
-  res.end();
+  const response = {
+    docs: 'https://github.com/windingtree/wt-nodejs-api/blob/master/README.md',
+    info: 'https://github.com/windingtree/wt-nodejs-api',
+    version,
+  };
+  res.status(200).json(response);
 });
 
 module.exports = {
