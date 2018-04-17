@@ -12,8 +12,8 @@ const {
   validateWallet,
 } = require('../../helpers/validators');
 
-const { handle } = require('../../../errors');
-const config = require('../../../config.js');
+const { handle } = require('../../errors');
+const config = require('../../config.js');
 
 walletRouter.post('/wallet', validatePassword, validateWallet, (req, res, next) => {
   const { wallet, password } = req.body;

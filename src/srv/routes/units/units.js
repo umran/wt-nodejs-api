@@ -1,13 +1,13 @@
 const express = require('express');
 const unitsRouter = express.Router();
-const config = require('../../../../config.js');
+const config = require('../../../config.js');
 const { loadAccount } = require('../../../helpers/crypto');
 const { validatePassword,
   validateActive,
   validateDate,
   validateDateRange } = require('../../../helpers/validators');
 
-const { handle } = require('../../../../errors');
+const { handle } = require('../../../errors');
 const { HotelManager, BookingData, User } = require('@windingtree/wt-js-libs');
 
 unitsRouter.post('/hotels/:hotelAddress/unitTypes/:unitType/units', validatePassword, async (req, res, next) => {

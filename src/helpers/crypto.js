@@ -1,7 +1,8 @@
 const fs = require('fs');
 const Web3 = require('web3');
-const CONFIG = require('../../config.json');
-const config = require('../../config.js');
+// tODO unify config
+const CONFIG = require('../config.json');
+const config = require('../config.js');
 const web3 = new Web3(new Web3.providers.HttpProvider(CONFIG.web3Provider));
 
 function loadAccount (dir) {

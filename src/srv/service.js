@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
 const app = express();
-const config = require('../../config');
+const config = require('../config');
 const { version } = require('../../package.json');
 
 const { validateWhiteList } = require('../helpers/validators');

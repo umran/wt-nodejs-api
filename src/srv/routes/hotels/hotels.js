@@ -7,10 +7,10 @@ const { validatePassword,
   validateHotelLocation,
   validateAddImage,
 } = require('../../../helpers/validators');
-const { handle } = require('../../../../errors');
+const { handle } = require('../../../errors');
 const { HotelManager } = require('@windingtree/wt-js-libs');
 
-const config = require('../../../../config.js');
+const config = require('../../../config.js');
 
 hotelsRouter.post('/hotels', validateHotelInfo, async (req, res, next) => {
   const { password, name, description } = req.body;

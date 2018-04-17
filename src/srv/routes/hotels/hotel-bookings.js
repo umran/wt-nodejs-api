@@ -5,10 +5,10 @@ const { loadAccount } = require('../../../helpers/crypto');
 const { validatePassword,
   validateRequired,
   validateReservationId } = require('../../../helpers/validators');
-const { handle } = require('../../../../errors');
+const { handle } = require('../../../errors');
 const { HotelManager, BookingData } = require('@windingtree/wt-js-libs');
 
-const config = require('../../../../config.js');
+const config = require('../../../config.js');
 
 hotelBookingRouter.put('/hotels/:hotelAddress/confirmation',
   validatePassword, validateRequired, async (req, res, next) => {

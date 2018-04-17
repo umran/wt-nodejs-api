@@ -1,6 +1,6 @@
 const express = require('express');
 const unitTypesRouter = express.Router();
-const config = require('../../../../config.js');
+const config = require('../../../config.js');
 const { loadAccount } = require('../../../helpers/crypto');
 const { validatePassword,
   validateUnitType,
@@ -10,7 +10,7 @@ const { validatePassword,
   validateCode,
   validatePrice } = require('../../../helpers/validators');
 
-const { handle } = require('../../../../errors');
+const { handle } = require('../../../errors');
 const { HotelManager } = require('@windingtree/wt-js-libs');
 
 unitTypesRouter.get('/hotels/:hotelAddress/unitTypes', async (req, res, next) => {
