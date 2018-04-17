@@ -18,9 +18,9 @@
     "url": "https://windingtree.github.io/wt-js-libs/"
   },
   "schemes": [
-    "http"
+    "https"
   ],
-  "host": "localhost:3000",
+  "host": "demo-api.windingtree.com",
   "basePath": "/",
   "tags": [
     {
