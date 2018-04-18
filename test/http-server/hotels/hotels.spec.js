@@ -4,9 +4,11 @@ const { expect } = require('chai');
 const fetch = require('node-fetch');
 const config = require('../../../src/config');
 const { PASSWORD_HEADER } = require('../../../src/helpers/validators');
-const { AfterEach,
+const {
+  AfterEach,
   BeforeEach,
-  Before } = require('../../hooks.js');
+  Before,
+} = require('../../utils/hooks.js');
 
 const getGenericHeaders = () => {
   let headers = {

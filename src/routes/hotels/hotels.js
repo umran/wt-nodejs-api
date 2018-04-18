@@ -1,21 +1,21 @@
 const express = require('express');
 const hotelsRouter = express.Router();
-const { loadAccount } = require('../../../helpers/crypto');
+const { loadAccount } = require('../../helpers/crypto');
 const { validatePassword,
   validateHotelInfo,
   PASSWORD_HEADER,
-} = require('../../../helpers/validators');
-const { handle } = require('../../../errors');
+} = require('../../helpers/validators');
+const { handle } = require('../../errors');
 const { HotelManager } = require('@windingtree/wt-js-libs');
 
-const config = require('../../../config');
+const config = require('../../config');
 
 hotelsRouter.post('/hotels', validatePassword, validateHotelInfo, async (req, res, next) => {
   const { name, description } = req.body;
   const password = req.header(PASSWORD_HEADER);
   let ownerAccount = {};
   try {
-    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyFile')), password);
     const hotelManager = new HotelManager({
       indexAddress: config.get('indexAddress'),
       owner: ownerAccount.address,
@@ -37,7 +37,7 @@ hotelsRouter.get('/hotels', validatePassword, async (req, res, next) => {
   const password = req.header(PASSWORD_HEADER);
   let ownerAccount = {};
   try {
-    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyFile')), password);
   } catch (err) {
     return next(handle('web3', err));
   }
@@ -77,7 +77,7 @@ hotelsRouter.delete('/hotels/:hotelAddress', validatePassword, async (req, res, 
   const { hotelAddress } = req.params;
   let ownerAccount = {};
   try {
-    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyFile')), password);
   } catch (err) {
     return next(handle('web3', err));
   }
@@ -103,7 +103,7 @@ hotelsRouter.put('/hotels/:hotelAddress', validateHotelInfo, validatePassword, a
   const { hotelAddress } = req.params;
   let ownerAccount = {};
   try {
-    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
+    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyFile')), password);
     const hotelManager = new HotelManager({
       indexAddress: config.get('indexAddress'),
       owner: ownerAccount.address,

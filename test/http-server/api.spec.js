@@ -3,9 +3,11 @@
 const { expect } = require('chai');
 const fetch = require('node-fetch');
 const config = require('../../src/config');
-const { AfterEach,
+const {
+  AfterEach,
   BeforeEach,
-  Before } = require('../hooks.js');
+  Before,
+} = require('../utils/hooks.js');
 
 describe('API', function () {
   AfterEach();

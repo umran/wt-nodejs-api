@@ -13,7 +13,7 @@ function updateAccount (oldPassword, newPassword, privateKeyJSON, writeTo) {
     newPassword = oldPassword;
   }
   if (!writeTo) {
-    config.get('privateKeyDir');
+    writeTo = config.get('privateKeyFile');
   }
 
   const { privateKey } = web3.eth.accounts.decrypt(privateKeyJSON, oldPassword);
@@ -22,7 +22,7 @@ function updateAccount (oldPassword, newPassword, privateKeyJSON, writeTo) {
 }
 
 function storeWallet (wallet) {
-  fs.writeFileSync(config.get('privateKeyDir'), JSON.stringify(wallet), 'utf8');
+  fs.writeFileSync(config.get('privateKeyFile'), JSON.stringify(wallet), 'utf8');
 }
 module.exports = {
   loadAccount,

@@ -12,7 +12,7 @@ const UPDATED_TEST_ACCOUNT_DIR = 'keys/test-updated.json';
 describe('Utils test', function () {
   describe('crypto.js', function () {
     it('Create account. Expect ok', async function () {
-      config.set('privateKeyDir', 'keys/test.json');
+      config.set('privateKeyFile', 'keys/test.json');
       await config.get('web3provider').web3.eth.accounts.wallet.create(3);
       const wallet = await config.get('web3provider').web3.eth.accounts.wallet[0].encrypt(password);
       storeWallet(wallet);
