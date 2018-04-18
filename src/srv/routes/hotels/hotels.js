@@ -10,7 +10,10 @@ const { HotelManager } = require('@windingtree/wt-js-libs');
 
 const config = require('../../../config');
 
-hotelsRouter.post('/hotels', validatePassword, validateHotelInfo, async (req, res, next) => {
+const hotelRoute = '/hotels/:hotelAddress';
+const hotelsRoute = '/hotels';
+
+hotelsRouter.post(hotelsRoute, validatePassword, validateHotelInfo, async (req, res, next) => {
   const { name, description } = req.body;
   const password = req.header(PASSWORD_HEADER);
   let ownerAccount = {};
@@ -33,7 +36,7 @@ hotelsRouter.post('/hotels', validatePassword, validateHotelInfo, async (req, re
   }
 });
 
-hotelsRouter.get('/hotels', validatePassword, async (req, res, next) => {
+hotelsRouter.get(hotelsRoute, validatePassword, async (req, res, next) => {
   const password = req.header(PASSWORD_HEADER);
   let ownerAccount = {};
   try {
@@ -55,7 +58,7 @@ hotelsRouter.get('/hotels', validatePassword, async (req, res, next) => {
   }
 });
 
-hotelsRouter.get('/hotels/:hotelAddress', async (req, res, next) => {
+hotelsRouter.get(hotelRoute, async (req, res, next) => {
   const { hotelAddress } = req.params;
   try {
     const hotelManager = new HotelManager({
@@ -72,7 +75,7 @@ hotelsRouter.get('/hotels/:hotelAddress', async (req, res, next) => {
   }
 });
 
-hotelsRouter.delete('/hotels/:hotelAddress', validatePassword, async (req, res, next) => {
+hotelsRouter.delete(hotelRoute, validatePassword, async (req, res, next) => {
   const password = req.header(PASSWORD_HEADER);
   const { hotelAddress } = req.params;
   let ownerAccount = {};
@@ -97,7 +100,7 @@ hotelsRouter.delete('/hotels/:hotelAddress', validatePassword, async (req, res, 
   }
 });
 
-hotelsRouter.put('/hotels/:hotelAddress', validateHotelInfo, validatePassword, async (req, res, next) => {
+hotelsRouter.put(hotelRoute, validateHotelInfo, validatePassword, async (req, res, next) => {
   const { name, description } = req.body;
   const password = req.header(PASSWORD_HEADER);
   const { hotelAddress } = req.params;
