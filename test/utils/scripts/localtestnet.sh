@@ -41,4 +41,4 @@ else
   start_testrpc
 fi
 
-./node_modules/mocha/bin/mocha "tests/**/*.spec.js" --timeout 20000
+./node_modules/.bin/nyc --reporter=text ./node_modules/mocha/bin/mocha "test/**/*.spec.js" --timeout 20000

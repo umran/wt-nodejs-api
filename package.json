@@ -4,8 +4,9 @@
   "description": " API to interact with the Winding Tree platform",
   "main": "index.js",
   "scripts": {
-    "eslint": "./node_modules/.bin/eslint src/ tests/",
-    "test": "npm run eslint && ETH_NETWORK=local scripts/test.sh",
+    "lint": "eslint src test",
+    "test": "npm run lint && ETH_NETWORK=local ./test/utils/scripts/localtestnet.sh",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
     "now-start": "ETH_NETWORK=testnet node ./src/srv/index.js",
     "dev": "node ./src/srv/index.js",
     "deploy": "now -e NODE_ENV=production --token $NOW_TOKEN --npm --public",
@@ -36,6 +37,7 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "coveralls": "^3.0.0",
     "eslint": "^4.19.1",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.11.0",
@@ -44,7 +46,8 @@
     "eslint-plugin-standard": "^3.0.1",
     "ganache-cli": "^6.1.0",
     "mocha": "^5.1.0",
-    "node-fetch": "^2.1.2"
+    "node-fetch": "^2.1.2",
+    "nyc": "^11.6.0"
   },
   "engines": {
     "node": "8.9.4"
