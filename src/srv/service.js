@@ -6,7 +6,7 @@ const config = require('../config');
 const { version } = require('../../package.json');
 
 const { validateWhiteList } = require('../helpers/validators');
-const { hotelsRouter } = require('./routes/hotels/hotels');
+const { hotelsRouter } = require('./routes/hotels');
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(require('../../docs/swagger.json')));
 app.use(bodyParser.json());
