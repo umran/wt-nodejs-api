@@ -14,11 +14,13 @@ class Config {
   get (key) {
     return this.context[key];
   }
-  updateWeb3Provider () {
-    const instancedWeb3 = new Web3(new Web3.providers.HttpProvider(this.context.web3Provider));
-    this.context.web3provider = web3providerFactory.getInstance(instancedWeb3);
-  }
 }
-const config = new Config(CONFIG);
+
+let config;
+if (process.env.ETH_NETWORK && CONFIG[process.env.ETH_NETWORK]) {
+  config = new Config(CONFIG[process.env.ETH_NETWORK]);
+} else {
+  config = new Config(CONFIG[CONFIG.defaultNetwork]);
+}
 
 module.exports = config;

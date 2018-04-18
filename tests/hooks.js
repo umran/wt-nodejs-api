@@ -15,8 +15,6 @@ let fundingSource;
 let daoAccount;
 let ownerAccount;
 let server;
-config.set('web3Provider', 'http://localhost:8545');
-config.updateWeb3Provider();
 
 const Before = () => (
   before(async function () {

@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "eslint": "./node_modules/.bin/eslint src/ tests/",
-    "test": "npm run eslint && scripts/test.sh",
-    "now-start": "npm run dev",
+    "test": "npm run eslint && ETH_NETWORK=local scripts/test.sh",
+    "now-start": "ETH_NETWORK=testnet node ./src/srv/index.js",
     "dev": "node ./src/srv/index.js",
     "deploy": "now -e NODE_ENV=production --token $NOW_TOKEN --npm --public",
     "alias": "now alias --token=$NOW_TOKEN"
