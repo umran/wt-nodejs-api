@@ -3,6 +3,7 @@
 const { expect } = require('chai');
 const fetch = require('node-fetch');
 const config = require('../src/config');
+const { PASSWORD_HEADER } = require('../src/helpers/validators');
 
 const { app } = require('../src/srv/service');
 const lifData = require('@windingtree/lif-token/build/contracts/LifTokenTest.json');
@@ -52,53 +53,35 @@ const AfterEach = () => (
 );
 
 async function generateHotel (ownerAddres) {
-  let body;
+  let body, headers;
   let res;
   let hotelAddresses;
   const hotelName = 'Test Hotel';
   const hotelDesc = 'Test Hotel desccription';
 
   body = JSON.stringify({
-    'password': config.get('password'),
     'description': hotelDesc,
     'name': hotelName,
   });
+  headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+  };
+  headers[PASSWORD_HEADER] = config.get('password');
   res = await fetch('http://localhost:3000/hotels', {
     method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
+    headers,
     body,
   });
 
-  body = JSON.stringify({
-    'password': config.get('password'),
-  });
   res = await fetch('http://localhost:3000/hotels', {
     method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(body),
-    },
-    body,
-  });
-
-  hotelAddresses = Object.keys(await res.json());
-  config.set('testAddress', hotelAddresses[0]);
-  res = await fetch('http://localhost:3000/hotels', {
-    method: 'GET',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(body),
-    },
-    body,
+    headers,
   });
 
   const hotels = await res.json();
   hotelAddresses = Object.keys(hotels);
+  config.set('testAddress', hotelAddresses[0]);
   const hotel = hotels[hotelAddresses[0]];
   expect(hotel).to.have.property('name', hotelName);
   expect(hotel).to.have.property('description', hotelDesc);
@@ -107,15 +90,16 @@ async function generateHotel (ownerAddres) {
 async function setUpWallet () {
   const wallet = await config.get('web3provider').web3.eth.accounts.wallet[0].encrypt(config.get('password'));
   const body = JSON.stringify({
-    'password': config.get('password'),
     wallet,
   });
+  const headers = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+  };
+  headers[PASSWORD_HEADER] = config.get('password');
   await fetch('http://localhost:3000/wallet', {
     method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
+    headers,
     body,
   });
 }

@@ -3,16 +3,16 @@ const hotelsRouter = express.Router();
 const { loadAccount } = require('../../../helpers/crypto');
 const { validatePassword,
   validateHotelInfo,
-  validateHotelAddress,
-  validateHotelLocation,
+  PASSWORD_HEADER,
 } = require('../../../helpers/validators');
 const { handle } = require('../../../errors');
 const { HotelManager } = require('@windingtree/wt-js-libs');
 
 const config = require('../../../config');
 
-hotelsRouter.post('/hotels', validateHotelInfo, async (req, res, next) => {
-  const { password, name, description } = req.body;
+hotelsRouter.post('/hotels', validatePassword, validateHotelInfo, async (req, res, next) => {
+  const { name, description } = req.body;
+  const password = req.header(PASSWORD_HEADER);
   let ownerAccount = {};
   try {
     ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
@@ -34,7 +34,7 @@ hotelsRouter.post('/hotels', validateHotelInfo, async (req, res, next) => {
 });
 
 hotelsRouter.get('/hotels', validatePassword, async (req, res, next) => {
-  const { password } = req.body;
+  const password = req.header(PASSWORD_HEADER);
   let ownerAccount = {};
   try {
     ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
@@ -73,7 +73,7 @@ hotelsRouter.get('/hotels/:hotelAddress', async (req, res, next) => {
 });
 
 hotelsRouter.delete('/hotels/:hotelAddress', validatePassword, async (req, res, next) => {
-  const { password } = req.body;
+  const password = req.header(PASSWORD_HEADER);
   const { hotelAddress } = req.params;
   let ownerAccount = {};
   try {
@@ -97,8 +97,9 @@ hotelsRouter.delete('/hotels/:hotelAddress', validatePassword, async (req, res, 
   }
 });
 
-hotelsRouter.put('/hotels/:hotelAddress', validateHotelInfo, async (req, res, next) => {
-  const { password, name, description } = req.body;
+hotelsRouter.put('/hotels/:hotelAddress', validateHotelInfo, validatePassword, async (req, res, next) => {
+  const { name, description } = req.body;
+  const password = req.header(PASSWORD_HEADER);
   const { hotelAddress } = req.params;
   let ownerAccount = {};
   try {
@@ -119,39 +120,6 @@ hotelsRouter.put('/hotels/:hotelAddress', validateHotelInfo, async (req, res, ne
     return next(handle('web3', err));
   }
 });
-
-hotelsRouter.put('/hotels/:hotelAddress/location', validatePassword, validateHotelAddress, validateHotelLocation,
-  async (req, res, next) => {
-    const { password, lineOne, lineTwo, zipCode, country, timezone, latitude, longitude } = req.body;
-    const { hotelAddress } = req.params;
-    let ownerAccount = {};
-    try {
-      ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
-      const hotelManager = new HotelManager({
-        indexAddress: config.get('indexAddress'),
-        owner: ownerAccount.address,
-        gasMargin: config.get('gasMargin'),
-        web3provider: config.get('web3provider'),
-      });
-      config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
-      const { logs } = await hotelManager.changeHotelLocation(
-        hotelAddress,
-        lineOne,
-        lineTwo,
-        zipCode,
-        country,
-        timezone,
-        longitude,
-        latitude
-      );
-      config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
-      res.status(200).json({
-        txHash: logs[0].transactionHash,
-      });
-    } catch (err) {
-      return next(handle('web3', err));
-    }
-  });
 
 module.exports = {
   hotelsRouter,

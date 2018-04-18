@@ -1,5 +1,6 @@
 const { handle } = require('../errors');
 const config = require('../config');
+const PASSWORD_HEADER = 'X-Wallet-Password';
 
 function validateWhiteList (req, res, next) {
   const whiteList = config.get('whiteList');
@@ -25,14 +26,13 @@ function validatePasswords (req, res, next) {
 }
 
 function validatePassword (req, res, next) {
-  const { password } = req.body;
+  const password = req.header(PASSWORD_HEADER);
   if (!password) return next(handle('missingPassword', new Error()));
   next();
 }
 
 function validateHotelInfo (req, res, next) {
-  const { password, name, description } = req.body;
-  if (!password) return next(handle('missingPassword', new Error()));
+  const { name, description } = req.body;
   if (!name) return next(handle('missingName', new Error()));
   if (!description) return next(handle('missingDescription', new Error()));
   next();
@@ -155,4 +155,5 @@ module.exports = {
   validateUnitTypeInformation,
   validateWallet,
   validateWhiteList,
+  PASSWORD_HEADER,
 };
