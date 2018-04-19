@@ -1,7 +1,9 @@
 const express = require('express');
 const hotelsRouter = express.Router();
-const { validatePassword,
-  validateHotelInfo } = require('../../helpers/validators');
+const {
+  validatePassword,
+  validateHotelInfo,
+} = require('../helpers/validators');
 const hotels = require('../controllers/hotels');
 
 const hotelRoute = '/hotels/:hotelAddress';

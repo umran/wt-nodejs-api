@@ -6,7 +6,10 @@ const config = require('./config');
 const { version } = require('../package.json');
 
 const { validateWhiteList } = require('./helpers/validators');
-const { hotelsRouter } = require('./routes/hotels/hotels');
+const { hotelsRouter } = require('./routes/hotels');
+const wtJsLibsService = require('./services/wt-js-libs');
+
+wtJsLibsService.initialize(config.get('web3Provider'));
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(require('../docs/swagger.json')));
 app.use(bodyParser.json());

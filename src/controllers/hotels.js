@@ -1,9 +1,9 @@
 const { HotelManager } = require('@windingtree/wt-js-libs');
-const { loadAccount } = require('../../helpers/crypto');
-const { handle } = require('../../errors');
+const { loadAccount } = require('../helpers/crypto');
+const { handle } = require('../errors');
 
-const config = require('../../config');
-const { PASSWORD_HEADER } = require('../../helpers/validators');
+const config = require('../config');
+const { PASSWORD_HEADER } = require('../helpers/validators');
 
 const create = async (req, res, next) => {
   const { name, description } = req.body;

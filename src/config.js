@@ -1,12 +1,8 @@
 const CONFIG = require('./configuration');
-const Web3 = require('web3');
-const { web3providerFactory } = require('@windingtree/wt-js-libs');
 
 class Config {
   constructor (context) {
     this.context = context;
-    const instancedWeb3 = new Web3(new Web3.providers.HttpProvider(context.web3Provider));
-    this.context.web3provider = web3providerFactory.getInstance(instancedWeb3);
   }
   set (key, value) {
     this.context[key] = value;

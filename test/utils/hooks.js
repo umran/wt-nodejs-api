@@ -5,7 +5,6 @@ const fetch = require('node-fetch');
 const config = require('../../src/config');
 const { PASSWORD_HEADER } = require('../../src/helpers/validators');
 const { app } = require('../../src/app');
-
 const lifData = require('@windingtree/lif-token/build/contracts/LifTokenTest.json');
 
 const gasMargin = 1.5;
@@ -21,6 +20,7 @@ const Before = () => (
     config.set('log', false);
     config.set('password', 'test123');
     config.set('privateKeyFile', 'keys/test.json');
+
     const wallet = await config.get('web3provider').web3.eth.accounts.wallet.create(3);
     const createdAccounts = await config.get('web3provider').web3.eth.getAccounts();
     fundingSource = createdAccounts[0];
