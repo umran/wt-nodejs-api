@@ -6,7 +6,6 @@
     "port": 3000,
     "privateKeyFile": "keys/mainKey.json",
     "web3Provider": "https://ropsten.infura.io/WKNyJ0kClh8Ao5LdmO7z",
-    "log": true,
     "whiteList": []
   },
   "local": {
@@ -15,7 +14,17 @@
     "port": 3000,
     "privateKeyFile": "keys/mainKey.json",
     "web3Provider": "http://localhost:8545",
-    "log": true,
     "whiteList": []
+  },
+  "test": {
+    "gasMargin": 2,
+    "port": 3000,
+    "privateKeyFile": "keys/test.json",
+    "password": "test123",
+    "web3Provider": "http://localhost:8545",
+    "user": "0xd39ca7d186a37bb6bf48ae8abfeb4c687dc8f906",
+    "whiteList": [
+      "127.0.0.1"
+    ]
   }
 }

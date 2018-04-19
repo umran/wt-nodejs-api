@@ -7,7 +7,6 @@ const { PASSWORD_HEADER } = require('../../../src/helpers/validators');
 const {
   AfterEach,
   BeforeEach,
-  Before,
 } = require('../../utils/hooks.js');
 
 const getGenericHeaders = () => {
@@ -22,7 +21,6 @@ const getGenericHeaders = () => {
 describe('Hotels', function () {
   AfterEach();
   BeforeEach();
-  Before();
 
   it('POST /hotels. Expect 200', async () => {
     const hotelName = 'Test Hotel';

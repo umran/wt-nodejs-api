@@ -6,13 +6,12 @@ const config = require('../../src/config');
 const {
   AfterEach,
   BeforeEach,
-  Before,
 } = require('../utils/hooks.js');
 
 describe('API', function () {
   AfterEach();
   BeforeEach();
-  Before();
+
   it('GET /', async () => {
     const response = await fetch('http://localhost:3000/', {
       method: 'GET',
@@ -23,12 +22,14 @@ describe('API', function () {
     expect(res).to.have.property('info');
     expect(res).to.have.property('version');
   });
+
   it('GET /docs', async () => {
     const response = await fetch('http://localhost:3000/docs', {
       method: 'GET',
     });
     expect(response).to.be.ok;
   });
+
   it('GET with no whilisted ip. Expect #whiteList', async () => {
     config.set('whiteList', ['11.22.33.44']);
     const response = await fetch('http://localhost:3000/', {
@@ -41,6 +42,7 @@ describe('API', function () {
     const res = await response.json();
     expect(res).to.have.property('code', '#whiteList');
   });
+
   it('Allow all ips with empty whiteList', async () => {
     config.set('whiteList', []);
     const response = await fetch('http://localhost:3000/', {

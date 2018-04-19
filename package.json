@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint src test",
-    "test": "npm run lint && ETH_NETWORK=local ./test/utils/scripts/localtestnet.sh",
+    "test": "npm run lint && ETH_NETWORK=test ./test/utils/scripts/localtestnet.sh",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "now-start": "ETH_NETWORK=testnet node ./src/srv/index.js",
     "dev": "node ./src/srv/index.js",
@@ -36,6 +36,7 @@
     "web3": "^1.0.0-beta.34"
   },
   "devDependencies": {
+    "@windingtree/wt-contracts": "^0.2.0",
     "chai": "^4.1.2",
     "coveralls": "^3.0.0",
     "eslint": "^4.19.1",
@@ -47,7 +48,8 @@
     "ganache-cli": "^6.1.0",
     "mocha": "^5.1.0",
     "node-fetch": "^2.1.2",
-    "nyc": "^11.6.0"
+    "nyc": "^11.6.0",
+    "truffle-contract": "^3.0.5"
   },
   "engines": {
     "node": "8.9.4"
