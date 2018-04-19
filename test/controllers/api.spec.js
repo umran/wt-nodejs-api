@@ -30,7 +30,7 @@ describe('API', function () {
     expect(response).to.be.ok;
   });
 
-  it('GET with no whilisted ip. Expect #whiteList', async () => {
+  it('GET with not whitelisted ip. Expect #whiteList', async () => {
     config.set('whiteList', ['11.22.33.44']);
     const response = await fetch('http://localhost:3000/', {
       method: 'GET',

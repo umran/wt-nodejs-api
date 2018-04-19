@@ -6,10 +6,10 @@ const config = require('../../src/config');
 
 const newPassword = 'newPassword1234567890';
 const password = 'test123';
-const TEST_ACCOUNT_DIR = 'keys/test.json';
-const UPDATED_TEST_ACCOUNT_DIR = 'keys/test-updated.json';
+const TEST_ACCOUNT_FILE = 'keys/test.json';
+const UPDATED_TEST_ACCOUNT_FILE = 'keys/test-updated.json';
 
-// TODO revisit
+// TODO revisit after wt-js-libs exposes Wallet/Accounts API
 xdescribe('Utils test', function () {
   describe('crypto.js', function () {
     it('Create account. Expect ok', async function () {
@@ -22,15 +22,15 @@ xdescribe('Utils test', function () {
     });
 
     it('Load account. Expect ok', async function () {
-      const privateKeyJSON = loadAccount(TEST_ACCOUNT_DIR);
+      const privateKeyJSON = loadAccount(TEST_ACCOUNT_FILE);
       expect(privateKeyJSON).to.be.ok;
     });
 
     it('Update password. Expect ok', async function () {
-      updateAccount(password, newPassword, loadAccount(TEST_ACCOUNT_DIR), UPDATED_TEST_ACCOUNT_DIR);
+      updateAccount(password, newPassword, loadAccount(TEST_ACCOUNT_FILE), UPDATED_TEST_ACCOUNT_FILE);
       let error, account;
       try {
-        account = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(UPDATED_TEST_ACCOUNT_DIR), newPassword);
+        account = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(UPDATED_TEST_ACCOUNT_FILE), newPassword);
       } catch (e) {
         error = e;
       }
@@ -41,7 +41,7 @@ xdescribe('Utils test', function () {
     it('Update password. Expect bad password', async function () {
       let error, account;
       try {
-        account = updateAccount('BAD_PASSWORD', newPassword, loadAccount(TEST_ACCOUNT_DIR), UPDATED_TEST_ACCOUNT_DIR);
+        account = updateAccount('BAD_PASSWORD', newPassword, loadAccount(TEST_ACCOUNT_FILE), UPDATED_TEST_ACCOUNT_FILE);
       } catch (e) {
         error = e;
       }
