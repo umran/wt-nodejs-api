@@ -17,7 +17,8 @@ app.use('/*', validateWhiteList);
 app.use(hotelsRouter);
 
 app.use((err, req, res, next) => {
-  res.status(400).json({
+  res.status(err.status).json({
+    status: err.status,
     code: err.code,
     short: err.short,
     long: err.long,

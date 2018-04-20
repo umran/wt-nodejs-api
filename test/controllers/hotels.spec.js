@@ -2,12 +2,12 @@
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
 const fetch = require('node-fetch');
-const config = require('../../../src/config');
-const { PASSWORD_HEADER } = require('../../../src/helpers/validators');
+const config = require('../../src/config');
+const { PASSWORD_HEADER } = require('../../src/helpers/validators');
 const {
   AfterEach,
   BeforeEach,
-} = require('../../utils/hooks.js');
+} = require('../utils/hooks.js');
 
 const getGenericHeaders = () => {
   let headers = {
