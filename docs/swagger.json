@@ -362,6 +362,12 @@
                   }
                 }
               },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              },
               "raw": {
                 "type": "object",
                 "properties": {
