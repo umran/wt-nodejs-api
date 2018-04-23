@@ -33,13 +33,13 @@ const WTIndex = getContractWithProvider(require('@windingtree/wt-contracts/build
 
 const BeforeEach = () => (
   beforeEach(async function () {
+    server = await app.listen(3000);
     const index = await WTIndex.new({
       from: config.get('user'),
       gas: 6000000,
     });
     expect(index.address).to.not.equal(ZERO_ADDRESS);
     config.set('indexAddress', index.address);
-    server = await app.listen(3000);
     const hotelUrl = 'ipfs://some-random-hash';
     const registerResult = await index.registerHotel(hotelUrl, {
       from: config.get('user'),
