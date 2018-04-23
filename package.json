@@ -47,7 +47,6 @@
     "eslint-plugin-standard": "^3.0.1",
     "ganache-cli": "^6.1.0",
     "mocha": "^5.1.0",
-    "node-fetch": "^2.1.2",
     "nyc": "^11.6.0",
     "supertest": "^3.0.0",
     "truffle-contract": "^3.0.5"

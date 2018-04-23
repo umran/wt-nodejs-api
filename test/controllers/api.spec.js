@@ -1,57 +1,53 @@
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
-const fetch = require('node-fetch');
+const request = require('supertest');
 const config = require('../../src/config');
-const {
-  AfterEach,
-  BeforeEach,
-} = require('../utils/hooks.js');
 
 describe('API', function () {
-  AfterEach();
-  BeforeEach();
-
-  it('GET /', async () => {
-    const response = await fetch('http://localhost:3000/', {
-      method: 'GET',
-    });
-    expect(response).to.be.ok;
-    const res = await response.json();
-    expect(res).to.have.property('docs');
-    expect(res).to.have.property('info');
-    expect(res).to.have.property('version');
+  let server;
+  beforeEach(() => {
+    server = require('../../src/index');
+  });
+  afterEach(() => {
+    server.close();
   });
 
-  it('GET /docs', async () => {
-    const response = await fetch('http://localhost:3000/docs', {
-      method: 'GET',
-    });
-    expect(response).to.be.ok;
+  it('GET /', (done) => {
+    request(server)
+      .get('/')
+      .expect((res) => {
+        expect(res.body).to.have.property('docs');
+        expect(res.body).to.have.property('info');
+        expect(res.body).to.have.property('version');
+      })
+      .expect(200, done);
   });
 
-  it('GET with not whitelisted ip. Expect #whiteList', async () => {
+  it('GET /docs', (done) => {
+    request(server)
+      .get('/docs/')
+      .expect('content-type', /html/i)
+      .expect((res) => {
+        expect(res.text).to.not.be.empty;
+      })
+      .expect(200, done);
+  });
+
+  it('GET with not whitelisted ip. Expect #whiteList', (done) => {
     config.set('whiteList', ['11.22.33.44']);
-    const response = await fetch('http://localhost:3000/', {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-    });
-    const res = await response.json();
-    expect(res).to.have.property('code', '#whiteList');
+    request(server)
+      .get('/')
+      .expect((res) => {
+        expect(res.body).to.have.property('code', '#whiteList');
+      })
+      .expect(403, done);
   });
 
-  it('Allow all ips with empty whiteList', async () => {
+  it('Allow all ips with empty whiteList', (done) => {
     config.set('whiteList', []);
-    const response = await fetch('http://localhost:3000/', {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-    });
-    expect(response).to.have.property('status', 200);
+    request(server)
+      .get('/')
+      .expect(200, done);
   });
 });

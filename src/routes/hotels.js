@@ -11,7 +11,7 @@ const hotelsRoute = '/hotels';
 
 hotelsRouter.post(hotelsRoute, validatePassword, hotels.create);
 
-hotelsRouter.get(hotelsRoute, validatePassword, hotels.findAll);
+hotelsRouter.get(hotelsRoute, hotels.findAll);
 
 hotelsRouter.get(hotelRoute, hotels.find);
 
