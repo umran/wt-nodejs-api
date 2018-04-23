@@ -34,6 +34,16 @@ describe('API', function () {
       .expect(200, done);
   });
 
+  it('GET /random-endpoint', (done) => {
+    request(server)
+      .get('/random-endpoint')
+      .expect('content-type', /json/i)
+      .expect((res) => {
+        expect(res.body).to.have.property('code', '#notFound');
+      })
+      .expect(404, done);
+  });
+
   it('GET with not whitelisted ip. Expect #whiteList', (done) => {
     config.set('whiteList', ['11.22.33.44']);
     request(server)

@@ -18,25 +18,37 @@ app.use('/*', validateWhiteList);
 app.use(hotelsRouter);
 app.use(transactionsRouter);
 
+// Error handler
 app.use((err, req, res, next) => {
+  if (config.get('log')) {
+    console.error(err);
+  }
   res.status(err.status).json({
     status: err.status,
     code: err.code,
     short: err.short,
     long: err.long,
   });
-  if (config.get('log')) {
-    console.error(err);
-  }
 });
 
-app.use('/', (req, res) => {
+// Root handler
+app.get('/', (req, res) => {
   const response = {
     docs: 'https://github.com/windingtree/wt-nodejs-api/blob/master/README.md',
     info: 'https://github.com/windingtree/wt-nodejs-api',
     version,
   };
   res.status(200).json(response);
+});
+
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({
+    status: 404,
+    code: '#notFound',
+    short: 'Page not found',
+    long: 'This endpoint does not exist',
+  });
 });
 
 module.exports = {
