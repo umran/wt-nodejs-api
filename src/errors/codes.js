@@ -25,7 +25,7 @@ module.exports = {
     long: 'Body must include "longitude".',
   },
   missingPassword: {
-    status: 400,
+    status: 401,
     short: 'Password is required',
     long: 'Body must include "password"',
   },
