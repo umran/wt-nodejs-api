@@ -1,118 +1,88 @@
-const { HotelManager } = require('@windingtree/wt-js-libs');
-const { loadAccount } = require('../helpers/crypto');
+const wtJsLibs = require('../services/wt-js-libs');
 const { handle } = require('../errors');
-
 const config = require('../config');
-const { PASSWORD_HEADER } = require('../helpers/validators');
 
-const create = async (req, res, next) => {
-  const { name, description } = req.body;
-  const password = req.header(PASSWORD_HEADER);
-  let ownerAccount = {};
+const create = async ({ body, wtWallet }, res, next) => {
+  const { name, description, manager, location } = body;
+  const wtLibsInstance = await wtJsLibs.getInstance();
+  const index = await wtLibsInstance.getWTIndex(config.get('indexAddress'));
   try {
-    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
-    const hotelManager = new HotelManager({
-      indexAddress: config.get('indexAddress'),
-      owner: ownerAccount.address,
-      gasMargin: config.get('gasMargin'),
-      web3provider: config.get('web3provider'),
-    });
-    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
-    const { logs } = await hotelManager.createHotel(name, description);
-    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
-    res.status(200).json({
-      txHash: logs[0].transactionHash,
-    });
-  } catch (err) {
-    return next(handle('web3', err));
+    const result = await index.addHotel(wtWallet, { name, description, manager, location });
+    res.status(202).json(result);
+  } catch (e) {
+    next(handle('unknownError', e));
   }
 };
 
 const findAll = async (req, res, next) => {
-  const password = req.header(PASSWORD_HEADER);
-  let ownerAccount = {};
   try {
-    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
-  } catch (err) {
-    return next(handle('web3', err));
-  }
-  try {
-    const hotelManager = new HotelManager({
-      indexAddress: config.get('indexAddress'),
-      owner: ownerAccount.address,
-      gasMargin: config.get('gasMargin'),
-      web3provider: config.get('web3provider'),
-    });
-    const hotels = await hotelManager.getHotels();
-    res.status(200).json(hotels);
-  } catch (err) {
-    return next(handle('hotelManager', err));
-  }
-};
-
-const find = async (req, res, next) => {
-  const { hotelAddress } = req.params;
-  try {
-    const hotelManager = new HotelManager({
-      indexAddress: config.get('indexAddress'),
-      gasMargin: config.get('gasMargin'),
-      web3provider: config.get('web3provider'),
-    });
-    const hotel = await hotelManager.getHotel(hotelAddress);
-    res.status(200).json({
-      hotel,
-    });
-  } catch (err) {
-    next(handle('web3', err));
+    const wtLibsInstance = wtJsLibs.getInstance();
+    const index = await wtLibsInstance.getWTIndex(config.get('indexAddress'));
+    let hotels = await index.getAllHotels();
+    let rawHotels = [];
+    for (let hotel in hotels) {
+      try {
+        rawHotels.push({
+          address: await hotel.address,
+          name: await hotel.name,
+          description: await hotel.description,
+          manager: await hotel.manager,
+          location: await hotel.location,
+        });
+      } catch (e) { console.log(e); }
+    }
+    res.status(200).json({ hotels: rawHotels });
+  } catch (e) {
+    next(handle('unknownError', e));
   }
 };
 
-const update = async (req, res, next) => {
-  const { name, description } = req.body;
-  const password = req.header(PASSWORD_HEADER);
-  const { hotelAddress } = req.params;
-  let ownerAccount = {};
+const find = async ({ params, wtWallet }, res, next) => {
+  const { hotelAddress } = params;
+  const wtLibsInstance = await wtJsLibs.getInstance();
+  const index = await wtLibsInstance.getWTIndex(config.get('indexAddress'));
   try {
-    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
-    const hotelManager = new HotelManager({
-      indexAddress: config.get('indexAddress'),
-      owner: ownerAccount.address,
-      gasMargin: config.get('gasMargin'),
-      web3provider: config.get('web3provider'),
-    });
-    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
-    const { logs } = await hotelManager.changeHotelInfo(hotelAddress, name, description);
-    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
-    res.status(200).json({
-      txHash: logs[0].transactionHash,
-    });
-  } catch (err) {
-    return next(handle('web3', err));
+    let hotel = await index.getHotel(hotelAddress);
+    return res.status(200).json({ hotel: {
+      address: await hotel.address,
+      name: await hotel.name,
+      description: await hotel.description,
+      manager: await hotel.manager,
+      location: await hotel.location,
+    } });
+  } catch (e) {
+    next(handle('unknownError', e));
   }
 };
 
-const remove = async (req, res, next) => {
-  const password = req.header(PASSWORD_HEADER);
-  const { hotelAddress } = req.params;
-  let ownerAccount = {};
+const update = async ({ body, params, wtWallet }, res, next) => {
+  const { url, name, description } = body;
+  const { hotelAddress } = params;
+  const wtLibsInstance = await wtJsLibs.getInstance();
   try {
-    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
-  } catch (err) {
-    return next(handle('web3', err));
+    const index = await wtLibsInstance.getWTIndex(config.get('indexAddress'));
+    const hotel = await index.getHotel(hotelAddress);
+    hotel.url = url;
+    hotel.name = name;
+    hotel.description = description;
+
+    const transactionIds = await index.updateHotel(wtWallet, hotel);
+    res.status(202).json({ transactionIds });
+  } catch (e) {
+    next(handle('unknownError', e));
   }
+};
+
+const remove = async ({ wtWallet, params }, res, next) => {
+  const { hotelAddress } = params;
+  const wtLibsInstance = await wtJsLibs.getInstance();
+  const index = await wtLibsInstance.getWTIndex(config.get('indexAddress'));
+  const hotel = await index.getHotel(hotelAddress);
   try {
-    const hotelManager = new HotelManager({
-      indexAddress: config.get('indexAddress'),
-      owner: ownerAccount.address,
-      gasMargin: config.get('gasMargin'),
-      web3provider: config.get('web3provider'),
-    });
-    const { transactionHash } = await hotelManager.removeHotel(hotelAddress);
-    res.status(204).json({
-      txHash: transactionHash,
-    });
-  } catch (err) {
-    return next(handle('hotelManager', err));
+    const transactionIds = await index.removeHotel(wtWallet, hotel);
+    res.status(202).json({ transactionIds });
+  } catch (e) {
+    next(handle('unknownError', e));
   }
 };
 
