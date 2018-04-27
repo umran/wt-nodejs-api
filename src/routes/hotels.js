@@ -1,24 +1,25 @@
 const express = require('express');
-const hotelsRouter = express.Router();
 const {
-  validatePassword,
-  // validateHotelInfo,
-} = require('../helpers/validators');
-const { accountLoader } = require('../middlewares/accounts');
-const hotels = require('../controllers/hotels');
+  injectWtLibs,
+  unlockAccount,
+} = require('../middlewares');
+const hotelsController = require('../controllers/hotels');
 
-const hotelRoute = '/hotels/:hotelAddress';
-const hotelsRoute = '/hotels';
+const HOTEL_ROUTE = '/hotels/:hotelAddress';
+const HOTELS_ROUTE = '/hotels';
+const hotelsRouter = express.Router();
 
-hotelsRouter.post(hotelsRoute, validatePassword, accountLoader, hotels.create);
+// Read only methods
+hotelsRouter.get(HOTELS_ROUTE, injectWtLibs, hotelsController.findAll);
 
-hotelsRouter.get(hotelsRoute, hotels.findAll);
+hotelsRouter.get(HOTEL_ROUTE, injectWtLibs, hotelsController.find);
 
-hotelsRouter.get(hotelRoute, hotels.find);
+// Data modifying methods
+hotelsRouter.post(HOTELS_ROUTE, unlockAccount, hotelsController.create);
 
-hotelsRouter.put(hotelRoute, validatePassword, accountLoader, hotels.update);
+hotelsRouter.put(HOTEL_ROUTE, unlockAccount, hotelsController.update);
 
-hotelsRouter.delete(hotelRoute, validatePassword, accountLoader, hotels.remove);
+hotelsRouter.delete(HOTEL_ROUTE, unlockAccount, hotelsController.remove);
 
 module.exports = {
   hotelsRouter,

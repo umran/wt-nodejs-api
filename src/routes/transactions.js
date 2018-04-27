@@ -1,9 +1,10 @@
 const express = require('express');
 const transactions = require('../controllers/transactions');
-const transactionsRoute = '/transactions';
 
+const TRANSACTIONS_ROUTE = '/transactions';
 const transactionsRouter = express.Router();
-transactionsRouter.get(transactionsRoute, transactions.getStatuses);
+
+transactionsRouter.get(TRANSACTIONS_ROUTE, transactions.getStatuses);
 
 module.exports = {
   transactionsRouter,

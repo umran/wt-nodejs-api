@@ -3,8 +3,7 @@
 const { expect } = require('chai');
 const request = require('supertest');
 const config = require('../../src/config');
-
-const { PASSWORD_HEADER } = require('../../src/helpers/validators');
+const { PASSWORD_HEADER } = require('../../src/constants');
 const {
   deployIndexAndHotel,
 } = require('../utils/hooks.js');

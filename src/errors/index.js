@@ -1,6 +1,6 @@
 const errorCodes = require('./codes.js');
 
-function handle (code, e) {
+function handleApplicationError (code, e) {
   if (code === 'web3') {
     // Generic web3 error
     e.status = 500;
@@ -13,10 +13,10 @@ function handle (code, e) {
   e.status = desc.status;
   e.code = `#${code}`;
   e.short = desc.short;
-  e.long = desc.long;
+  e.long = e.message || desc.long;
   return e;
 }
 
 module.exports = {
-  handle,
+  handleApplicationError,
 };

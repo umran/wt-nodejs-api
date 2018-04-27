@@ -5,7 +5,7 @@ const app = express();
 const config = require('./config');
 const { version } = require('../package.json');
 
-const { validateWhiteList } = require('./helpers/validators');
+const { validateIPWhiteList } = require('./middlewares');
 const { hotelsRouter } = require('./routes/hotels');
 const { transactionsRouter } = require('./routes/transactions');
 const wtJsLibsService = require('./services/wt-js-libs');
@@ -14,7 +14,7 @@ wtJsLibsService.initialize(config.get('web3Provider'));
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(require('../docs/swagger.json')));
 app.use(bodyParser.json());
-app.use('/*', validateWhiteList);
+app.use('/*', validateIPWhiteList);
 app.use(hotelsRouter);
 app.use(transactionsRouter);
 

@@ -1,24 +1,18 @@
-const wtJsLibs = require('../services/wt-js-libs');
-const { handle } = require('../errors');
-const config = require('../config');
+const { handleApplicationError } = require('../errors');
 
-const create = async ({ body, wtWallet }, res, next) => {
-  const { name, description, manager, location } = body;
-  const wtLibsInstance = await wtJsLibs.getInstance();
-  const index = await wtLibsInstance.getWTIndex(config.get('indexAddress'));
+const create = async (req, res, next) => {
+  const { name, description, manager, location } = req.body;
   try {
-    const result = await index.addHotel(wtWallet, { name, description, manager, location });
+    const result = await req.wt.index.addHotel(req.wt.wallet, { name, description, manager, location });
     res.status(202).json(result);
   } catch (e) {
-    next(handle('unknownError', e));
+    next(handleApplicationError('unknownError', e));
   }
 };
 
 const findAll = async (req, res, next) => {
   try {
-    const wtLibsInstance = wtJsLibs.getInstance();
-    const index = await wtLibsInstance.getWTIndex(config.get('indexAddress'));
-    let hotels = await index.getAllHotels();
+    let hotels = await req.wt.index.getAllHotels();
     let rawHotels = [];
     for (let hotel in hotels) {
       try {
@@ -29,20 +23,19 @@ const findAll = async (req, res, next) => {
           manager: await hotel.manager,
           location: await hotel.location,
         });
+        // TODO test this case
       } catch (e) { console.log(e); }
     }
     res.status(200).json({ hotels: rawHotels });
   } catch (e) {
-    next(handle('unknownError', e));
+    next(handleApplicationError('unknownError', e));
   }
 };
 
-const find = async ({ params, wtWallet }, res, next) => {
-  const { hotelAddress } = params;
-  const wtLibsInstance = await wtJsLibs.getInstance();
-  const index = await wtLibsInstance.getWTIndex(config.get('indexAddress'));
+const find = async (req, res, next) => {
+  const { hotelAddress } = req.params;
   try {
-    let hotel = await index.getHotel(hotelAddress);
+    let hotel = await req.wt.index.getHotel(hotelAddress);
     return res.status(200).json({ hotel: {
       address: await hotel.address,
       name: await hotel.name,
@@ -51,38 +44,34 @@ const find = async ({ params, wtWallet }, res, next) => {
       location: await hotel.location,
     } });
   } catch (e) {
-    next(handle('unknownError', e));
+    next(handleApplicationError('unknownError', e));
   }
 };
 
-const update = async ({ body, params, wtWallet }, res, next) => {
-  const { url, name, description } = body;
-  const { hotelAddress } = params;
-  const wtLibsInstance = await wtJsLibs.getInstance();
+const update = async (req, res, next) => {
+  const { url, name, description } = req.body;
+  const { hotelAddress } = req.params;
   try {
-    const index = await wtLibsInstance.getWTIndex(config.get('indexAddress'));
-    const hotel = await index.getHotel(hotelAddress);
+    const hotel = await req.wt.index.getHotel(hotelAddress);
     hotel.url = url;
     hotel.name = name;
     hotel.description = description;
 
-    const transactionIds = await index.updateHotel(wtWallet, hotel);
+    const transactionIds = await req.wt.index.updateHotel(req.wt.wallet, hotel);
     res.status(202).json({ transactionIds });
   } catch (e) {
-    next(handle('unknownError', e));
+    next(handleApplicationError('unknownError', e));
   }
 };
 
-const remove = async ({ wtWallet, params }, res, next) => {
-  const { hotelAddress } = params;
-  const wtLibsInstance = await wtJsLibs.getInstance();
-  const index = await wtLibsInstance.getWTIndex(config.get('indexAddress'));
-  const hotel = await index.getHotel(hotelAddress);
+const remove = async (req, res, next) => {
+  const { hotelAddress } = req.params;
+  const hotel = await req.wt.index.getHotel(hotelAddress);
   try {
-    const transactionIds = await index.removeHotel(wtWallet, hotel);
+    const transactionIds = await req.wt.index.removeHotel(req.wt.wallet, hotel);
     res.status(202).json({ transactionIds });
   } catch (e) {
-    next(handle('unknownError', e));
+    next(handleApplicationError('unknownError', e));
   }
 };
 
