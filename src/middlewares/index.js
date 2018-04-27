@@ -2,9 +2,9 @@ const compose = require('compose-middleware').compose;
 
 const wtJsLibs = require('../services/wt-js-libs');
 const { PASSWORD_HEADER } = require('../constants');
-const { loadAccount } = require('../helpers/crypto');
-const config = require('../config');
+const { loadKeyfile } = require('../helpers/keyfiles');
 const { handleApplicationError } = require('../errors');
+const config = require('../config');
 
 const injectWtLibs = async (req, res, next) => {
   if (req.wt) {
@@ -26,13 +26,12 @@ const unlockAccount = compose([
     if (!password) {
       return next(handleApplicationError('missingPassword', new Error()));
     }
-    const wallet = loadAccount(config.get('privateKeyFile'));
+    const wallet = loadKeyfile(config.get('privateKeyFile'));
 
     try {
       req.wt.wallet = await req.wt.instance.createWallet(wallet);
       await req.wt.wallet.unlock(password);
     } catch (err) {
-      // TODO improve error handling
       return next(handleApplicationError('wallet', err));
     }
     next();
