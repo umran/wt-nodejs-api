@@ -7,6 +7,7 @@ jobs:
   - stage: test
     script:
     - npm test
+    - npm run coverage
   - stage: deploy
     if: tag IS present
     script:
