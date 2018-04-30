@@ -6,7 +6,7 @@ const config = require('../../src/config');
 const { PASSWORD_HEADER } = require('../../src/constants');
 const {
   deployIndexAndHotel,
-} = require('../utils/hooks.js');
+} = require('../utils/helpers');
 
 describe('Hotels', function () {
   let server;

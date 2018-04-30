@@ -5,7 +5,7 @@ const sinon = require('sinon');
 const request = require('supertest');
 const {
   deployIndexAndHotel,
-} = require('../utils/hooks.js');
+} = require('../utils/helpers');
 const wtJsLibs = require('../../src/services/wt-js-libs');
 
 describe('Transactions', function () {
