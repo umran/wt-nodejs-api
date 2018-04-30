@@ -54,6 +54,12 @@
             "schema": {
               "$ref": "#/definitions/Hotels"
             }
+          },
+          "500": {
+            "description": "Unexpected error, for example the blockchain network cannot be accessed.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
@@ -62,7 +68,7 @@
           "Hotel"
         ],
         "summary": "Create new hotel",
-        "description": "Create a new hotel",
+        "description": "Create a new hotel. Data is wrapped into a hotel property to enable easier extension in the future.",
         "parameters": [
           {
             "name": "X-Wallet-Password",
@@ -76,17 +82,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "properties": {
-                "location": {
-                  "$ref": "#/definitions/Location"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "description": {
-                  "type": "string"
-                }
-              }
+              "$ref": "#/definitions/WrappedHotel"
             }
           }
         ],
@@ -105,6 +101,18 @@
           },
           "401": {
             "description": "It was not possible to decrypt the wallet for some reason.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Hotel does not exist.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Unexpected error, for example the blockchain network cannot be accessed.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -132,11 +140,17 @@
           "200": {
             "description": "Ok.",
             "schema": {
-              "$ref": "#/definitions/Hotels"
+              "$ref": "#/definitions/WrappedHotel"
             }
           },
           "404": {
             "description": "Hotel does not exist.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Unexpected error, for example the blockchain network cannot be accessed.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -148,7 +162,7 @@
           "Hotel"
         ],
         "summary": "Update hotel data",
-        "description": "Update hotel data",
+        "description": "Update hotel data. Data is wrapped into a hotel property to enable easier extension in the future.",
         "parameters": [
           {
             "name": "X-Wallet-Password",
@@ -169,17 +183,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "properties": {
-                "location": {
-                  "$ref": "#/definitions/Location"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "description": {
-                  "type": "string"
-                }
-              }
+              "$ref": "#/definitions/WrappedHotel"
             }
           }
         ],
@@ -198,6 +202,18 @@
           },
           "401": {
             "description": "It was not possible to decrypt the wallet for some reason.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Hotel does not exist.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Unexpected error, for example the blockchain network cannot be accessed.",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -244,6 +260,18 @@
             "schema": {
               "$ref": "#/definitions/Error"
             }
+          },
+          "404": {
+            "description": "Hotel does not exist.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Unexpected error, for example the blockchain network cannot be accessed.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
@@ -271,6 +299,12 @@
             "description": "Transactions status and stats",
             "schema": {
               "$ref": "#/definitions/transactionsStats"
+            }
+          },
+          "500": {
+            "description": "Unexpected error, for example the blockchain network cannot be accessed.",
+            "schema": {
+              "$ref": "#/definitions/Error"
             }
           }
         }
@@ -468,9 +502,14 @@
     "Hotels": {
       "title": "Hotels",
       "description": "Hotels list.",
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/Hotel"
+      "type": "object",
+      "properties": {
+        "hotels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Hotel"
+          }
+        }
       }
     },
     "Location": {
@@ -482,6 +521,14 @@
         },
         "longitude": {
           "type": "number"
+        }
+      }
+    },
+    "WrappedHotel": {
+      "title": "WrappedHotel",
+      "properties": {
+        "hotel": {
+          "$ref": "#/definitions/Hotel"
         }
       }
     },
