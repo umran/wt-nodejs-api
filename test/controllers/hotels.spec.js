@@ -56,10 +56,10 @@ describe('Hotels', function () {
           .set(PASSWORD_HEADER, config.get('password'))
           .send({ description: 'Best hotel.', name: 'WTHotel', url: 'new-url' })
           .expect((res) => {
-            expect(res.body.hotel).to.have.property('name');
-            expect(res.body.hotel).to.have.property('description');
-            expect(res.body.hotel).to.have.property('manager');
-            expect(res.body.hotel).to.have.property('location');
+            expect(res.body).to.have.property('name');
+            expect(res.body).to.have.property('description');
+            expect(res.body).to.have.property('manager');
+            expect(res.body).to.have.property('location');
           })
           .expect(200, done);
       });

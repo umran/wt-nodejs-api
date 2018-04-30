@@ -14,16 +14,9 @@ const findAll = async (req, res, next) => {
   try {
     let hotels = await req.wt.index.getAllHotels();
     let rawHotels = [];
-    for (let hotel in hotels) {
+    for (let hotel of hotels) {
       try {
-        rawHotels.push({
-          address: await hotel.address,
-          name: await hotel.name,
-          description: await hotel.description,
-          manager: await hotel.manager,
-          location: await hotel.location,
-        });
-        // TODO test this case
+        rawHotels.push(await hotel.toPlainObject());
       } catch (e) { console.log(e); }
     }
     res.status(200).json({ hotels: rawHotels });
@@ -36,13 +29,7 @@ const find = async (req, res, next) => {
   const { hotelAddress } = req.params;
   try {
     let hotel = await req.wt.index.getHotel(hotelAddress);
-    return res.status(200).json({ hotel: {
-      address: await hotel.address,
-      name: await hotel.name,
-      description: await hotel.description,
-      manager: await hotel.manager,
-      location: await hotel.location,
-    } });
+    return res.status(200).json(await hotel.toPlainObject());
   } catch (e) {
     next(handleApplicationError('unknownError', e));
   }
