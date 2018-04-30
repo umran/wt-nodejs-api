@@ -46,7 +46,7 @@ describe('Hotels', function () {
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(PASSWORD_HEADER, config.get('password'))
-        .send({ name, description, manager, location })
+        .send({ hotel: { name, description, manager, location } })
         .end((err, res) => {
           if (err) return done(err);
           expect(res.body).to.have.property('address');
@@ -93,7 +93,7 @@ describe('Hotels', function () {
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(PASSWORD_HEADER, config.get('password'))
-        .send({ name, description, manager, location })
+        .send({ hotel: { name, description, manager, location } })
         .expect((res) => {
           expect(res.body).to.have.property('address');
           expect(res.body).to.have.property('transactionIds');
@@ -108,7 +108,7 @@ describe('Hotels', function () {
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(PASSWORD_HEADER, config.get('password'))
-        .send({ name, description, location })
+        .send({ hotel: { name, description, location } })
         .expect(400)
         .end((err, res) => {
           if (err) { return done(err); }
@@ -125,7 +125,7 @@ describe('Hotels', function () {
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(PASSWORD_HEADER, 'random-password')
-        .send({ name, description, manager, location })
+        .send({ hotel: { name, description, manager, location } })
         .expect(401)
         .end((err, res) => {
           if (err) { return done(err); }
@@ -141,7 +141,7 @@ describe('Hotels', function () {
         .post('/hotels')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .send({ name, description, manager })
+        .send({ hotel: { name, description, manager } })
         .expect(401)
         .end((err, res) => {
           if (err) { return done(err); }
@@ -170,7 +170,7 @@ describe('Hotels', function () {
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(PASSWORD_HEADER, config.get('password'))
-        .send({ name, description, manager, location })
+        .send({ hotel: { name, description, manager, location } })
         .end((err, res) => {
           if (err) { return done(err); }
           address = res.body.address;
@@ -182,7 +182,7 @@ describe('Hotels', function () {
             .set('content-type', 'application/json')
             .set('accept', 'application/json')
             .set(PASSWORD_HEADER, config.get('password'))
-            .send({ description: 'Best hotel.', name: 'WTHotel', url: 'new-url' })
+            .send({ hotel: { description: 'Best hotel.', name: 'WTHotel', url: 'new-url' } })
             .expect((res) => {
               expect(res.body.transactionIds.length).to.be.above(0);
             })
@@ -209,11 +209,12 @@ describe('Hotels', function () {
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(PASSWORD_HEADER, config.get('password'))
-        .send({ name,
+        .send({ hotel: {
+          name,
           description,
           location,
           manager: 'someone-else',
-        })
+        } })
         .expect(202)
         .end((err, res) => {
           if (err) { return done(err); }
@@ -235,7 +236,7 @@ describe('Hotels', function () {
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(PASSWORD_HEADER, config.get('password'))
-        .send({ url: null })
+        .send({ hotel: { url: null } })
         .expect(202)
         .end((err, res) => {
           if (err) { return done(err); }
@@ -269,7 +270,7 @@ describe('Hotels', function () {
         .set('accept', 'application/json')
         .set(PASSWORD_HEADER, 'windingtree')
         // url is required to force interaction with network
-        .send({ name, description: 'random-updated-description', location, url })
+        .send({ hotel: { name, description: 'random-updated-description', location, url } })
         .expect(401)
         .end((err, res) => {
           if (err) { return done(err); }
@@ -284,7 +285,7 @@ describe('Hotels', function () {
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(PASSWORD_HEADER, 'random-password')
-        .send({ name, description, manager, location })
+        .send({ hotel: { name, description, manager, location } })
         .expect(401)
         .end((err, res) => {
           if (err) { return done(err); }
@@ -300,7 +301,7 @@ describe('Hotels', function () {
         .put(`/hotels/${config.get('testAddress')}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .send({ name, description, manager, location })
+        .send({ hotel: { name, description, manager, location } })
         .expect(401)
         .end((err, res) => {
           if (err) { return done(err); }

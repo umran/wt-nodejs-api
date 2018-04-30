@@ -27,12 +27,12 @@ const find = async (req, res, next) => {
 };
 
 const create = async (req, res, next) => {
-  const { name, description, manager, location } = req.body;
-  if (!manager) {
+  const { hotel: hotelData } = req.body;
+  if (!hotelData.manager) {
     return next(handleApplicationError('missingManager'));
   }
   try {
-    const result = await req.wt.index.addHotel(req.wt.wallet, { name, description, manager, location });
+    const result = await req.wt.index.addHotel(req.wt.wallet, hotelData);
     res.status(202).json(result);
   } catch (e) {
     next(e);
@@ -40,18 +40,18 @@ const create = async (req, res, next) => {
 };
 
 const update = async (req, res, next) => {
-  const { url, name, description } = req.body;
+  const { hotel: hotelData } = req.body;
   const { hotelAddress } = req.params;
   try {
     const hotel = await req.wt.index.getHotel(hotelAddress);
-    if (url) {
-      hotel.url = url;
+    if (hotelData.url) {
+      hotel.url = hotelData.url;
     }
-    if (name) {
-      hotel.name = name;
+    if (hotelData.name) {
+      hotel.name = hotelData.name;
     }
-    if (description) {
-      hotel.description = description;
+    if (hotelData.description) {
+      hotel.description = hotelData.description;
     }
 
     const transactionIds = await req.wt.index.updateHotel(req.wt.wallet, hotel);
