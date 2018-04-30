@@ -8,6 +8,7 @@ const { version } = require('../package.json');
 const { validateIPWhiteList } = require('./middlewares');
 const { hotelsRouter } = require('./routes/hotels');
 const { transactionsRouter } = require('./routes/transactions');
+const { handleApplicationError } = require('./errors');
 const wtJsLibsService = require('./services/wt-js-libs');
 
 wtJsLibsService.initialize(config.get('web3Provider'));
@@ -22,6 +23,14 @@ app.use(transactionsRouter);
 app.use((err, req, res, next) => {
   if (config.get('log')) {
     console.error(err);
+  }
+  if (!err.code) {
+    // Handle special cases of generic errors
+    if (err.message === 'Invalid JSON RPC response: ""') {
+      err = handleApplicationError('unreachableChain', err);
+    } else {
+      err = handleApplicationError('genericError', err);
+    }
   }
   res.status(err.status).json({
     status: err.status,

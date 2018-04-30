@@ -8,7 +8,7 @@
     "test": "npm run lint && ETH_NETWORK=test ./test/utils/scripts/localtestnet.sh",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "now-start": "ETH_NETWORK=testnet node ./src/index.js",
-    "dev": "node ./src/index.js",
+    "dev": "ETH_NETWORK=local node ./src/index.js",
     "deploy": "now -e NODE_ENV=production --token $NOW_TOKEN --npm --public",
     "alias": "now alias --token=$NOW_TOKEN"
   },

@@ -1,6 +1,9 @@
 const errorCodes = require('./codes.js');
 
 function handleApplicationError (code, e) {
+  if (!e) {
+    e = new Error();
+  }
   if (code === 'web3') {
     // Generic web3 error
     e.status = 500;

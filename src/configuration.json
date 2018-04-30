@@ -12,6 +12,7 @@
     "gasMargin": 2,
     "indexAddress": "0x8c2373842d5ea4ce4baf53f4175e5e42a364c59c",
     "port": 3000,
+    "log": true,
     "privateKeyFile": "keys/mainKey.json",
     "web3Provider": "http://localhost:8545",
     "whiteList": []
