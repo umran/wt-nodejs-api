@@ -7,11 +7,11 @@ const { handleApplicationError } = require('../errors');
 const config = require('../config');
 
 const injectWtLibs = async (req, res, next) => {
-  if (req.wt) {
+  if (res.locals.wt) {
     next();
   }
   const wtLibsInstance = wtJsLibs.getInstance();
-  req.wt = {
+  res.locals.wt = {
     instance: wtLibsInstance,
     index: await wtLibsInstance.getWTIndex(config.get('indexAddress')),
     wallet: null,
@@ -30,8 +30,8 @@ const unlockAccount = compose([
     // TODO handle IO error
     const wallet = await loadKeyfile(config.get('privateKeyFile'));
     try {
-      req.wt.wallet = await req.wt.instance.createWallet(await wallet);
-      await req.wt.wallet.unlock(password);
+      res.locals.wt.wallet = await res.locals.wt.instance.createWallet(await wallet);
+      await res.locals.wt.wallet.unlock(password);
     } catch (err) {
       return next(handleApplicationError('cannotUnlockWallet', err));
     }

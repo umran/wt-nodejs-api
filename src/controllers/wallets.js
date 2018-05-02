@@ -16,7 +16,7 @@ const create = async (req, res, next) => {
   // TODO store under ${keyStoreV3.id}.json as per https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition
   try {
     console.log('keyStoreV3', keyStoreV3);
-    const wallet = await req.wt.instance.createWallet(keyStoreV3);
+    const wallet = await res.locals.wt.instance.createWallet(keyStoreV3);
     // TODO report on mismatching password
     await wallet.unlock(password);
     wallet.destroy();

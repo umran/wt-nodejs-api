@@ -2,7 +2,7 @@ const { handleApplicationError } = require('../errors');
 
 const findAll = async (req, res, next) => {
   try {
-    let hotels = await req.wt.index.getAllHotels();
+    let hotels = await res.locals.wt.index.getAllHotels();
     let rawHotels = [];
     for (let hotel of hotels) {
       rawHotels.push(await hotel.toPlainObject());
@@ -16,7 +16,7 @@ const findAll = async (req, res, next) => {
 const find = async (req, res, next) => {
   const { hotelAddress } = req.params;
   try {
-    let hotel = await req.wt.index.getHotel(hotelAddress);
+    let hotel = await res.locals.wt.index.getHotel(hotelAddress);
     return res.status(200).json({ hotel: await hotel.toPlainObject() });
   } catch (e) {
     if (e.message.match(/cannot find hotel/i)) {
@@ -32,7 +32,7 @@ const create = async (req, res, next) => {
     return next(handleApplicationError('missingManager'));
   }
   try {
-    const result = await req.wt.index.addHotel(req.wt.wallet, hotelData);
+    const result = await res.locals.wt.index.addHotel(res.locals.wt.wallet, hotelData);
     res.status(202).json(result);
   } catch (e) {
     next(e);
@@ -43,7 +43,7 @@ const update = async (req, res, next) => {
   const { hotel: hotelData } = req.body;
   const { hotelAddress } = req.params;
   try {
-    const hotel = await req.wt.index.getHotel(hotelAddress);
+    const hotel = await res.locals.wt.index.getHotel(hotelAddress);
     if (hotelData.url) {
       hotel.url = hotelData.url;
     }
@@ -54,7 +54,7 @@ const update = async (req, res, next) => {
       hotel.description = hotelData.description;
     }
 
-    const transactionIds = await req.wt.index.updateHotel(req.wt.wallet, hotel);
+    const transactionIds = await res.locals.wt.index.updateHotel(res.locals.wt.wallet, hotel);
     res.status(202).json({ transactionIds });
   } catch (e) {
     if (e.message.match(/cannot find hotel/i)) {
@@ -70,8 +70,8 @@ const update = async (req, res, next) => {
 const remove = async (req, res, next) => {
   const { hotelAddress } = req.params;
   try {
-    const hotel = await req.wt.index.getHotel(hotelAddress);
-    const transactionIds = await req.wt.index.removeHotel(req.wt.wallet, hotel);
+    const hotel = await res.locals.wt.index.getHotel(hotelAddress);
+    const transactionIds = await res.locals.wt.index.removeHotel(res.locals.wt.wallet, hotel);
     res.status(202).json({ transactionIds });
   } catch (e) {
     if (e.message.match(/cannot find hotel/i)) {
