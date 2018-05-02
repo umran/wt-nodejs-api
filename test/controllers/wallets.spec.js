@@ -148,25 +148,59 @@ describe('Wallet', function () {
     });
   });
 
-  xdescribe('GET /wallets/:uuid', () => {
+  xdescribe('GET /wallets/:walletId', () => {
 
   });
 
-  xdescribe('DELETE /wallets/:uuid', () => {
+  describe('DELETE /wallets/:walletId', () => {
     it('should delete a wallet', (done) => {
       request(server)
-        .delete('/wallets')
+        .delete(`/wallets/${wallet.id}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .expect((res) => {
-          expect(res.body.keyStoreV3).to.be.ok;
-        })
-        .expect(200, done);
+        .expect(204, done);
     });
 
     it('should not delete a wallet when a bad password is provided', (done) => {
+      request(server)
+        .delete(`/wallets/${wallet.id}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .set(WALLET_PASSWORD_HEADER, secondWalletPassword)
+        .expect(401)
+        .end((err, res) => {
+          if (err) { return done(err); }
+          expect(res.body).to.have.property('code', '#cannotUnlockWallet');
+          done();
+        });
+    });
 
+    it('should not delete a wallet without a password', (done) => {
+      request(server)
+        .delete(`/wallets/${wallet.id}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect(401)
+        .end((err, res) => {
+          if (err) { return done(err); }
+          expect(res.body).to.have.property('code', '#missingPassword');
+          done();
+        });
+    });
+
+    it('should not delete a nonexistent wallet', (done) => {
+      request(server)
+        .delete('/wallets/some-random-wallet-nonexistent-id')
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .set(WALLET_PASSWORD_HEADER, walletPassword)
+        .expect(404)
+        .end((err, res) => {
+          if (err) { return done(err); }
+          expect(res.body).to.have.property('code', '#walletNotFound');
+          done();
+        });
     });
   });
 });

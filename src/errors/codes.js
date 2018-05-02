@@ -42,6 +42,10 @@ module.exports = {
     short: 'Wallet ID already exists',
     long: 'Wallet ID already exists but with a different contents. If you\'ve changed the password, delete the original wallet.',
   },
+  walletNotFound: {
+    status: 404,
+    short: 'Wallet not found',
+  },
   cannotUnlockWallet: {
     status: 401,
     short: 'Wallet cannot be unlocked',

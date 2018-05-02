@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { WALLET_PASSWORD_HEADER, WALLET_ID_HEADER } = require('../constants');
+const { WALLET_PASSWORD_HEADER } = require('../constants');
 const { storeKeyFile, loadKeyFile, removeKeyFile } = require('../services/keyfiles');
 const { handleApplicationError } = require('../errors');
 
@@ -97,14 +97,25 @@ const create = async (req, res, next) => {
 };
 
 const remove = async (req, res, next) => {
-  // const password = req.header(WALLET_PASSWORD_HEADER);
-  const uuid = req.header(WALLET_ID_HEADER);
+  const password = req.header(WALLET_PASSWORD_HEADER);
+  const { walletId } = req.params;
   try {
-    const keyStore = await loadKeyFile(uuid);
-    // TODO try to make wallet and unlock
-    removeKeyFile(uuid);
-    return res.status(200).json({ keyStore });
+    const keyStore = await loadKeyFile(walletId);
+    const wallet = await res.locals.wt.instance.createWallet(keyStore);
+    await wallet.unlock(password);
+    wallet.destroy();
+    await removeKeyFile(walletId);
+    return res.sendStatus(204);
   } catch (err) {
+    if (err.message.match(/wallet not found/i)) {
+      return next(handleApplicationError('walletNotFound'), err);
+    }
+    if (err.message.match(/no password given/i)) {
+      return next(handleApplicationError('missingPassword'), err);
+    }
+    if (err.message.match(/key derivation failed/i)) {
+      return next(handleApplicationError('cannotUnlockWallet', err));
+    }
     return next(handleApplicationError('wallet', err));
   }
 };
