@@ -142,6 +142,24 @@ describe('Hotels', function () {
         });
     });
 
+    it('should return 401 on bad wallet id', (done) => {
+      request(server)
+        .post('/hotels')
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .set(WALLET_PASSWORD_HEADER, config.get('password'))
+        .set(WALLET_ID_HEADER, 'random-nonexistent-wallet-id')
+        .send({ hotel: { name, description, manager, location } })
+        .expect(401)
+        .end((err, res) => {
+          if (err) { return done(err); }
+          expect(res.body).to.have.property('code', '#cannotUnlockWallet');
+          expect(res.body).to.have.property('short');
+          expect(res.body.short).to.match(/cannot be unlocked/i);
+          done();
+        });
+    });
+
     it('should return 401 on missing password', (done) => {
       request(server)
         .post('/hotels')
@@ -155,6 +173,23 @@ describe('Hotels', function () {
           expect(res.body).to.have.property('code', '#missingPassword');
           expect(res.body).to.have.property('short');
           expect(res.body.short).to.match(/password is required/i);
+          done();
+        });
+    });
+
+    it('should return 401 on missing wallet', (done) => {
+      request(server)
+        .post('/hotels')
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .set(WALLET_PASSWORD_HEADER, config.get('password'))
+        .send({ hotel: { name, description, manager, location } })
+        .expect(401)
+        .end((err, res) => {
+          if (err) { return done(err); }
+          expect(res.body).to.have.property('code', '#missingWallet');
+          expect(res.body).to.have.property('short');
+          expect(res.body.short).to.match(/wallet id is required/i);
           done();
         });
     });

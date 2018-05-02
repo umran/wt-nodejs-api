@@ -1,5 +1,5 @@
 const { WALLET_PASSWORD_HEADER, WALLET_ID_HEADER } = require('../constants');
-const { storeKeyFile, loadKeyFile, removeKeyFile } = require('../helpers/keyfiles');
+const { storeKeyFile, loadKeyFile, removeKeyFile } = require('../services/keyfiles');
 const { handleApplicationError } = require('../errors');
 const config = require('../config');
 

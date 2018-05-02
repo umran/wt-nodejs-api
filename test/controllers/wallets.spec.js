@@ -9,7 +9,7 @@ const { WALLET_PASSWORD_HEADER } = require('../../src/constants');
 const { deployIndexAndHotel } = require('../utils/helpers');
 const { loadKeyfile,
   storeKeyFile,
-} = require('../../src/helpers/keyfiles');
+} = require('../../src/services/keyfiles');
 
 xdescribe('Wallet', function () {
   let server;

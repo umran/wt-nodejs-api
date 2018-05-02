@@ -2,7 +2,7 @@ const compose = require('compose-middleware').compose;
 
 const wtJsLibs = require('../services/wt-js-libs');
 const { WALLET_PASSWORD_HEADER, WALLET_ID_HEADER } = require('../constants');
-const { loadKeyFile } = require('../helpers/keyfiles');
+const { loadKeyFile } = require('../services/keyfiles');
 const { handleApplicationError } = require('../errors');
 const config = require('../config');
 
@@ -27,14 +27,12 @@ const unlockAccount = compose([
     if (!password) {
       return next(handleApplicationError('missingPassword'));
     }
-
     if (!keyFileUuid) {
       return next(handleApplicationError('missingWallet'));
     }
 
-    // TODO handle IO error
-    const wallet = await loadKeyFile(keyFileUuid);
     try {
+      const wallet = await loadKeyFile(keyFileUuid);
       res.locals.wt.wallet = await res.locals.wt.instance.createWallet(await wallet);
       await res.locals.wt.wallet.unlock(password);
     } catch (err) {
