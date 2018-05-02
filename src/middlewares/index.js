@@ -26,11 +26,11 @@ const unlockAccount = compose([
     if (!password) {
       return next(handleApplicationError('missingPassword'));
     }
-    // TODO handle file read error
-    const wallet = loadKeyfile(config.get('privateKeyFile'));
 
+    // TODO handle file read error
+    const wallet = await loadKeyfile(config.get('privateKeyFile'));
     try {
-      req.wt.wallet = await req.wt.instance.createWallet(wallet);
+      req.wt.wallet = await req.wt.instance.createWallet(await wallet);
       await req.wt.wallet.unlock(password);
     } catch (err) {
       return next(handleApplicationError('cannotUnlockWallet', err));
