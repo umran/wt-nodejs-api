@@ -1,0 +1,32 @@
+{
+  "defaultNetwork": "local",
+  "testnet": {
+    "gasMargin": 1.5,
+    "indexAddress": "0x09C0AECBA9BBEBCCDAAF3FE8473591A69C4C11BE",
+    "port": 3000,
+    "privateKeyFile": "keys/mainKey.json",
+    "web3Provider": "https://ropsten.infura.io/WKNyJ0kClh8Ao5LdmO7z",
+    "whiteList": []
+  },
+  "local": {
+    "gasMargin": 2,
+    "indexAddress": "0x8c2373842d5ea4ce4baf53f4175e5e42a364c59c",
+    "port": 3000,
+    "log": true,
+    "privateKeyFile": "keys/mainKey.json",
+    "web3Provider": "http://localhost:8545",
+    "whiteList": []
+  },
+  "test": {
+    "gasMargin": 2,
+    "port": 3000,
+    "privateKeyFile": "test/utils/test-keyfile.json",
+    "password": "test123",
+    "web3Provider": "http://localhost:8545",
+    "user": "0xd39ca7d186a37bb6bf48ae8abfeb4c687dc8f906",
+    "whiteList": [
+      "127.0.0.1"
+    ],
+    "log": false
+  }
+}

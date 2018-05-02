@@ -4,10 +4,11 @@
   "description": " API to interact with the Winding Tree platform",
   "main": "index.js",
   "scripts": {
-    "eslint": "./node_modules/.bin/eslint src/ tests/",
-    "test": "npm run eslint && scripts/test.sh",
-    "now-start": "npm run dev",
-    "dev": "node ./src/srv/index.js",
+    "lint": "eslint src test",
+    "test": "npm run lint && ETH_NETWORK=test ./test/utils/scripts/localtestnet.sh",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "now-start": "ETH_NETWORK=testnet node ./src/index.js",
+    "dev": "ETH_NETWORK=local node ./src/index.js",
     "deploy": "now -e NODE_ENV=production --token $NOW_TOKEN --npm --public",
     "alias": "now alias --token=$NOW_TOKEN"
   },
@@ -28,23 +29,29 @@
   },
   "homepage": "https://github.com/windingtree/wt-nodejs-api#readme",
   "dependencies": {
-    "@windingtree/wt-js-libs": "^0.1.2",
+    "@windingtree/wt-js-libs": "^0.2.1",
     "body-parser": "^1.18.2",
-    "express": "^4.16.2",
-    "swagger-ui-express": "^2.0.11",
-    "web3": "1.0.0-beta.26"
+    "compose-middleware": "^4.0.0",
+    "express": "^4.16.3",
+    "swagger-ui-express": "^3.0.8",
+    "web3": "^1.0.0-beta.34"
   },
   "devDependencies": {
+    "@windingtree/wt-contracts": "^0.2.0",
     "chai": "^4.1.2",
-    "eslint": "^4.16.0",
-    "eslint-config-standard": "^10.2.1",
-    "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-node": "^5.2.1",
-    "eslint-plugin-promise": "^3.6.0",
+    "coveralls": "^3.0.0",
+    "eslint": "^4.19.1",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-standard": "^3.0.1",
-    "ethereumjs-testrpc": "3.9.2",
-    "mocha": "^4.0.1",
-    "node-fetch": "^1.7.3"
+    "ganache-cli": "^6.1.0",
+    "mocha": "^5.1.0",
+    "nyc": "^11.6.0",
+    "sinon": "^4.5.0",
+    "supertest": "^3.0.0",
+    "truffle-contract": "^3.0.5"
   },
   "engines": {
     "node": "8.9.4"
