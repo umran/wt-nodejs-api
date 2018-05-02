@@ -12,9 +12,6 @@ const walletsRouter = express.Router();
 walletsRouter.post(WALLETS_ROUTE, injectWtLibs, walletsController.create);
 walletsRouter.delete(WALLETS_ROUTE, unlockAccount, walletsController.remove);
 
-// Read only methods
-walletsRouter.get(WALLETS_ROUTE, unlockAccount, walletsController.read);
-
 module.exports = {
   walletsRouter,
 };

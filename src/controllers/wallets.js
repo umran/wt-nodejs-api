@@ -25,15 +25,6 @@ const create = async (req, res, next) => {
   }
 };
 
-const read = async (req, res, next) => {
-  try {
-    const keyStoreV3 = await loadKeyfile(config.get('privateKeyFile'));
-    return res.status(200).json({ keyStoreV3 });
-  } catch (err) {
-    return next(handleApplicationError('wallet', err));
-  }
-};
-
 const remove = async (req, res, next) => {
   try {
     const keyStoreV3 = await loadKeyfile(config.get('privateKeyFile'));
@@ -46,6 +37,5 @@ const remove = async (req, res, next) => {
 
 module.exports = {
   create,
-  read,
   remove,
 };

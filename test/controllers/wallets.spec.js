@@ -14,31 +14,24 @@ const { loadKeyfile,
 describe('Wallet', function () {
   let server;
   let privateKeyFile;
+
   before(async () => {
     privateKeyFile = config.get('privateKeyFile');
     config.set('privateKeyFile', path.resolve('keys/test-keyfile.json'));
     storeKeyFile(await loadKeyfile(TEST_ACCOUNT_FILE), config.get('privateKeyFile'));
   });
+
   beforeEach(async () => {
     server = require('../../src/index');
     await deployIndexAndHotel();
   });
+
   afterEach(() => {
     server.close();
   });
+
   after(() => {
     config.set('privateKeyFile', privateKeyFile);
-  });
-  it('GET /wallets. Expect 200', (done) => {
-    request(server)
-      .get('/wallets')
-      .set('content-type', 'application/json')
-      .set('accept', 'application/json')
-      .set(PASSWORD_HEADER, config.get('password'))
-      .expect((res) => {
-        expect(res.body.keyStoreV3).to.be.ok;
-      })
-      .expect(200, done);
   });
 
   it('POST /wallets. Expect 200', async () => {
