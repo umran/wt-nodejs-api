@@ -20,7 +20,7 @@
   "test": {
     "gasMargin": 2,
     "port": 3000,
-    "privateKeyFile": "test/utils/test-keyfile.json",
+    "privateKeyFile": "test/utils/ffa1e3be-e80a-4e1c-bb71-ed54c3bef115.json",
     "password": "test123",
     "web3Provider": "http://localhost:8545",
     "user": "0xd39ca7d186a37bb6bf48ae8abfeb4c687dc8f906",

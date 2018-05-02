@@ -3,9 +3,9 @@
 const path = require('path');
 const request = require('supertest');
 const config = require('../../src/config');
-const TEST_ACCOUNT_FILE = path.resolve('test/utils/test-keyfile.json');
+const TEST_ACCOUNT_FILE = path.resolve('test/utils/ffa1e3be-e80a-4e1c-bb71-ed54c3bef115.json');
 const { expect } = require('chai');
-const { PASSWORD_HEADER } = require('../../src/constants');
+const { WALLET_PASSWORD_HEADER } = require('../../src/constants');
 const { deployIndexAndHotel } = require('../utils/helpers');
 const { loadKeyfile,
   storeKeyFile,
@@ -17,7 +17,7 @@ describe('Wallet', function () {
 
   before(async () => {
     privateKeyFile = config.get('privateKeyFile');
-    config.set('privateKeyFile', path.resolve('keys/test-keyfile.json'));
+    config.set('privateKeyFile', path.resolve('keys/ffa1e3be-e80a-4e1c-bb71-ed54c3bef115.json'));
     storeKeyFile(await loadKeyfile(TEST_ACCOUNT_FILE), config.get('privateKeyFile'));
   });
 
@@ -40,7 +40,7 @@ describe('Wallet', function () {
       .set('content-type', 'application/json')
       .set('accept', 'application/json')
       .send({ keyStoreV3: await loadKeyfile(TEST_ACCOUNT_FILE) })
-      .set(PASSWORD_HEADER, config.get('password'))
+      .set(WALLET_PASSWORD_HEADER, config.get('password'))
       .expect(200);
   });
 
@@ -49,7 +49,7 @@ describe('Wallet', function () {
       .delete('/wallets')
       .set('content-type', 'application/json')
       .set('accept', 'application/json')
-      .set(PASSWORD_HEADER, config.get('password'))
+      .set(WALLET_PASSWORD_HEADER, config.get('password'))
       .expect((res) => {
         expect(res.body.keyStoreV3).to.be.ok;
       })

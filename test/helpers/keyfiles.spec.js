@@ -9,7 +9,7 @@ const {
   removeKeyfile,
 } = require('../../src/helpers/keyfiles');
 
-const TEST_ACCOUNT_FILE = path.resolve('test/utils/test-keyfile.json');
+const TEST_ACCOUNT_FILE = path.resolve('test/utils/ffa1e3be-e80a-4e1c-bb71-ed54c3bef115.json');
 
 describe('keyfiles.js', function () {
   it('should load keyfile', async () => {
@@ -19,7 +19,7 @@ describe('keyfiles.js', function () {
 
   it('should store keyfile', async () => {
     try {
-      await storeKeyFile(await loadKeyfile(TEST_ACCOUNT_FILE), path.resolve('keys/test-keyfile.json'));
+      await storeKeyFile(await loadKeyfile(TEST_ACCOUNT_FILE), path.resolve('keys/ffa1e3be-e80a-4e1c-bb71-ed54c3bef115.json'));
     } catch (e) {
       expect(false);
     }
@@ -27,7 +27,7 @@ describe('keyfiles.js', function () {
 
   it('should remove keyfile', async () => {
     try {
-      await removeKeyfile(path.resolve('keys/test-keyfile.json'));
+      await removeKeyfile(path.resolve('keys/ffa1e3be-e80a-4e1c-bb71-ed54c3bef115.json'));
     } catch (e) {
       expect(false);
     }

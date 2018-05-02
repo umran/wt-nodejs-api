@@ -3,7 +3,7 @@
 const { expect } = require('chai');
 const request = require('supertest');
 const config = require('../../src/config');
-const { PASSWORD_HEADER } = require('../../src/constants');
+const { WALLET_PASSWORD_HEADER } = require('../../src/constants');
 const {
   deployIndexAndHotel,
 } = require('../utils/helpers');
@@ -45,7 +45,7 @@ describe('Hotels', function () {
         .post('/hotels')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(PASSWORD_HEADER, config.get('password'))
+        .set(WALLET_PASSWORD_HEADER, config.get('password'))
         .send({ hotel: { name, description, manager, location } })
         .end((err, res) => {
           if (err) return done(err);
@@ -92,7 +92,7 @@ describe('Hotels', function () {
         .post('/hotels')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(PASSWORD_HEADER, config.get('password'))
+        .set(WALLET_PASSWORD_HEADER, config.get('password'))
         .send({ hotel: { name, description, manager, location } })
         .expect((res) => {
           expect(res.body).to.have.property('address');
@@ -107,7 +107,7 @@ describe('Hotels', function () {
         .post('/hotels')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(PASSWORD_HEADER, config.get('password'))
+        .set(WALLET_PASSWORD_HEADER, config.get('password'))
         .send({ hotel: { name, description, location } })
         .expect(400)
         .end((err, res) => {
@@ -124,7 +124,7 @@ describe('Hotels', function () {
         .post('/hotels')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(PASSWORD_HEADER, 'random-password')
+        .set(WALLET_PASSWORD_HEADER, 'random-password')
         .send({ hotel: { name, description, manager, location } })
         .expect(401)
         .end((err, res) => {
@@ -169,7 +169,7 @@ describe('Hotels', function () {
         .post('/hotels')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(PASSWORD_HEADER, config.get('password'))
+        .set(WALLET_PASSWORD_HEADER, config.get('password'))
         .send({ hotel: { name, description, manager, location } })
         .end((err, res) => {
           if (err) { return done(err); }
@@ -181,7 +181,7 @@ describe('Hotels', function () {
             .put(`/hotels/${res.body.address}`)
             .set('content-type', 'application/json')
             .set('accept', 'application/json')
-            .set(PASSWORD_HEADER, config.get('password'))
+            .set(WALLET_PASSWORD_HEADER, config.get('password'))
             .send({ hotel: { description: 'Best hotel.', name: 'WTHotel', url: 'new-url' } })
             .expect((res) => {
               expect(res.body.transactionIds.length).to.be.above(0);
@@ -208,7 +208,7 @@ describe('Hotels', function () {
         .put(`/hotels/${config.get('testAddress')}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(PASSWORD_HEADER, config.get('password'))
+        .set(WALLET_PASSWORD_HEADER, config.get('password'))
         .send({ hotel: {
           name,
           description,
@@ -235,7 +235,7 @@ describe('Hotels', function () {
         .put(`/hotels/${config.get('testAddress')}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(PASSWORD_HEADER, config.get('password'))
+        .set(WALLET_PASSWORD_HEADER, config.get('password'))
         .send({ hotel: { url: null } })
         .expect(202)
         .end((err, res) => {
@@ -256,25 +256,25 @@ describe('Hotels', function () {
         .put('/hotels/0x76ccdbb28c18168cc4ab55b11fc3be776e81200c')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(PASSWORD_HEADER, config.get('password'))
+        .set(WALLET_PASSWORD_HEADER, config.get('password'))
         .send({ name, description, location })
         .expect(404, done);
     });
 
     it('should return 401 on updating a hotel of a different manager', (done) => {
       // switch wallets
-      config.set('privateKeyFile', 'test/utils/test-keyfile-d037.json');
+      config.set('privateKeyFile', 'test/utils/7fe84016-4686-4622-97c9-dc7b47f5f5c6.json');
       request(server)
         .put(`/hotels/${config.get('testAddress')}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(PASSWORD_HEADER, 'windingtree')
+        .set(WALLET_PASSWORD_HEADER, 'windingtree')
         // url is required to force interaction with network
         .send({ hotel: { name, description: 'random-updated-description', location, url } })
         .expect(401)
         .end((err, res) => {
           if (err) { return done(err); }
-          config.set('privateKeyFile', 'test/utils/test-keyfile.json');
+          config.set('privateKeyFile', 'test/utils/ffa1e3be-e80a-4e1c-bb71-ed54c3bef115.json');
           done();
         });
     });
@@ -284,7 +284,7 @@ describe('Hotels', function () {
         .put(`/hotels/${config.get('testAddress')}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(PASSWORD_HEADER, 'random-password')
+        .set(WALLET_PASSWORD_HEADER, 'random-password')
         .send({ hotel: { name, description, manager, location } })
         .expect(401)
         .end((err, res) => {
@@ -319,7 +319,7 @@ describe('Hotels', function () {
         .delete(`/hotels/${config.get('testAddress')}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(PASSWORD_HEADER, config.get('password'))
+        .set(WALLET_PASSWORD_HEADER, config.get('password'))
         .expect(202)
         .end((err, res) => {
           if (err) { return done(err); }
@@ -333,22 +333,22 @@ describe('Hotels', function () {
         .delete('/hotels/0x76ccdbb28c18168cc4ab55b11fc3be776e81200c')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(PASSWORD_HEADER, config.get('password'))
+        .set(WALLET_PASSWORD_HEADER, config.get('password'))
         .expect(404, done);
     });
 
     it('should return 401 on deleting a hotel of a different manager', (done) => {
       // switch wallets
-      config.set('privateKeyFile', 'test/utils/test-keyfile-d037.json');
+      config.set('privateKeyFile', 'test/utils/7fe84016-4686-4622-97c9-dc7b47f5f5c6.json');
       request(server)
         .delete(`/hotels/${config.get('testAddress')}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(PASSWORD_HEADER, 'windingtree')
+        .set(WALLET_PASSWORD_HEADER, 'windingtree')
         .expect(401)
         .end((err, res) => {
           if (err) { return done(err); }
-          config.set('privateKeyFile', 'test/utils/test-keyfile.json');
+          config.set('privateKeyFile', 'test/utils/ffa1e3be-e80a-4e1c-bb71-ed54c3bef115.json');
           done();
         });
     });
@@ -358,7 +358,7 @@ describe('Hotels', function () {
         .delete(`/hotels/${config.get('testAddress')}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(PASSWORD_HEADER, 'random-password')
+        .set(WALLET_PASSWORD_HEADER, 'random-password')
         .expect(401)
         .end((err, res) => {
           if (err) { return done(err); }
