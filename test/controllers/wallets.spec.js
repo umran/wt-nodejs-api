@@ -148,8 +148,56 @@ describe('Wallet', function () {
     });
   });
 
-  xdescribe('GET /wallets/:walletId', () => {
+  describe('GET /wallets/:walletId', () => {
+    it('should respond with 200 when wallet exists and password is ok', (done) => {
+      request(server)
+        .get(`/wallets/${wallet.id}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .set(WALLET_PASSWORD_HEADER, walletPassword)
+        .expect(200, done);
+    });
 
+    it('should respond with 401 when wallet exists and password is not ok', (done) => {
+      request(server)
+        .get(`/wallets/${wallet.id}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .set(WALLET_PASSWORD_HEADER, secondWalletPassword)
+        .expect(401)
+        .end((err, res) => {
+          if (err) { return done(err); }
+          expect(res.body).to.have.property('code', '#cannotUnlockWallet');
+          done();
+        });
+    });
+
+    it('should respond with 401 when password is not sent', (done) => {
+      request(server)
+        .get(`/wallets/${wallet.id}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect(401)
+        .end((err, res) => {
+          if (err) { return done(err); }
+          expect(res.body).to.have.property('code', '#missingPassword');
+          done();
+        });
+    });
+
+    it('should respond with 404 when wallet does not exist', (done) => {
+      request(server)
+        .get('/wallets/some-random-nonexistent-wallet-id')
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .set(WALLET_PASSWORD_HEADER, walletPassword)
+        .expect(404)
+        .end((err, res) => {
+          if (err) { return done(err); }
+          expect(res.body).to.have.property('code', '#walletNotFound');
+          done();
+        });
+    });
   });
 
   describe('DELETE /wallets/:walletId', () => {

@@ -121,7 +121,26 @@ const remove = async (req, res, next) => {
 };
 
 const get = async (req, res, next) => {
-  next();
+  const password = req.header(WALLET_PASSWORD_HEADER);
+  const { walletId } = req.params;
+  try {
+    const keyStore = await loadKeyFile(walletId);
+    const wallet = await res.locals.wt.instance.createWallet(keyStore);
+    await wallet.unlock(password);
+    wallet.destroy();
+    return res.sendStatus(200);
+  } catch (err) {
+    if (err.message.match(/wallet not found/i)) {
+      return next(handleApplicationError('walletNotFound'), err);
+    }
+    if (err.message.match(/no password given/i)) {
+      return next(handleApplicationError('missingPassword'), err);
+    }
+    if (err.message.match(/key derivation failed/i)) {
+      return next(handleApplicationError('cannotUnlockWallet', err));
+    }
+    return next(handleApplicationError('wallet', err));
+  }
 };
 
 module.exports = {

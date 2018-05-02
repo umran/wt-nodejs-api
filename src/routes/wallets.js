@@ -10,6 +10,8 @@ const walletsRouter = express.Router();
 
 // We want more fine-grained control over error states, so we don't use unlockAccount here
 
+// TODO introduce throttling for vulnerable wallet endpoints
+
 // Data modifying methods
 walletsRouter.post(WALLETS_ROUTE, injectWtLibs, walletsController.create);
 walletsRouter.delete(WALLET_ROUTE, injectWtLibs, walletsController.remove);
