@@ -1,8 +1,8 @@
 const compose = require('compose-middleware').compose;
 
 const wtJsLibs = require('../services/wt-js-libs');
-const { WALLET_PASSWORD_HEADER } = require('../constants');
-const { loadKeyfile } = require('../helpers/keyfiles');
+const { WALLET_PASSWORD_HEADER, WALLET_ID_HEADER } = require('../constants');
+const { loadKeyFile } = require('../helpers/keyfiles');
 const { handleApplicationError } = require('../errors');
 const config = require('../config');
 
@@ -22,13 +22,18 @@ const injectWtLibs = async (req, res, next) => {
 const unlockAccount = compose([
   injectWtLibs,
   async (req, res, next) => {
+    const keyFileUuid = req.header(WALLET_ID_HEADER);
     const password = req.header(WALLET_PASSWORD_HEADER);
     if (!password) {
       return next(handleApplicationError('missingPassword'));
     }
 
+    if (!keyFileUuid) {
+      return next(handleApplicationError('missingWallet'));
+    }
+
     // TODO handle IO error
-    const wallet = await loadKeyfile(config.get('privateKeyFile'));
+    const wallet = await loadKeyFile(keyFileUuid);
     try {
       res.locals.wt.wallet = await res.locals.wt.instance.createWallet(await wallet);
       await res.locals.wt.wallet.unlock(password);

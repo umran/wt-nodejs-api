@@ -1,5 +1,5 @@
-const { WALLET_PASSWORD_HEADER } = require('../constants');
-const { storeKeyFile, loadKeyfile, removeKeyfile } = require('../helpers/keyfiles');
+const { WALLET_PASSWORD_HEADER, WALLET_ID_HEADER } = require('../constants');
+const { storeKeyFile, loadKeyFile, removeKeyFile } = require('../helpers/keyfiles');
 const { handleApplicationError } = require('../errors');
 const config = require('../config');
 
@@ -13,14 +13,14 @@ const create = async (req, res, next) => {
     return next(handleApplicationError('missingWallet', new Error()));
   }
   // TODO check duplicates
-  // TODO store under ${keyStoreV3.id}.json as per https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition
+  // TODO check required storage version
   try {
     console.log('keyStoreV3', keyStoreV3);
     const wallet = await res.locals.wt.instance.createWallet(keyStoreV3);
     // TODO report on mismatching password
     await wallet.unlock(password);
     wallet.destroy();
-    storeKeyFile(keyStoreV3, config.get('privateKeyFile'));
+    storeKeyFile(keyStoreV3);
     return res.sendStatus(200);
   } catch (err) {
     console.log(err);
@@ -29,9 +29,12 @@ const create = async (req, res, next) => {
 };
 
 const remove = async (req, res, next) => {
+  const password = req.header(WALLET_PASSWORD_HEADER);
+  const uuid = req.header(WALLET_ID_HEADER);
   try {
-    const keyStoreV3 = await loadKeyfile(config.get('privateKeyFile'));
-    removeKeyfile(config.get('privateKeyFile'));
+    const keyStoreV3 = await loadKeyFile(uuid);
+    // TODO try to make wallet and unlock
+    removeKeyFile(uuid);
     return res.status(200).json({ keyStoreV3 });
   } catch (err) {
     return next(handleApplicationError('wallet', err));

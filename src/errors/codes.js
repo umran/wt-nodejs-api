@@ -22,6 +22,11 @@ module.exports = {
     short: 'Password is required',
     long: 'You must include "X-Wallet-Password" header',
   },
+  missingWallet: {
+    status: 401,
+    short: 'Wallet id is required',
+    long: 'You must include "X-Wallet-Id" header',
+  },
   cannotUnlockWallet: {
     status: 401,
     short: 'Wallet cannot be unlocked',

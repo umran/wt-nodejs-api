@@ -11,14 +11,14 @@ const { loadKeyfile,
   storeKeyFile,
 } = require('../../src/helpers/keyfiles');
 
-describe('Wallet', function () {
+xdescribe('Wallet', function () {
   let server;
   let privateKeyFile;
 
   before(async () => {
     privateKeyFile = config.get('privateKeyFile');
-    config.set('privateKeyFile', path.resolve('keys/ffa1e3be-e80a-4e1c-bb71-ed54c3bef115.json'));
-    storeKeyFile(await loadKeyfile(TEST_ACCOUNT_FILE), config.get('privateKeyFile'));
+    // config.set('privateKeyFile', path.resolve('keys/ffa1e3be-e80a-4e1c-bb71-ed54c3bef115.json'));
+    // storeKeyFile(await loadKeyfile(TEST_ACCOUNT_FILE), config.get('privateKeyFile'));
   });
 
   beforeEach(async () => {
