@@ -11,7 +11,7 @@ const {
 
 const TEST_ACCOUNT_FILE = path.resolve('test/utils/test-keyfile.json');
 
-describe.only('keyfiles.js', function () {
+describe('keyfiles.js', function () {
   it('should load keyfile', async () => {
     const privateKeyJSON = await loadKeyfile(TEST_ACCOUNT_FILE);
     expect(privateKeyJSON).to.be.ok;

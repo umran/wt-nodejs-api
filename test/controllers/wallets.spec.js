@@ -6,12 +6,12 @@ const config = require('../../src/config');
 const TEST_ACCOUNT_FILE = path.resolve('test/utils/test-keyfile.json');
 const { expect } = require('chai');
 const { PASSWORD_HEADER } = require('../../src/constants');
-const { deployIndexAndHotel } = require('../utils/hooks.js');
+const { deployIndexAndHotel } = require('../utils/helpers');
 const { loadKeyfile,
   storeKeyFile,
 } = require('../../src/helpers/keyfiles');
 
-describe.only('Wallet', function () {
+describe('Wallet', function () {
   let server;
   let privateKeyFile;
   before(async () => {
