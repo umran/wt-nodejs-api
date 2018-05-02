@@ -12,7 +12,7 @@ function handleApplicationError (code, e) {
     e.long = e.message;
     return e;
   }
-  const desc = errorCodes[code] || errorCodes.unknownError;
+  const desc = errorCodes[code] || errorCodes.genericError;
   e.status = desc.status;
   e.code = `#${code}`;
   e.short = desc.short;

@@ -8,7 +8,9 @@ const {
   deployIndexAndHotel,
 } = require('../utils/helpers');
 
-const WALLET_UUID = 'ffa1e3be-e80a-4e1c-bb71-ed54c3bef115';
+// We can use the default test location for wallets since we're not modifying them
+const walletUuid = 'ffa1e3be-e80a-4e1c-bb71-ed54c3bef115';
+const walletPassword = 'test123';
 
 describe('Hotels', function () {
   let server;
@@ -47,8 +49,8 @@ describe('Hotels', function () {
         .post('/hotels')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, config.get('password'))
-        .set(WALLET_ID_HEADER, WALLET_UUID)
+        .set(WALLET_PASSWORD_HEADER, walletPassword)
+        .set(WALLET_ID_HEADER, walletUuid)
         .send({ hotel: { name, description, manager, location } })
         .end((err, res) => {
           if (err) return done(err);
@@ -95,8 +97,8 @@ describe('Hotels', function () {
         .post('/hotels')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, config.get('password'))
-        .set(WALLET_ID_HEADER, WALLET_UUID)
+        .set(WALLET_PASSWORD_HEADER, walletPassword)
+        .set(WALLET_ID_HEADER, walletUuid)
         .send({ hotel: { name, description, manager, location } })
         .expect((res) => {
           expect(res.body).to.have.property('address');
@@ -111,8 +113,8 @@ describe('Hotels', function () {
         .post('/hotels')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, config.get('password'))
-        .set(WALLET_ID_HEADER, WALLET_UUID)
+        .set(WALLET_PASSWORD_HEADER, walletPassword)
+        .set(WALLET_ID_HEADER, walletUuid)
         .send({ hotel: { name, description, location } })
         .expect(400)
         .end((err, res) => {
@@ -130,7 +132,7 @@ describe('Hotels', function () {
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(WALLET_PASSWORD_HEADER, 'random-password')
-        .set(WALLET_ID_HEADER, WALLET_UUID)
+        .set(WALLET_ID_HEADER, walletUuid)
         .send({ hotel: { name, description, manager, location } })
         .expect(401)
         .end((err, res) => {
@@ -147,7 +149,7 @@ describe('Hotels', function () {
         .post('/hotels')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, config.get('password'))
+        .set(WALLET_PASSWORD_HEADER, walletPassword)
         .set(WALLET_ID_HEADER, 'random-nonexistent-wallet-id')
         .send({ hotel: { name, description, manager, location } })
         .expect(401)
@@ -165,7 +167,7 @@ describe('Hotels', function () {
         .post('/hotels')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_ID_HEADER, WALLET_UUID)
+        .set(WALLET_ID_HEADER, walletUuid)
         .send({ hotel: { name, description, manager } })
         .expect(401)
         .end((err, res) => {
@@ -182,7 +184,7 @@ describe('Hotels', function () {
         .post('/hotels')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, config.get('password'))
+        .set(WALLET_PASSWORD_HEADER, walletPassword)
         .send({ hotel: { name, description, manager, location } })
         .expect(401)
         .end((err, res) => {
@@ -211,8 +213,8 @@ describe('Hotels', function () {
         .post('/hotels')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, config.get('password'))
-        .set(WALLET_ID_HEADER, WALLET_UUID)
+        .set(WALLET_PASSWORD_HEADER, walletPassword)
+        .set(WALLET_ID_HEADER, walletUuid)
         .send({ hotel: { name, description, manager, location } })
         .end((err, res) => {
           if (err) { return done(err); }
@@ -224,8 +226,8 @@ describe('Hotels', function () {
             .put(`/hotels/${res.body.address}`)
             .set('content-type', 'application/json')
             .set('accept', 'application/json')
-            .set(WALLET_PASSWORD_HEADER, config.get('password'))
-            .set(WALLET_ID_HEADER, WALLET_UUID)
+            .set(WALLET_PASSWORD_HEADER, walletPassword)
+            .set(WALLET_ID_HEADER, walletUuid)
             .send({ hotel: { description: 'Best hotel.', name: 'WTHotel', url: 'new-url' } })
             .expect((res) => {
               expect(res.body.transactionIds.length).to.be.above(0);
@@ -252,8 +254,8 @@ describe('Hotels', function () {
         .put(`/hotels/${config.get('testAddress')}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, config.get('password'))
-        .set(WALLET_ID_HEADER, WALLET_UUID)
+        .set(WALLET_PASSWORD_HEADER, walletPassword)
+        .set(WALLET_ID_HEADER, walletUuid)
         .send({ hotel: {
           name,
           description,
@@ -280,8 +282,8 @@ describe('Hotels', function () {
         .put(`/hotels/${config.get('testAddress')}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, config.get('password'))
-        .set(WALLET_ID_HEADER, WALLET_UUID)
+        .set(WALLET_PASSWORD_HEADER, walletPassword)
+        .set(WALLET_ID_HEADER, walletUuid)
         .send({ hotel: { url: null } })
         .expect(202)
         .end((err, res) => {
@@ -302,8 +304,8 @@ describe('Hotels', function () {
         .put('/hotels/0x76ccdbb28c18168cc4ab55b11fc3be776e81200c')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, config.get('password'))
-        .set(WALLET_ID_HEADER, WALLET_UUID)
+        .set(WALLET_PASSWORD_HEADER, walletPassword)
+        .set(WALLET_ID_HEADER, walletUuid)
         .send({ name, description, location })
         .expect(404, done);
     });
@@ -326,7 +328,7 @@ describe('Hotels', function () {
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(WALLET_PASSWORD_HEADER, 'random-password')
-        .set(WALLET_ID_HEADER, WALLET_UUID)
+        .set(WALLET_ID_HEADER, walletUuid)
         .send({ hotel: { name, description, manager, location } })
         .expect(401)
         .end((err, res) => {
@@ -343,7 +345,7 @@ describe('Hotels', function () {
         .put(`/hotels/${config.get('testAddress')}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_ID_HEADER, WALLET_UUID)
+        .set(WALLET_ID_HEADER, walletUuid)
         .send({ hotel: { name, description, manager, location } })
         .expect(401)
         .end((err, res) => {
@@ -360,7 +362,7 @@ describe('Hotels', function () {
         .put(`/hotels/${config.get('testAddress')}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, config.get('password'))
+        .set(WALLET_PASSWORD_HEADER, walletPassword)
         .send({ hotel: { name, description, manager, location } })
         .expect(401)
         .end((err, res) => {
@@ -379,8 +381,8 @@ describe('Hotels', function () {
         .delete(`/hotels/${config.get('testAddress')}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, config.get('password'))
-        .set(WALLET_ID_HEADER, WALLET_UUID)
+        .set(WALLET_PASSWORD_HEADER, walletPassword)
+        .set(WALLET_ID_HEADER, walletUuid)
         .expect(202)
         .end((err, res) => {
           if (err) { return done(err); }
@@ -394,8 +396,8 @@ describe('Hotels', function () {
         .delete('/hotels/0x76ccdbb28c18168cc4ab55b11fc3be776e81200c')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, config.get('password'))
-        .set(WALLET_ID_HEADER, WALLET_UUID)
+        .set(WALLET_PASSWORD_HEADER, walletPassword)
+        .set(WALLET_ID_HEADER, walletUuid)
         .expect(404, done);
     });
 
@@ -415,7 +417,7 @@ describe('Hotels', function () {
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(WALLET_PASSWORD_HEADER, 'random-password')
-        .set(WALLET_ID_HEADER, WALLET_UUID)
+        .set(WALLET_ID_HEADER, walletUuid)
         .expect(401)
         .end((err, res) => {
           if (err) { return done(err); }
@@ -431,7 +433,7 @@ describe('Hotels', function () {
         .delete(`/hotels/${config.get('testAddress')}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_ID_HEADER, WALLET_UUID)
+        .set(WALLET_ID_HEADER, walletUuid)
         .end((err, res) => {
           if (err) { return done(err); }
           expect(res.body).to.have.property('code', '#missingPassword');
@@ -446,7 +448,7 @@ describe('Hotels', function () {
         .delete(`/hotels/${config.get('testAddress')}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, config.get('password'))
+        .set(WALLET_PASSWORD_HEADER, walletPassword)
         .end((err, res) => {
           if (err) { return done(err); }
           expect(res.body).to.have.property('code', '#missingWallet');

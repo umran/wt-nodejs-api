@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint src test",
-    "test": "npm run lint && ETH_NETWORK=test ./test/utils/scripts/localtestnet.sh",
+    "test": "npm run lint; ETH_NETWORK=test ./test/utils/scripts/localtestnet.sh",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "now-start": "ETH_NETWORK=testnet node ./src/index.js",
     "dev": "ETH_NETWORK=local node ./src/index.js",
@@ -33,6 +33,7 @@
     "body-parser": "^1.18.2",
     "compose-middleware": "^4.0.0",
     "express": "^4.16.3",
+    "lodash": "^4.17.10",
     "swagger-ui-express": "^3.0.8",
     "web3": "^1.0.0-beta.34"
   },

@@ -1,47 +1,120 @@
+const _ = require('lodash');
 const { WALLET_PASSWORD_HEADER, WALLET_ID_HEADER } = require('../constants');
 const { storeKeyFile, loadKeyFile, removeKeyFile } = require('../services/keyfiles');
 const { handleApplicationError } = require('../errors');
-const config = require('../config');
+
+const REQUIRED_VERSION = 3;
+
+// Format taken from https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition
+function hasAllPbkdf2Sha256Fields (keyStore) {
+  if (!keyStore.address ||
+      !keyStore.id ||
+      !keyStore.version ||
+      !keyStore.crypto ||
+      !keyStore.crypto.mac ||
+      !keyStore.crypto.ciphertext ||
+      !keyStore.crypto.cipherparams ||
+      !keyStore.crypto.cipherparams.iv ||
+      !keyStore.crypto.cipher ||
+      !keyStore.crypto.kdf ||
+      !keyStore.crypto.kdfparams ||
+      !keyStore.crypto.kdfparams.dklen ||
+      !keyStore.crypto.kdfparams.salt ||
+      !keyStore.crypto.kdfparams.c ||
+      !keyStore.crypto.kdfparams.prf
+  ) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+// Format taken from https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition
+function hasAllScryptFields (keyStore) {
+  if (!keyStore.address ||
+      !keyStore.id ||
+      !keyStore.version ||
+      !keyStore.crypto ||
+      !keyStore.crypto.mac ||
+      !keyStore.crypto.ciphertext ||
+      !keyStore.crypto.cipherparams ||
+      !keyStore.crypto.cipherparams.iv ||
+      !keyStore.crypto.cipher ||
+      !keyStore.crypto.kdf ||
+      !keyStore.crypto.kdfparams ||
+      !keyStore.crypto.kdfparams.dklen ||
+      !keyStore.crypto.kdfparams.salt ||
+      !keyStore.crypto.kdfparams.n ||
+      !keyStore.crypto.kdfparams.r ||
+      !keyStore.crypto.kdfparams.p
+  ) {
+    return false;
+  } else {
+    return true;
+  }
+}
 
 const create = async (req, res, next) => {
   const password = req.header(WALLET_PASSWORD_HEADER);
-  const { keyStoreV3 } = req.body;
+  const keyStore = req.body;
   if (!password) {
-    return next(handleApplicationError('missingPassword', new Error()));
+    return next(handleApplicationError('missingPassword'));
   }
-  if (!keyStoreV3) {
-    return next(handleApplicationError('missingWallet', new Error()));
+  if (!keyStore.id) {
+    return next(handleApplicationError('missingWallet'));
   }
-  // TODO check duplicates
-  // TODO check required storage version
+  if (!keyStore.version || parseInt(keyStore.version, 10) !== REQUIRED_VERSION) {
+    return next(handleApplicationError('badWalletVersion'));
+  }
+
+  if (!hasAllPbkdf2Sha256Fields(keyStore) && !hasAllScryptFields(keyStore)) {
+    return next(handleApplicationError('badWalletFormat'));
+  }
+  // Check for possible overwrites
   try {
-    console.log('keyStoreV3', keyStoreV3);
-    const wallet = await res.locals.wt.instance.createWallet(keyStoreV3);
-    // TODO report on mismatching password
+    const existingWallet = await loadKeyFile(keyStore.id);
+    if (!_.isEqual(existingWallet, keyStore)) {
+      return next(handleApplicationError('walletConflict'));
+    }
+  } catch (e) {
+    // pass as it does not matter that it does not exist
+  }
+
+  try {
+    const wallet = await res.locals.wt.instance.createWallet(keyStore);
     await wallet.unlock(password);
     wallet.destroy();
-    storeKeyFile(keyStoreV3);
-    return res.sendStatus(200);
+    await storeKeyFile(keyStore);
+    res.status(200).json({
+      id: keyStore.id,
+    });
   } catch (err) {
-    console.log(err);
+    if (err.message.match(/key derivation failed/i)) {
+      return next(handleApplicationError('cannotUnlockWallet', err));
+    }
     return next(handleApplicationError('wallet', err));
   }
 };
 
 const remove = async (req, res, next) => {
-  const password = req.header(WALLET_PASSWORD_HEADER);
+  // const password = req.header(WALLET_PASSWORD_HEADER);
   const uuid = req.header(WALLET_ID_HEADER);
   try {
-    const keyStoreV3 = await loadKeyFile(uuid);
+    const keyStore = await loadKeyFile(uuid);
     // TODO try to make wallet and unlock
     removeKeyFile(uuid);
-    return res.status(200).json({ keyStoreV3 });
+    return res.status(200).json({ keyStore });
   } catch (err) {
     return next(handleApplicationError('wallet', err));
   }
 };
 
+const get = async (req, res, next) => {
+  next();
+};
+
 module.exports = {
   create,
   remove,
+  get,
 };

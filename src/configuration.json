@@ -19,7 +19,6 @@
   "test": {
     "gasMargin": 2,
     "port": 3000,
-    "password": "test123",
     "web3Provider": "http://localhost:8545",
     "user": "0xd39ca7d186a37bb6bf48ae8abfeb4c687dc8f906",
     "keyFileStorage": "./test/utils/keys",

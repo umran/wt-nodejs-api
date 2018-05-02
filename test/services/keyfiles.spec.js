@@ -17,7 +17,7 @@ const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
 const unlink = promisify(fs.unlink);
 
-describe('keyfiles.js', function () {
+describe('keyfiles.js', () => {
   let originalKeyStorage;
   const tempPath = path.resolve('test/utils/temp-keys');
 
@@ -26,11 +26,11 @@ describe('keyfiles.js', function () {
     config.set('keyFileStorage', tempPath);
   });
 
-  beforeEach(async function () {
+  beforeEach(async () => {
     await writeFile(path.resolve(config.get('keyFileStorage'), `${wallet.id}.json`), JSON.stringify(wallet), { encoding: 'utf8', flag: 'w' });
   });
 
-  afterEach(async function () {
+  afterEach(async () => {
     if (fs.existsSync(path.resolve(tempPath, `${wallet.id}.json`))) {
       await unlink(path.resolve(tempPath, `${wallet.id}.json`));
     }
