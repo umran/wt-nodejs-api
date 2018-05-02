@@ -1,13 +1,8 @@
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
-const { expect } = require('chai');
 const TruffleContract = require('truffle-contract');
 const Web3 = require('web3');
-
 const config = require('../../src/config');
-const { app } = require('../../src/app');
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000000000000000000000000000';
-let server;
 
 // dirty hack for web3@1.0.0 support for localhost testrpc, see
 // https://github.com/trufflesuite/truffle-contract/issues/56#issuecomment-331084530
@@ -31,31 +26,20 @@ function getContractWithProvider (metadata, provider) {
 const provider = new Web3.providers.HttpProvider(config.get('web3Provider'));
 const WTIndex = getContractWithProvider(require('@windingtree/wt-contracts/build/contracts/WTIndex'), provider);
 
-const BeforeEach = () => (
-  beforeEach(async function () {
-    const index = await WTIndex.new({
-      from: config.get('user'),
-      gas: 6000000,
-    });
-    expect(index.address).to.not.equal(ZERO_ADDRESS);
-    config.set('indexAddress', index.address);
-    server = await app.listen(3000);
-    const hotelUrl = 'ipfs://some-random-hash';
-    const registerResult = await index.registerHotel(hotelUrl, {
-      from: config.get('user'),
-      gas: 6000000,
-    });
-    config.set('testAddress', registerResult.logs[0].args.hotel);
-  })
-);
-
-const AfterEach = () => (
-  afterEach(async function () {
-    return server.close();
-  })
-);
+const deployIndexAndHotel = async () => {
+  const index = await WTIndex.new({
+    from: config.get('user'),
+    gas: 6000000,
+  });
+  config.set('indexAddress', index.address);
+  const hotelUrl = 'ipfs://some-random-hash';
+  const registerResult = await index.registerHotel(hotelUrl, {
+    from: config.get('user'),
+    gas: 6000000,
+  });
+  config.set('testAddress', registerResult.logs[0].args.hotel);
+};
 
 module.exports = {
-  AfterEach,
-  BeforeEach,
+  deployIndexAndHotel,
 };

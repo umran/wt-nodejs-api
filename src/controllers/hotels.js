@@ -1,118 +1,86 @@
-const { HotelManager } = require('@windingtree/wt-js-libs');
-const { loadAccount } = require('../helpers/crypto');
-const { handle } = require('../errors');
-
-const config = require('../config');
-const { PASSWORD_HEADER } = require('../helpers/validators');
-
-const create = async (req, res, next) => {
-  const { name, description } = req.body;
-  const password = req.header(PASSWORD_HEADER);
-  let ownerAccount = {};
-  try {
-    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
-    const hotelManager = new HotelManager({
-      indexAddress: config.get('indexAddress'),
-      owner: ownerAccount.address,
-      gasMargin: config.get('gasMargin'),
-      web3provider: config.get('web3provider'),
-    });
-    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
-    const { logs } = await hotelManager.createHotel(name, description);
-    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
-    res.status(200).json({
-      txHash: logs[0].transactionHash,
-    });
-  } catch (err) {
-    return next(handle('web3', err));
-  }
-};
+const { handleApplicationError } = require('../errors');
 
 const findAll = async (req, res, next) => {
-  const password = req.header(PASSWORD_HEADER);
-  let ownerAccount = {};
   try {
-    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
-  } catch (err) {
-    return next(handle('web3', err));
-  }
-  try {
-    const hotelManager = new HotelManager({
-      indexAddress: config.get('indexAddress'),
-      owner: ownerAccount.address,
-      gasMargin: config.get('gasMargin'),
-      web3provider: config.get('web3provider'),
-    });
-    const hotels = await hotelManager.getHotels();
-    res.status(200).json(hotels);
-  } catch (err) {
-    return next(handle('hotelManager', err));
+    let hotels = await req.wt.index.getAllHotels();
+    let rawHotels = [];
+    for (let hotel of hotels) {
+      rawHotels.push(await hotel.toPlainObject());
+    }
+    res.status(200).json({ hotels: rawHotels });
+  } catch (e) {
+    next(e);
   }
 };
 
 const find = async (req, res, next) => {
   const { hotelAddress } = req.params;
   try {
-    const hotelManager = new HotelManager({
-      indexAddress: config.get('indexAddress'),
-      gasMargin: config.get('gasMargin'),
-      web3provider: config.get('web3provider'),
-    });
-    const hotel = await hotelManager.getHotel(hotelAddress);
-    res.status(200).json({
-      hotel,
-    });
-  } catch (err) {
-    next(handle('web3', err));
+    let hotel = await req.wt.index.getHotel(hotelAddress);
+    return res.status(200).json({ hotel: await hotel.toPlainObject() });
+  } catch (e) {
+    if (e.message.match(/cannot find hotel/i)) {
+      return next(handleApplicationError('hotelNotFound', e));
+    }
+    next(e);
+  }
+};
+
+const create = async (req, res, next) => {
+  const { hotel: hotelData } = req.body;
+  if (!hotelData.manager) {
+    return next(handleApplicationError('missingManager'));
+  }
+  try {
+    const result = await req.wt.index.addHotel(req.wt.wallet, hotelData);
+    res.status(202).json(result);
+  } catch (e) {
+    next(e);
   }
 };
 
 const update = async (req, res, next) => {
-  const { name, description } = req.body;
-  const password = req.header(PASSWORD_HEADER);
+  const { hotel: hotelData } = req.body;
   const { hotelAddress } = req.params;
-  let ownerAccount = {};
   try {
-    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
-    const hotelManager = new HotelManager({
-      indexAddress: config.get('indexAddress'),
-      owner: ownerAccount.address,
-      gasMargin: config.get('gasMargin'),
-      web3provider: config.get('web3provider'),
-    });
-    config.get('web3provider').web3.eth.accounts.wallet.add(ownerAccount);
-    const { logs } = await hotelManager.changeHotelInfo(hotelAddress, name, description);
-    config.get('web3provider').web3.eth.accounts.wallet.remove(ownerAccount);
-    res.status(200).json({
-      txHash: logs[0].transactionHash,
-    });
-  } catch (err) {
-    return next(handle('web3', err));
+    const hotel = await req.wt.index.getHotel(hotelAddress);
+    if (hotelData.url) {
+      hotel.url = hotelData.url;
+    }
+    if (hotelData.name) {
+      hotel.name = hotelData.name;
+    }
+    if (hotelData.description) {
+      hotel.description = hotelData.description;
+    }
+
+    const transactionIds = await req.wt.index.updateHotel(req.wt.wallet, hotel);
+    res.status(202).json({ transactionIds });
+  } catch (e) {
+    if (e.message.match(/cannot find hotel/i)) {
+      return next(handleApplicationError('hotelNotFound', e));
+    }
+    if (e.message.match(/transaction originator/i)) {
+      return next(handleApplicationError('managerWalletMismatch', e));
+    }
+    next(e);
   }
 };
 
 const remove = async (req, res, next) => {
-  const password = req.header(PASSWORD_HEADER);
   const { hotelAddress } = req.params;
-  let ownerAccount = {};
   try {
-    ownerAccount = config.get('web3provider').web3.eth.accounts.decrypt(loadAccount(config.get('privateKeyDir')), password);
-  } catch (err) {
-    return next(handle('web3', err));
-  }
-  try {
-    const hotelManager = new HotelManager({
-      indexAddress: config.get('indexAddress'),
-      owner: ownerAccount.address,
-      gasMargin: config.get('gasMargin'),
-      web3provider: config.get('web3provider'),
-    });
-    const { transactionHash } = await hotelManager.removeHotel(hotelAddress);
-    res.status(204).json({
-      txHash: transactionHash,
-    });
-  } catch (err) {
-    return next(handle('hotelManager', err));
+    const hotel = await req.wt.index.getHotel(hotelAddress);
+    const transactionIds = await req.wt.index.removeHotel(req.wt.wallet, hotel);
+    res.status(202).json({ transactionIds });
+  } catch (e) {
+    if (e.message.match(/cannot find hotel/i)) {
+      return next(handleApplicationError('hotelNotFound', e));
+    }
+    if (e.message.match(/transaction originator/i)) {
+      return next(handleApplicationError('managerWalletMismatch', e));
+    }
+    next(e);
   }
 };
 

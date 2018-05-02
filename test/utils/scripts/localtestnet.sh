@@ -39,7 +39,7 @@ start_testrpc() {
 
   node_modules/.bin/ganache-cli -i 77 --gasLimit 6000000 "${accounts[@]}" > /dev/null &
   testrpc_pid=$!
-  sleep 5
+  sleep 1
 }
 
 if testrpc_running; then

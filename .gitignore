@@ -58,5 +58,4 @@ typings/
 .env
 
 # test files
-keys/test.json
-keys/test-updated.json
+keys/*.json
