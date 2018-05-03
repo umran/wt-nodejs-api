@@ -59,4 +59,9 @@ module.exports = {
     short: 'IP is not whitelisted.',
     long: 'IP must be in the whitelist. Please contact the administrator.',
   },
+  rateLimit: {
+    status: 429,
+    short: 'API rate Limit Exceeded',
+    long: 'The rate limit was exceeded. Please try later.',
+  },
 };

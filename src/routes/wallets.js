@@ -2,6 +2,7 @@ const express = require('express');
 const {
   injectWtLibs,
 } = require('../middlewares');
+const { throttling } = require('../middlewares/throttling.js');
 const walletsController = require('../controllers/wallets');
 
 const WALLETS_ROUTE = '/wallets';
@@ -17,7 +18,7 @@ walletsRouter.post(WALLETS_ROUTE, injectWtLibs, walletsController.create);
 walletsRouter.delete(WALLET_ROUTE, injectWtLibs, walletsController.remove);
 
 // Read only methods
-walletsRouter.get(WALLET_ROUTE, injectWtLibs, walletsController.get);
+walletsRouter.get(WALLET_ROUTE, throttling, injectWtLibs, walletsController.get);
 
 module.exports = {
   walletsRouter,
