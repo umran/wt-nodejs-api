@@ -2,6 +2,7 @@ const express = require('express');
 const {
   injectWtLibs,
   unlockAccount,
+  wipeAccountFromMemory,
 } = require('../middlewares');
 const hotelsController = require('../controllers/hotels');
 
@@ -15,11 +16,11 @@ hotelsRouter.get(HOTELS_ROUTE, injectWtLibs, hotelsController.findAll);
 hotelsRouter.get(HOTEL_ROUTE, injectWtLibs, hotelsController.find);
 
 // Data modifying methods
-hotelsRouter.post(HOTELS_ROUTE, unlockAccount, hotelsController.create);
+hotelsRouter.post(HOTELS_ROUTE, unlockAccount, wipeAccountFromMemory, hotelsController.create);
 
-hotelsRouter.put(HOTEL_ROUTE, unlockAccount, hotelsController.update);
+hotelsRouter.put(HOTEL_ROUTE, unlockAccount, wipeAccountFromMemory, hotelsController.update);
 
-hotelsRouter.delete(HOTEL_ROUTE, unlockAccount, hotelsController.remove);
+hotelsRouter.delete(HOTEL_ROUTE, unlockAccount, wipeAccountFromMemory, hotelsController.remove);
 
 module.exports = {
   hotelsRouter,

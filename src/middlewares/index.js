@@ -42,6 +42,15 @@ const unlockAccount = compose([
   },
 ]);
 
+const wipeAccountFromMemory = async (req, res, next) => {
+  res.on('finish', () => {
+    if (res.locals.wt.wallet) {
+      res.locals.wt.wallet.destroy();
+    }
+  });
+  next();
+};
+
 const validateIPWhiteList = function (req, res, next) {
   const whiteList = config.get('whiteList');
   if (!whiteList.length) {
@@ -65,5 +74,6 @@ const validateIPWhiteList = function (req, res, next) {
 module.exports = {
   injectWtLibs,
   unlockAccount,
+  wipeAccountFromMemory,
   validateIPWhiteList,
 };

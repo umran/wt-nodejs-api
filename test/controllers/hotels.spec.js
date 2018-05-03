@@ -1,7 +1,9 @@
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
+const sinon = require('sinon');
 const request = require('supertest');
+const wtJsLibs = require('../../src/services/wt-js-libs');
 const config = require('../../src/config');
 const { WALLET_PASSWORD_HEADER, WALLET_ID_HEADER } = require('../../src/constants');
 const {
@@ -14,11 +16,17 @@ const walletPassword = 'test123';
 
 describe('Hotels', function () {
   let server;
+  let createWalletSpy;
+
   beforeEach(async () => {
     server = require('../../src/index');
+    const wtLibsInstance = wtJsLibs.getInstance();
+    createWalletSpy = sinon.spy(wtLibsInstance, 'createWallet');
     await deployIndexAndHotel();
   });
+
   afterEach(() => {
+    createWalletSpy.restore();
     server.close();
   });
 
@@ -92,8 +100,9 @@ describe('Hotels', function () {
       longitude: 14.4225864,
     };
 
-    it('should create transactions on chain that will create a hotel', (done) => {
-      request(server)
+    it('should create transactions on chain that will create a hotel', async () => {
+      server = require('../../src/index');
+      await request(server)
         .post('/hotels')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
@@ -105,7 +114,10 @@ describe('Hotels', function () {
           expect(res.body).to.have.property('transactionIds');
           expect(res.body.transactionIds.length).to.be.above(0);
         })
-        .expect(202, done);
+        .expect(202);
+      expect(createWalletSpy.callCount).to.be.eql(1);
+      const wallet = await createWalletSpy.returnValues[0];
+      expect(wallet).to.have.property('__destroyedFlag', true);
     });
 
     it('should return 400 on missing manager', (done) => {
@@ -207,46 +219,46 @@ describe('Hotels', function () {
       longitude: 14.4225864,
     };
 
-    it('should update a hotel', (done) => {
+    it('should create transactions on chain that will update a hotel', async () => {
       let address;
-      request(server)
+      let res = await request(server)
         .post('/hotels')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(WALLET_PASSWORD_HEADER, walletPassword)
         .set(WALLET_ID_HEADER, walletUuid)
-        .send({ hotel: { name, description, manager, location } })
-        .end((err, res) => {
-          if (err) { return done(err); }
-          address = res.body.address;
-          expect(res.body).to.have.property('address');
-          expect(res.body).to.have.property('transactionIds');
+        .send({ hotel: { name, description, manager, location } });
+      address = res.body.address;
+      expect(res.body).to.have.property('address');
+      expect(res.body).to.have.property('transactionIds');
+      expect(res.body.transactionIds.length).to.be.above(0);
+      expect(createWalletSpy.callCount).to.be.eql(1);
+      let wallet = await createWalletSpy.returnValues[0];
+      expect(wallet).to.have.property('__destroyedFlag', true);
+      createWalletSpy.resetHistory();
+
+      await request(server)
+        .put(`/hotels/${res.body.address}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .set(WALLET_PASSWORD_HEADER, walletPassword)
+        .set(WALLET_ID_HEADER, walletUuid)
+        .send({ hotel: { description: 'Best hotel.', name: 'WTHotel', url: 'new-url' } })
+        .expect((res) => {
           expect(res.body.transactionIds.length).to.be.above(0);
-          request(server)
-            .put(`/hotels/${res.body.address}`)
-            .set('content-type', 'application/json')
-            .set('accept', 'application/json')
-            .set(WALLET_PASSWORD_HEADER, walletPassword)
-            .set(WALLET_ID_HEADER, walletUuid)
-            .send({ hotel: { description: 'Best hotel.', name: 'WTHotel', url: 'new-url' } })
-            .expect((res) => {
-              expect(res.body.transactionIds.length).to.be.above(0);
-            })
-            .expect(202)
-            .end((err, res) => {
-              if (err) { return done(err); }
-              request(server)
-                .get(`/hotels/${address}`)
-                .expect(200)
-                .end((err, res) => {
-                  if (err) { return done(err); }
-                  expect(res.body).to.have.nested.property('hotel.url', 'new-url');
-                  expect(res.body).to.have.nested.property('hotel.name', 'WTHotel');
-                  expect(res.body).to.have.nested.property('hotel.description', 'Best hotel.');
-                  done();
-                });
-            });
-        });
+        })
+        .expect(202);
+
+      expect(createWalletSpy.callCount).to.be.eql(1);
+      wallet = await createWalletSpy.returnValues[0];
+      expect(wallet).to.have.property('__destroyedFlag', true);
+
+      res = await request(server)
+        .get(`/hotels/${address}`)
+        .expect(200);
+      expect(res.body).to.have.nested.property('hotel.url', 'new-url');
+      expect(res.body).to.have.nested.property('hotel.name', 'WTHotel');
+      expect(res.body).to.have.nested.property('hotel.description', 'Best hotel.');
     });
 
     it('should never update a manager', (done) => {
@@ -376,19 +388,19 @@ describe('Hotels', function () {
   });
 
   describe('DELETE /hotels/:hotelAddress', () => {
-    it('should delete a hotel', (done) => {
-      request(server)
+    it('should create transactions on chain that will delete a hotel', async () => {
+      const res = await request(server)
         .delete(`/hotels/${config.get('testAddress')}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(WALLET_PASSWORD_HEADER, walletPassword)
         .set(WALLET_ID_HEADER, walletUuid)
-        .expect(202)
-        .end((err, res) => {
-          if (err) { return done(err); }
-          expect(res.body.transactionIds.length).to.be.above(0);
-          done();
-        });
+        .expect(202);
+
+      expect(createWalletSpy.callCount).to.be.eql(1);
+      expect(res.body.transactionIds.length).to.be.above(0);
+      const wallet = await createWalletSpy.returnValues[0];
+      expect(wallet).to.have.property('__destroyedFlag', true);
     });
 
     it('should return 404 when trying to delete non-existing hotel', (done) => {
