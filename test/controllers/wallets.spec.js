@@ -50,205 +50,157 @@ describe('Wallet', function () {
   });
 
   describe('POST /wallets', () => {
-    it('should create a wallet', (done) => {
-      request(server)
+    it('should create a wallet', async () => {
+      const res = await request(server)
         .post('/wallets')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .send(secondWallet)
         .set(WALLET_PASSWORD_HEADER, secondWalletPassword)
-        .expect(200)
-        .end((err, res) => {
-          if (err) { return done(err); }
-          expect(res.body).to.have.property('id', secondWallet.id);
-          const fileContents = (fs.readFileSync(path.resolve(tempPath, `${secondWallet.id}.enc`))).toString();
-          expect(fileContents).to.be.eql(secondWalletEncoded);
-          done();
-        });
+        .expect(200);
+      expect(res.body).to.have.property('id', secondWallet.id);
+      const fileContents = (fs.readFileSync(path.resolve(tempPath, `${secondWallet.id}.enc`))).toString();
+      expect(fileContents).to.be.eql(secondWalletEncoded);
     });
 
-    it('should not break on a wallet that already exists with the same content', (done) => {
-      request(server)
+    it('should not break on a wallet that already exists with the same content', async () => {
+      const res = await request(server)
         .post('/wallets')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .send(wallet)
         .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .expect(200)
-        .end((err, res) => {
-          if (err) { return done(err); }
-          expect(res.body).to.have.property('id', wallet.id);
-          const fileContents = (fs.readFileSync(path.resolve(tempPath, `${wallet.id}.enc`))).toString();
-          expect(fileContents).to.be.eql(walletEncoded);
-          done();
-        });
+        .expect(200);
+      expect(res.body).to.have.property('id', wallet.id);
+      const fileContents = (fs.readFileSync(path.resolve(tempPath, `${wallet.id}.enc`))).toString();
+      expect(fileContents).to.be.eql(walletEncoded);
     });
 
-    it('should break on a wallet that already exists with a different content', (done) => {
+    it('should break on a wallet that already exists with a different content', async () => {
       let customWallet = Object.assign({}, secondWallet);
       customWallet.id = wallet.id;
-      request(server)
+      const res = await request(server)
         .post('/wallets')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .send(customWallet)
         .set(WALLET_PASSWORD_HEADER, secondWalletPassword)
-        .expect(400)
-        .end((err, res) => {
-          if (err) { return done(err); }
-          expect(res.body).to.have.property('code', '#walletConflict');
-          done();
-        });
+        .expect(400);
+      expect(res.body).to.have.property('code', '#walletConflict');
     });
 
-    it('should not create a wallet when a bad password is provided', (done) => {
-      request(server)
+    it('should not create a wallet when a bad password is provided', async () => {
+      const res = await request(server)
         .post('/wallets')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .send(secondWallet)
         .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .expect(401)
-        .end((err, res) => {
-          if (err) { return done(err); }
-          expect(res.body).to.have.property('code', '#cannotUnlockWallet');
-          done();
-        });
+        .expect(401);
+      expect(res.body).to.have.property('code', '#cannotUnlockWallet');
     });
 
-    it('should not create a wallet without a password', (done) => {
-      request(server)
+    it('should not create a wallet without a password', async () => {
+      const res = await request(server)
         .post('/wallets')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .send(secondWallet)
-        .expect(401)
-        .end((err, res) => {
-          if (err) { return done(err); }
-          expect(res.body).to.have.property('code', '#missingPassword');
-          done();
-        });
+        .expect(401);
+      expect(res.body).to.have.property('code', '#missingPassword');
     });
 
-    it('should not create a wallet with some fields missing', (done) => {
+    it('should not create a wallet with some fields missing', async () => {
       let customWallet = Object.assign({}, secondWallet);
       delete customWallet.crypto;
-      request(server)
+      const res = await request(server)
         .post('/wallets')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .send(customWallet)
         .set(WALLET_PASSWORD_HEADER, secondWalletPassword)
-        .expect(400)
-        .end((err, res) => {
-          if (err) { return done(err); }
-          expect(res.body).to.have.property('code', '#badWalletFormat');
-          done();
-        });
+        .expect(400);
+      expect(res.body).to.have.property('code', '#badWalletFormat');
     });
   });
 
   describe('GET /wallets/:walletId', () => {
-    it('should respond with 200 when wallet exists and password is ok', (done) => {
-      request(server)
+    it('should respond with 200 when wallet exists and password is ok', async () => {
+      await request(server)
         .get(`/wallets/${wallet.id}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .expect(200, done);
+        .expect(200);
     });
 
-    it('should respond with 401 when wallet exists and password is not ok', (done) => {
-      request(server)
+    it('should respond with 401 when wallet exists and password is not ok', async () => {
+      const res = await request(server)
         .get(`/wallets/${wallet.id}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(WALLET_PASSWORD_HEADER, secondWalletPassword)
-        .expect(401)
-        .end((err, res) => {
-          if (err) { return done(err); }
-          expect(res.body).to.have.property('code', '#cannotUnlockWallet');
-          done();
-        });
+        .expect(401);
+      expect(res.body).to.have.property('code', '#cannotUnlockWallet');
     });
 
-    it('should respond with 401 when password is not sent', (done) => {
-      request(server)
+    it('should respond with 401 when password is not sent', async () => {
+      const res = await request(server)
         .get(`/wallets/${wallet.id}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .expect(401)
-        .end((err, res) => {
-          if (err) { return done(err); }
-          expect(res.body).to.have.property('code', '#missingPassword');
-          done();
-        });
+        .expect(401);
+      expect(res.body).to.have.property('code', '#missingPassword');
     });
 
-    it('should respond with 404 when wallet does not exist', (done) => {
-      request(server)
+    it('should respond with 404 when wallet does not exist', async () => {
+      const res = await request(server)
         .get('/wallets/some-random-nonexistent-wallet-id')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .expect(404)
-        .end((err, res) => {
-          if (err) { return done(err); }
-          expect(res.body).to.have.property('code', '#walletNotFound');
-          done();
-        });
+        .expect(404);
+      expect(res.body).to.have.property('code', '#walletNotFound');
     });
   });
 
   describe('DELETE /wallets/:walletId', () => {
-    it('should delete a wallet', (done) => {
-      request(server)
+    it('should delete a wallet', async () => {
+      await request(server)
         .delete(`/wallets/${wallet.id}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .expect(204, done);
+        .expect(204);
     });
 
-    it('should not delete a wallet when a bad password is provided', (done) => {
-      request(server)
+    it('should not delete a wallet when a bad password is provided', async () => {
+      const res = await request(server)
         .delete(`/wallets/${wallet.id}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(WALLET_PASSWORD_HEADER, secondWalletPassword)
-        .expect(401)
-        .end((err, res) => {
-          if (err) { return done(err); }
-          expect(res.body).to.have.property('code', '#cannotUnlockWallet');
-          done();
-        });
+        .expect(401);
+      expect(res.body).to.have.property('code', '#cannotUnlockWallet');
     });
 
-    it('should not delete a wallet without a password', (done) => {
-      request(server)
+    it('should not delete a wallet without a password', async () => {
+      const res = await request(server)
         .delete(`/wallets/${wallet.id}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .expect(401)
-        .end((err, res) => {
-          if (err) { return done(err); }
-          expect(res.body).to.have.property('code', '#missingPassword');
-          done();
-        });
+        .expect(401);
+      expect(res.body).to.have.property('code', '#missingPassword');
     });
 
-    it('should not delete a nonexistent wallet', (done) => {
-      request(server)
+    it('should not delete a nonexistent wallet', async () => {
+      const res = await request(server)
         .delete('/wallets/some-random-wallet-nonexistent-id')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .expect(404)
-        .end((err, res) => {
-          if (err) { return done(err); }
-          expect(res.body).to.have.property('code', '#walletNotFound');
-          done();
-        });
+        .expect(404);
+      expect(res.body).to.have.property('code', '#walletNotFound');
     });
   });
 });

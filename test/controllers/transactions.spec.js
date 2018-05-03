@@ -20,8 +20,8 @@ describe('Transactions', function () {
   });
 
   describe('GET /transactions', () => {
-    it('should return empty response when no transactionIds are passed', (done) => {
-      request(server)
+    it('should return empty response when no transactionIds are passed', async () => {
+      await request(server)
         .get('/transactions')
         .expect('content-type', /application\/json/i)
         .expect((res) => {
@@ -29,11 +29,11 @@ describe('Transactions', function () {
           expect(res.body).to.have.nested.property('results');
           expect(res.body.results).to.be.empty;
         })
-        .expect(200, done);
+        .expect(200);
     });
 
-    it('should parse the list of transactionIds', (done) => {
-      request(server)
+    it('should parse the list of transactionIds', async () => {
+      await request(server)
         .get('/transactions?transactionIds=0x52f67ef99966e8b6b46047e3b57ea5499aaf21b9efd21f4f55cc2c3176a64db7,0xd4a887be015ed0fb03ca73e29ed1c4c2b6d5a59d2207a4d9c9dc962d44bbc321')
         .expect('content-type', /application\/json/i)
         .expect((res) => {
@@ -41,11 +41,11 @@ describe('Transactions', function () {
           expect(res.body).to.have.nested.property('results');
           expect(res.body.results).to.not.be.empty;
         })
-        .expect(200, done);
+        .expect(200);
     });
 
-    it('should not panic on weird separator', (done) => {
-      request(server)
+    it('should not panic on weird separator', async () => {
+      await request(server)
         .get('/transactions?transactionIds=0x52f67ef99966e8b6b46047e3b57ea5499aaf21b9efd21f4f55cc2c3176a64db7;0xd4a887be015ed0fb03ca73e29ed1c4c2b6d5a59d2207a4d9c9dc962d44bbc321')
         .expect('content-type', /application\/json/i)
         .expect((res) => {
@@ -53,11 +53,11 @@ describe('Transactions', function () {
           expect(res.body).to.have.nested.property('results');
           expect(res.body.results).to.be.empty;
         })
-        .expect(200, done);
+        .expect(200);
     });
 
-    it('should work for only one transactionId', (done) => {
-      request(server)
+    it('should work for only one transactionId', async () => {
+      await request(server)
         .get('/transactions?transactionIds=0x52f67ef99966e8b6b46047e3b57ea5499aaf21b9efd21f4f55cc2c3176a64db7')
         .expect('content-type', /application\/json/i)
         .expect((res) => {
@@ -65,25 +65,25 @@ describe('Transactions', function () {
           expect(res.body).to.have.nested.property('results');
           expect(res.body.results).to.not.be.empty;
         })
-        .expect(200, done);
+        .expect(200);
     });
 
-    it('should ask the transaction status from libs', (done) => {
+    it('should ask the transaction status from libs', async () => {
       const wtjLibsSpy = sinon.spy(wtJsLibs.getInstance(), 'getTransactionsStatus');
-      request(server)
+      await request(server)
         .get('/transactions?transactionIds=0x52f67ef99966e8b6b46047e3b57ea5499aaf21b9efd21f4f55cc2c3176a64db7')
         .expect('content-type', /application\/json/i)
         .expect((res) => {
           expect(res.body).to.have.nested.property('meta.total', 1);
           expect(res.body).to.have.nested.property('results');
           expect(res.body.results).to.not.be.empty;
-          expect(wtjLibsSpy.callCount).to.be.eql(1);
-          wtjLibsSpy.restore();
         })
-        .expect(200, done);
+        .expect(200);
+      expect(wtjLibsSpy.callCount).to.be.eql(1);
+      wtjLibsSpy.restore();
     });
 
-    it('should properly compute the metadata', (done) => {
+    it('should properly compute the metadata', async () => {
       // The first two should always be mined as they represent first two txs of the accounts[0].
       // If no other tests are run, the deployIndexAndHotel in beforeEach
       // should ensure they exist on chain.
@@ -94,7 +94,7 @@ describe('Transactions', function () {
         '0x729e91d7994ce14d4bef89bf724468f278a760171621347844d3a870d5133308',
         '0x0ad3abfae15553716d22d2a1fefe6f631f3ca23d44628aabbc91d96e38a27bbc',
       ];
-      request(server)
+      await request(server)
         .get(`/transactions?transactionIds=${transactions.join(',')}`)
         .expect('content-type', /application\/json/i)
         .expect((res) => {
@@ -125,11 +125,11 @@ describe('Transactions', function () {
             expect(res.body.results[transactions[i]]).to.have.nested.property('raw.status');
           }
         })
-        .expect(200, done);
+        .expect(200);
     });
 
-    it('should not panic on a non-existent transaction id', (done) => {
-      request(server)
+    it('should not panic on a non-existent transaction id', async () => {
+      await request(server)
         .get('/transactions?transactionIds=some-totally-random-txid')
         .expect('content-type', /application\/json/i)
         .expect((res) => {
@@ -138,11 +138,11 @@ describe('Transactions', function () {
           expect(res.body).to.have.nested.property('results');
           expect(res.body.results).to.be.empty;
         })
-        .expect(200, done);
+        .expect(200);
     });
 
-    it('should not panic on one multiple non-existent transaction ids', (done) => {
-      request(server)
+    it('should not panic on one multiple non-existent transaction ids', async () => {
+      await request(server)
         .get('/transactions?transactionIds=some-totally-random-txid,another-totally-random-txid')
         .expect('content-type', /application\/json/i)
         .expect((res) => {
@@ -151,7 +151,7 @@ describe('Transactions', function () {
           expect(res.body).to.have.nested.property('results');
           expect(res.body.results).to.be.empty;
         })
-        .expect(200, done);
+        .expect(200);
     });
   });
 });
