@@ -38,7 +38,7 @@ module.exports = {
     long: 'Check https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition for valid formats',
   },
   walletConflict: {
-    status: 400,
+    status: 409,
     short: 'Wallet ID already exists',
     long: 'Wallet ID already exists but with a different contents. If you\'ve changed the password, delete the original wallet.',
   },

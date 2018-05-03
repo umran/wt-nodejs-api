@@ -85,7 +85,7 @@ describe('Wallet', function () {
         .set('accept', 'application/json')
         .send(customWallet)
         .set(WALLET_PASSWORD_HEADER, secondWalletPassword)
-        .expect(400);
+        .expect(409);
       expect(res.body).to.have.property('code', '#walletConflict');
     });
 
