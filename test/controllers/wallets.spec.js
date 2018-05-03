@@ -8,17 +8,19 @@ const { expect } = require('chai');
 
 const { WALLET_PASSWORD_HEADER } = require('../../src/constants');
 const config = require('../../src/config');
-const wallet = require('../utils/keys/ffa1e3be-e80a-4e1c-bb71-ed54c3bef115.json');
+const wallet = require('../utils/keys/ffa1e3be-e80a-4e1c-bb71-ed54c3bef115');
 const walletPassword = 'test123';
-const secondWallet = require('../utils/keys/7fe84016-4686-4622-97c9-dc7b47f5f5c6.json');
+const secondWallet = require('../utils/keys/7fe84016-4686-4622-97c9-dc7b47f5f5c6');
 const secondWalletPassword = 'windingtree';
 
 const writeFile = promisify(fs.writeFile);
+const readFile = promisify(fs.readFile);
 const unlink = promisify(fs.unlink);
 
 describe('Wallet', function () {
   let server;
   let originalKeyStorage;
+  let walletEncoded, secondWalletEncoded;
   const tempPath = path.resolve('test/utils/temp-keys');
 
   before(() => {
@@ -28,16 +30,18 @@ describe('Wallet', function () {
 
   beforeEach(async () => {
     server = require('../../src/index');
-    await writeFile(path.resolve(config.get('keyFileStorage'), `${wallet.id}.json`), JSON.stringify(wallet), { encoding: 'utf8', flag: 'w' });
+    walletEncoded = (await readFile(path.resolve('test/utils/keys/ffa1e3be-e80a-4e1c-bb71-ed54c3bef115.enc'))).toString();
+    secondWalletEncoded = (await readFile(path.resolve('test/utils/keys/7fe84016-4686-4622-97c9-dc7b47f5f5c6.enc'))).toString();
+    await writeFile(path.resolve(config.get('keyFileStorage'), 'ffa1e3be-e80a-4e1c-bb71-ed54c3bef115.enc'), walletEncoded, { encoding: 'utf8', flag: 'w' });
   });
 
   afterEach(async () => {
     server.close();
-    if (fs.existsSync(path.resolve(tempPath, `${wallet.id}.json`))) {
-      await unlink(path.resolve(tempPath, `${wallet.id}.json`));
+    if (fs.existsSync(path.resolve(tempPath, wallet.id))) {
+      await unlink(path.resolve(tempPath, wallet.id));
     }
-    if (fs.existsSync(path.resolve(tempPath, `${secondWallet.id}.json`))) {
-      await unlink(path.resolve(tempPath, `${secondWallet.id}.json`));
+    if (fs.existsSync(path.resolve(tempPath, secondWallet.id))) {
+      await unlink(path.resolve(tempPath, secondWallet.id));
     }
   });
 
@@ -57,10 +61,8 @@ describe('Wallet', function () {
         .end((err, res) => {
           if (err) { return done(err); }
           expect(res.body).to.have.property('id', secondWallet.id);
-          const fileContents = JSON.parse(fs.readFileSync(path.resolve(tempPath, `${secondWallet.id}.json`)));
-          expect(fileContents).to.have.property('id', secondWallet.id);
-          expect(fileContents).to.have.property('address', secondWallet.address);
-          expect(fileContents).to.have.deep.property('crypto', secondWallet.crypto);
+          const fileContents = (fs.readFileSync(path.resolve(tempPath, `${secondWallet.id}.enc`))).toString();
+          expect(fileContents).to.be.eql(secondWalletEncoded);
           done();
         });
     });
@@ -76,10 +78,8 @@ describe('Wallet', function () {
         .end((err, res) => {
           if (err) { return done(err); }
           expect(res.body).to.have.property('id', wallet.id);
-          const fileContents = JSON.parse(fs.readFileSync(path.resolve(tempPath, `${wallet.id}.json`)));
-          expect(fileContents).to.have.property('id', wallet.id);
-          expect(fileContents).to.have.property('address', wallet.address);
-          expect(fileContents).to.have.deep.property('crypto', wallet.crypto);
+          const fileContents = (fs.readFileSync(path.resolve(tempPath, `${wallet.id}.enc`))).toString();
+          expect(fileContents).to.be.eql(walletEncoded);
           done();
         });
     });
