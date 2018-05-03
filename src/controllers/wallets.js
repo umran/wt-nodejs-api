@@ -7,7 +7,7 @@ const REQUIRED_VERSION = 3;
 
 // Format taken from https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition
 function hasAllPbkdf2Sha256Fields (keyStore) {
-  if (!keyStore.address ||
+  return !(!keyStore.address ||
       !keyStore.id ||
       !keyStore.version ||
       !keyStore.crypto ||
@@ -22,16 +22,12 @@ function hasAllPbkdf2Sha256Fields (keyStore) {
       !keyStore.crypto.kdfparams.salt ||
       !keyStore.crypto.kdfparams.c ||
       !keyStore.crypto.kdfparams.prf
-  ) {
-    return false;
-  } else {
-    return true;
-  }
+  );
 }
 
 // Format taken from https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition
 function hasAllScryptFields (keyStore) {
-  if (!keyStore.address ||
+  return !(!keyStore.address ||
       !keyStore.id ||
       !keyStore.version ||
       !keyStore.crypto ||
@@ -47,11 +43,7 @@ function hasAllScryptFields (keyStore) {
       !keyStore.crypto.kdfparams.n ||
       !keyStore.crypto.kdfparams.r ||
       !keyStore.crypto.kdfparams.p
-  ) {
-    return false;
-  } else {
-    return true;
-  }
+  );
 }
 
 const create = async (req, res, next) => {
