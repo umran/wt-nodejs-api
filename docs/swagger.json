@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "0.0.1",
+    "version": "0.1.1",
     "title": "Winding tree API",
     "description": "Node js API for Winding Tree",
     "contact": {
@@ -26,6 +26,10 @@
     {
       "name": "Hotel",
       "description": "Hotel management."
+    },
+    {
+      "name": "Wallet",
+      "description": "Wallet management."
     },
     {
       "name": "Services",
@@ -78,6 +82,13 @@
             "description": "Password to the API-stored JSON keystore with Ethereum wallet."
           },
           {
+            "name": "X-Wallet-Id",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Wallet ID that will be used from the API encrypted wallet storage."
+          },
+          {
             "name": "params",
             "in": "body",
             "required": true,
@@ -121,21 +132,21 @@
       }
     },
     "/hotels/{hotelAddress}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "hotelAddress",
+          "type": "string",
+          "required": true,
+          "description": "Hotel address."
+        }
+      ],
       "get": {
         "tags": [
           "Hotel"
         ],
         "summary": "Get Hotel.",
         "description": "Get Hotel by contract address.",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "hotelAddress",
-            "type": "string",
-            "required": true,
-            "description": "Hotel address."
-          }
-        ],
         "responses": {
           "200": {
             "description": "Ok.",
@@ -172,11 +183,11 @@
             "description": "Password to the API-stored JSON keystore with Ethereum wallet."
           },
           {
-            "in": "path",
-            "name": "hotelAddress",
-            "type": "string",
+            "name": "X-Wallet-Id",
+            "in": "header",
             "required": true,
-            "description": "Hotel address."
+            "type": "string",
+            "description": "Wallet ID that will be used from the API encrypted wallet storage."
           },
           {
             "name": "params",
@@ -235,11 +246,11 @@
             "description": "Password to the API-stored JSON keystore with Ethereum wallet."
           },
           {
-            "in": "path",
-            "name": "hotelAddress",
-            "type": "string",
+            "name": "X-Wallet-Id",
+            "in": "header",
             "required": true,
-            "description": "Hotel address."
+            "type": "string",
+            "description": "Wallet ID that will be used from the API encrypted wallet storage."
           }
         ],
         "responses": {
@@ -303,6 +314,138 @@
           },
           "500": {
             "description": "Unexpected error, for example the blockchain network cannot be accessed.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/wallets": {
+      "post": {
+        "tags": [
+          "Wallet"
+        ],
+        "summary": "Stores a wallet.",
+        "description": "Stores a wallet JSON keyfile representation(https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition) into an encrypted API storage for later use.",
+        "parameters": [
+          {
+            "name": "X-Wallet-Password",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Password to the Ethereum wallet which is used to verify wallet ownership."
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WalletScrypt"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Wallet was stored",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Wallet ID"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Wallet is missing some fields.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Wallet cannot be decrypted with given password or password is missing.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "409": {
+            "description": "Wallet with the same ID already exists but with a different content.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/wallets/{walletId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "walletId",
+          "type": "string",
+          "required": true,
+          "description": "Wallet ID."
+        },
+        {
+          "name": "X-Wallet-Password",
+          "in": "header",
+          "required": true,
+          "type": "string",
+          "description": "Password to the Ethereum wallet which is used to verify wallet ownership."
+        }
+      ],
+      "get": {
+        "tags": [
+          "Wallet"
+        ],
+        "responses": {
+          "200": {
+            "description": "Wallet exists and password is OK"
+          },
+          "401": {
+            "description": "Wallet exists, but password is not OK",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Wallet does not exist",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "429": {
+            "description": "Too many attempts",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Wallet"
+        ],
+        "responses": {
+          "204": {
+            "description": "Wallet was destroyed"
+          },
+          "401": {
+            "description": "Wallet exists, but password is not OK. Wallet was not destroyed.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "Wallet does not exist",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "429": {
+            "description": "Too many attempts",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -553,6 +696,117 @@
         },
         "description": {
           "type": "string"
+        }
+      }
+    },
+    "WalletScrypt": {
+      "title": "WalletScrypt",
+      "description": "Wallet properties",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "number"
+        },
+        "crypto": {
+          "type": "object",
+          "properties": {
+            "mac": {
+              "type": "string"
+            },
+            "ciphertext": {
+              "type": "string"
+            },
+            "cipherparams": {
+              "type": "object",
+              "properties": {
+                "iv": {
+                  "type": "string"
+                }
+              }
+            },
+            "cipher": {
+              "type": "string"
+            },
+            "kdf": {
+              "type": "string"
+            },
+            "kdfparams": {
+              "type": "object",
+              "properties": {
+                "dklen": {
+                  "type": "string"
+                },
+                "salt": {
+                  "type": "string"
+                },
+                "n": {
+                  "type": "string"
+                },
+                "r": {
+                  "type": "string"
+                },
+                "p": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "WalletPbkdf2Sha256": {
+      "title": "Wallet PBKDF2 SHA-256",
+      "description": "Wallet properties",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "number"
+        },
+        "crypto": {
+          "type": "object",
+          "properties": {
+            "mac": {
+              "type": "string"
+            },
+            "ciphertext": {
+              "type": "string"
+            },
+            "cipherparams": {
+              "type": "object",
+              "properties": {
+                "iv": {
+                  "type": "string"
+                }
+              }
+            },
+            "cipher": {
+              "type": "string"
+            },
+            "kdf": {
+              "type": "string"
+            },
+            "kdfparams": {
+              "type": "object",
+              "properties": {
+                "dklen": {
+                  "type": "string"
+                },
+                "salt": {
+                  "type": "string"
+                },
+                "c": {
+                  "type": "string"
+                },
+                "prf": {
+                  "type": "string"
+                }
+              }
+            }
+          }
         }
       }
     }

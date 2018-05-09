@@ -1,17 +1,17 @@
 const compose = require('compose-middleware').compose;
 
 const wtJsLibs = require('../services/wt-js-libs');
-const { PASSWORD_HEADER } = require('../constants');
-const { loadKeyfile } = require('../helpers/keyfiles');
+const { WALLET_PASSWORD_HEADER, WALLET_ID_HEADER } = require('../constants');
+const { loadKeyFile } = require('../services/keyfiles');
 const { handleApplicationError } = require('../errors');
 const config = require('../config');
 
 const injectWtLibs = async (req, res, next) => {
-  if (req.wt) {
+  if (res.locals.wt) {
     next();
   }
   const wtLibsInstance = wtJsLibs.getInstance();
-  req.wt = {
+  res.locals.wt = {
     instance: wtLibsInstance,
     index: await wtLibsInstance.getWTIndex(config.get('indexAddress')),
     wallet: null,
@@ -22,22 +22,34 @@ const injectWtLibs = async (req, res, next) => {
 const unlockAccount = compose([
   injectWtLibs,
   async (req, res, next) => {
-    const password = req.header(PASSWORD_HEADER);
+    const keyFileUuid = req.header(WALLET_ID_HEADER);
+    const password = req.header(WALLET_PASSWORD_HEADER);
     if (!password) {
       return next(handleApplicationError('missingPassword'));
     }
-    // TODO handle file read error
-    const wallet = loadKeyfile(config.get('privateKeyFile'));
+    if (!keyFileUuid) {
+      return next(handleApplicationError('missingWallet'));
+    }
 
     try {
-      req.wt.wallet = await req.wt.instance.createWallet(wallet);
-      await req.wt.wallet.unlock(password);
+      const wallet = await loadKeyFile(keyFileUuid);
+      res.locals.wt.wallet = await res.locals.wt.instance.createWallet(await wallet);
+      await res.locals.wt.wallet.unlock(password);
     } catch (err) {
       return next(handleApplicationError('cannotUnlockWallet', err));
     }
     next();
   },
 ]);
+
+const wipeAccountFromMemory = async (req, res, next) => {
+  res.on('finish', () => {
+    if (res.locals.wt.wallet) {
+      res.locals.wt.wallet.destroy();
+    }
+  });
+  next();
+};
 
 const validateIPWhiteList = function (req, res, next) {
   const whiteList = config.get('whiteList');
@@ -62,5 +74,6 @@ const validateIPWhiteList = function (req, res, next) {
 module.exports = {
   injectWtLibs,
   unlockAccount,
+  wipeAccountFromMemory,
   validateIPWhiteList,
 };

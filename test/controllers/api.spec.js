@@ -13,51 +13,51 @@ describe('API', function () {
     server.close();
   });
 
-  it('GET /', (done) => {
-    request(server)
+  it('GET /', async () => {
+    await request(server)
       .get('/')
       .expect((res) => {
         expect(res.body).to.have.property('docs');
         expect(res.body).to.have.property('info');
         expect(res.body).to.have.property('version');
       })
-      .expect(200, done);
+      .expect(200);
   });
 
-  it('GET /docs', (done) => {
-    request(server)
+  it('GET /docs', async () => {
+    await request(server)
       .get('/docs/')
       .expect('content-type', /html/i)
       .expect((res) => {
         expect(res.text).to.not.be.empty;
       })
-      .expect(200, done);
+      .expect(200);
   });
 
-  it('GET /random-endpoint', (done) => {
-    request(server)
+  it('GET /random-endpoint', async () => {
+    await request(server)
       .get('/random-endpoint')
       .expect('content-type', /json/i)
       .expect((res) => {
         expect(res.body).to.have.property('code', '#notFound');
       })
-      .expect(404, done);
+      .expect(404);
   });
 
-  it('GET with not whitelisted ip. Expect #whiteList', (done) => {
+  it('GET with not whitelisted ip. Expect #whiteList', async () => {
     config.set('whiteList', ['11.22.33.44']);
-    request(server)
+    await request(server)
       .get('/')
       .expect((res) => {
         expect(res.body).to.have.property('code', '#whiteList');
       })
-      .expect(403, done);
+      .expect(403);
   });
 
-  it('Allow all ips with empty whiteList', (done) => {
+  it('Allow all ips with empty whiteList', async () => {
     config.set('whiteList', []);
-    request(server)
+    await request(server)
       .get('/')
-      .expect(200, done);
+      .expect(200);
   });
 });
