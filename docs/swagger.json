@@ -405,10 +405,22 @@
             "description": "Wallet exists and password is OK"
           },
           "401": {
-            "description": "Wallet exists, but password is not OK"
+            "description": "Wallet exists, but password is not OK",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "description": "Wallet does not exist"
+            "description": "Wallet does not exist",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "429": {
+            "description": "Too many attempts",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       },
@@ -421,10 +433,22 @@
             "description": "Wallet was destroyed"
           },
           "401": {
-            "description": "Wallet exists, but password is not OK. Wallet was not destroyed."
+            "description": "Wallet exists, but password is not OK. Wallet was not destroyed.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "description": "Wallet does not exist"
+            "description": "Wallet does not exist",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "429": {
+            "description": "Too many attempts",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
         }
       }
