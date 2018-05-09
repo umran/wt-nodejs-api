@@ -5,9 +5,9 @@ const path = require('path');
 const fs = require('fs');
 const { promisify } = require('util');
 const { expect } = require('chai');
+const throttling = require('../../src/middlewares/throttling');
 
 const { WALLET_PASSWORD_HEADER } = require('../../src/constants');
-const { throttling } = require('../../src/middlewares/throttling');
 const config = require('../../src/config');
 const wallet = require('../utils/keys/ffa1e3be-e80a-4e1c-bb71-ed54c3bef115');
 const walletPassword = 'test123';
@@ -30,6 +30,7 @@ describe('Wallet', function () {
   });
 
   beforeEach(async () => {
+    throttling.turnOffThrottling();
     server = require('../../src/index');
     walletEncoded = (await readFile(path.resolve('test/utils/keys/ffa1e3be-e80a-4e1c-bb71-ed54c3bef115.enc'))).toString();
     secondWalletEncoded = (await readFile(path.resolve('test/utils/keys/7fe84016-4686-4622-97c9-dc7b47f5f5c6.enc'))).toString();
@@ -37,7 +38,6 @@ describe('Wallet', function () {
   });
 
   afterEach(async () => {
-    throttling.resetKey('::ffff:127.0.0.1');
     await server.close();
     if (fs.existsSync(path.resolve(tempPath, wallet.id))) {
       await unlink(path.resolve(tempPath, wallet.id));
@@ -45,6 +45,7 @@ describe('Wallet', function () {
     if (fs.existsSync(path.resolve(tempPath, secondWallet.id))) {
       await unlink(path.resolve(tempPath, secondWallet.id));
     }
+    throttling.turnOnThrottling();
   });
 
   after(() => {
@@ -165,7 +166,14 @@ describe('Wallet', function () {
       expect(res.body).to.have.property('code', '#walletNotFound');
     });
 
-    it('should respond with 429 with multiple request', async () => {
+    it('should respond with 429 when throttling limit is exceeded', async () => {
+      throttling.turnOnThrottling();
+      await request(server)
+        .get(`/wallets/${wallet.id}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .set(WALLET_PASSWORD_HEADER, walletPassword)
+        .expect(200);
       await request(server)
         .get(`/wallets/${wallet.id}`)
         .set('content-type', 'application/json')
@@ -224,6 +232,34 @@ describe('Wallet', function () {
         .set(WALLET_PASSWORD_HEADER, walletPassword)
         .expect(404);
       expect(res.body).to.have.property('code', '#walletNotFound');
+    });
+
+    it('should respond with 429 when throttling limit is exceeded', async () => {
+      throttling.turnOnThrottling();
+      await request(server)
+        .delete(`/wallets/${wallet.id}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .set(WALLET_PASSWORD_HEADER, 'bad-pwd')
+        .expect(401);
+      await request(server)
+        .delete(`/wallets/${wallet.id}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .set(WALLET_PASSWORD_HEADER, 'bad-pwd')
+        .expect(401);
+      await request(server)
+        .delete(`/wallets/${wallet.id}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .set(WALLET_PASSWORD_HEADER, 'bad-pwd')
+        .expect(401);
+      await request(server)
+        .delete(`/wallets/${wallet.id}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .set(WALLET_PASSWORD_HEADER, walletPassword)
+        .expect(429);
     });
   });
 });
