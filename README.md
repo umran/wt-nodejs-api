@@ -38,7 +38,7 @@ npm run dev-net # Start Ganache client
 npm run dev # Start server with ETH_NETWORK=local.
 ```
 When `ETH_NETWORK=local` we run internally a script to deploy WT Index and
-transfer founds to the user account.
+transfer fonds to the user account.
 
 #### Using local swagger
 

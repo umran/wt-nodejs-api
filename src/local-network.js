@@ -37,7 +37,7 @@ const deployIndex = async () => {
   console.log(`WTIndex at ${address}!`);
 };
 
-const transferFounds = async () => {
+const transferFunds = async () => {
   const fundingAccounts = await web3.eth.getAccounts();
   const userAccounts = config.get('users');
   userAccounts.forEach(async (to) => {
@@ -47,5 +47,5 @@ const transferFounds = async () => {
 
 module.exports = {
   deployIndex,
-  transferFounds,
+  transferFunds,
 };
