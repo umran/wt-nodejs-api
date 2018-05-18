@@ -17,28 +17,21 @@ npm test
 ```
 
 ### Running dev mode
-With all the dependencies installed, you can start the dev server
-
-First step is add the accounts to the `configuration.json` file. This accounts
-will receive some Ether from ganache accounts.
-```javascript
-{
-  local : {
-    ...
-    "users": ['0x0...1', '0x0...2']
-    ...
-  }
-}
-
-```
-Now, we can start Ganache client and run dev server
-
+With all the dependencies installed, you can start the dev server.
+First step is start Ganache.
 ```bash
-npm run dev-net # Start Ganache client
-npm run dev # Start server with ETH_NETWORK=local.
+npm run dev-net
 ```
-When `ETH_NETWORK=local` we run internally a script to deploy WT Index and
-transfer fonds to the user account.
+
+Gache starts with 2 default accounts, witch one is an hotel manager with address `0x0ba3cd50b07ee204a47246b6b2f274fd41805c47`.
+The id for this account is `9a4ce26b-80d7-4c71-8d5b-5518b75f7b55` and is stored
+encrypted in `keys/9a4ce26b-80d7-4c71-8d5b-5518b75f7b55.enc`
+
+Now we can run our dev server.
+```bash
+npm run dev
+```
+When `ETH_NETWORK=local` we run internally a script to deploy WT Index.
 
 #### Using local swagger
 
