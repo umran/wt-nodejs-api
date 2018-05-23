@@ -1,13 +1,3 @@
--------------
-README.md
--------------
-# Contributing, reviewing and commenting
-
-To contribute, see the detailed [Contributing Guide](CONTRIBUTING.md).
-
--------------
-CONTRIBUTING.md
--------------
 # How to contribute
 
 By participating in this project there are a few guidelines that we need contributors to follow:
