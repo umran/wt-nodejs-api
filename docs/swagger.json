@@ -260,7 +260,7 @@
           "Hotel"
         ],
         "summary": "Remove Hotel.",
-        "description": "Remove Hotel byfrom WT Index.",
+        "description": "Remove Hotel from WT Index.",
         "parameters": [
           {
             "name": "X-Wallet-Password",
