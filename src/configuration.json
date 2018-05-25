@@ -10,7 +10,6 @@
   },
   "local": {
     "gasMargin": 2,
-    "indexAddress": "0x8c2373842d5ea4ce4baf53f4175e5e42a364c59c",
     "secret": "do-not-use-me-in-production",
     "keyFileStorage": "./keys",
     "port": 3000,
