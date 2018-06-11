@@ -57,7 +57,7 @@
     "truffle-contract": "^3.0.5"
   },
   "engines": {
-    "node": "8.9.4"
+    "node": "10.3.0"
   },
   "now": {
     "name": "wt-nodejs-api",
