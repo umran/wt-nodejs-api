@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/windingtree/wt-nodejs-api#readme",
   "dependencies": {
+    "@windingtree/off-chain-adapter-in-memory": "^2.0.0",
     "@windingtree/wt-js-libs": "^0.2.1",
     "body-parser": "^1.18.2",
     "compose-middleware": "^4.0.0",

@@ -10,7 +10,8 @@ function hackInSendAsync (instance) {
   if (typeof instance.currentProvider.sendAsync !== 'function') {
     instance.currentProvider.sendAsync = function () {
       return instance.currentProvider.send.apply(
-        instance.currentProvider, arguments
+        instance.currentProvider,
+        arguments
       );
     };
   }
@@ -24,7 +25,10 @@ function getContractWithProvider (metadata, provider) {
   return contract;
 }
 const provider = new Web3.providers.HttpProvider(config.get('web3Provider'));
-const WTIndex = getContractWithProvider(require('@windingtree/wt-contracts/build/contracts/WTIndex'), provider);
+const WTIndex = getContractWithProvider(
+  require('@windingtree/wt-contracts/build/contracts/WTIndex'),
+  provider
+);
 
 const deployIndexAndHotel = async () => {
   const index = await WTIndex.new({
@@ -32,6 +36,7 @@ const deployIndexAndHotel = async () => {
     gas: 6000000,
   });
   config.set('indexAddress', index.address);
+  config.set('index', index);
   const hotelUrl = 'ipfs://some-random-hash';
   const registerResult = await index.registerHotel(hotelUrl, {
     from: config.get('user'),

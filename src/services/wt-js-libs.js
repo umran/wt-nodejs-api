@@ -1,5 +1,5 @@
 const WtJsLibs = require('@windingtree/wt-js-libs');
-
+const InMemoryAdapter = require('@windingtree/off-chain-adapter-in-memory').adapter;
 let wtJsLibsInstance;
 
 function initialize (web3Provider) {
@@ -9,6 +9,16 @@ function initialize (web3Provider) {
     dataModelType: 'web3-json',
     dataModelOptions: {
       provider: web3Provider,
+    },
+    offChainDataOptions: {
+      adapters: {
+        json: {
+          options: { },
+          create: (options) => {
+            return new InMemoryAdapter(options);
+          },
+        },
+      },
     },
   });
 }

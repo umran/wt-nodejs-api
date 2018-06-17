@@ -17,10 +17,10 @@ const walletPassword = 'test123';
 describe('Hotels', function () {
   let server;
   let createWalletSpy;
-
+  let wtLibsInstance;
   beforeEach(async () => {
     server = require('../../src/index');
-    const wtLibsInstance = wtJsLibs.getInstance();
+    wtLibsInstance = wtJsLibs.getInstance();
     createWalletSpy = sinon.spy(wtLibsInstance, 'createWallet');
     await deployIndexAndHotel();
   });
@@ -43,39 +43,85 @@ describe('Hotels', function () {
   });
 
   describe('GET /hotels/:hotelAddress', () => {
+    const testHotel = {
+      name: 'Premium hotel',
+      description: 'Great hotel',
+      location: {
+        latitude: 'lat',
+        longitude: 'long',
+      },
+    };
+    let address;
+    beforeEach(async () => {
+      const jsonClient = await wtLibsInstance.getOffChainDataClient('json');
+      const descUrl = await jsonClient.upload(testHotel);
+      const url = await jsonClient.upload({
+        description: descUrl,
+      });
+
+      let index = config.get('index');
+      const registerResult = await index.registerHotel(url, {
+        from: config.get('user'),
+        gas: 6000000,
+      });
+      address = registerResult.logs[0].args.hotel;
+    });
+
     it('should return a hotel', async () => {
-      const name = 'new hotel';
-      const description = 'some description';
-      const manager = '0xd39ca7d186a37bb6bf48ae8abfeb4c687dc8f906';
-      const location = {
-        latitude: 50.0754789,
-        longitude: 14.4225864,
-      };
-
-      let res = await request(server)
-        .post('/hotels')
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .set(WALLET_ID_HEADER, walletUuid)
-        .send({ hotel: { name, description, manager, location } });
-
-      expect(res.body).to.have.property('address');
-      expect(res.body).to.have.property('transactionIds');
-      expect(res.body.transactionIds.length).to.be.above(0);
-
       await request(server)
-        .get(`/hotels/${res.body.address}`)
+        .get(`/hotels/${address}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect((res) => {
-          expect(res.body.hotel).to.have.property('name', name);
-          expect(res.body.hotel).to.have.property('description', description);
-          expect(res.body.hotel).to.have.property('location');
-          expect(res.body.hotel).to.have.nested.property('location.latitude', location.latitude);
-          expect(res.body.hotel).to.have.nested.property('location.longitude', location.longitude);
           expect(res.body.hotel).to.have.property('manager');
-          expect(res.body.hotel.manager.toLowerCase()).to.be.eql(manager);
+          expect(res.body.hotel).to.have.property('url');
+          expect(res.body.hotel).to.have.property('address');
+        })
+        .expect(200);
+    });
+
+    it('should return only required fields', async () => {
+      const fields = ['name', 'location'];
+      const query = `include_fields=${fields.join()}`;
+
+      await request(server)
+        .get(`/hotels/${address}?${query}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          expect(res.body.hotel).to.have.property('name', testHotel.name);
+          expect(res.body.hotel).to.have.property('description', testHotel.description); // default included
+          expect(res.body.hotel).to.have.property('location');
+          expect(res.body.hotel).to.not.have.property('manager');
+        })
+        .expect(200);
+    });
+
+    it('should exclude description', async () => {
+      const query = 'exclude_fields=description';
+      await request(server)
+        .get(`/hotels/${address}?${query}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          expect(res.body.hotel).to.not.have.property('description');
+        })
+        .expect(200);
+    });
+
+    it('should include and exclude fields', async () => {
+      const Includefields = ['name', 'location'];
+      const Excludefields = ['description'];
+      const query = `include_fields=${Includefields.join()}&exclude_fields=${Excludefields.join()}`;
+      await request(server)
+        .get(`/hotels/${address}?${query}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          expect(res.body.hotel).to.have.property('name', testHotel.name);
+          expect(res.body.hotel).to.not.have.property('description');
+          expect(res.body.hotel).to.have.property('location');
+          expect(res.body.hotel).to.not.have.property('manager');
         })
         .expect(200);
     });
@@ -126,7 +172,7 @@ describe('Hotels', function () {
         .set(WALLET_ID_HEADER, walletUuid)
         .send({ hotel: { name, description, location } })
         .expect(400);
-        
+
       expect(res.body).to.have.property('code', '#missingManager');
       expect(res.body).to.have.property('short');
       expect(res.body.short).to.match(/is mandatory/i);
@@ -270,7 +316,7 @@ describe('Hotels', function () {
         .set(WALLET_ID_HEADER, walletUuid)
         .send({ hotel: { url: null } })
         .expect(202);
-          
+
       const res = await request(server)
         .get(`/hotels/${config.get('testAddress')}`)
         .expect(200);
