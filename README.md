@@ -50,3 +50,10 @@ For the current endpoints documentation, run the API with `npm run dev` and see 
 
 With every request that results into a transaction on the Ethereum network (typically data modification),
 you have to provide a password for this keyfile in a `X-Wallet-Password` header.
+
+### Fetch hotel
+
+Request to `/hotels/:address` can fetch off-chain data in a single request.
+
+You can use a query to specify the fields to include & exclude. Ex. 
+`/hotels/0x8F1f1212D876d62B6AF0831B0630359816460f61?include_fields=name,location&exclude_fields=description`
