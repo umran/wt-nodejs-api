@@ -10,7 +10,8 @@
     "now-start": "ETH_NETWORK=testnet node ./src/index.js",
     "dev": "ETH_NETWORK=local node ./src/index.js",
     "deploy": "now -e NODE_ENV=production --token $NOW_TOKEN --npm --public",
-    "alias": "now alias --token=$NOW_TOKEN"
+    "alias": "now alias --token=$NOW_TOKEN",
+    "dev-net": "./scripts/dev-net.sh"
   },
   "repository": {
     "type": "git",
@@ -57,7 +58,7 @@
     "truffle-contract": "^3.0.5"
   },
   "engines": {
-    "node": "8.9.4"
+    "node": "10.3.0"
   },
   "now": {
     "name": "wt-nodejs-api",
