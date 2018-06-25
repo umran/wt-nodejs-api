@@ -55,5 +55,49 @@ you have to provide a password for this keyfile in a `X-Wallet-Password` header.
 
 Request to `/hotels/:address` can fetch off-chain data in a single request.
 
-You can use a query to specify the fields to include & exclude. Ex. 
-`/hotels/0x8F1f1212D876d62B6AF0831B0630359816460f61?include_fields=name,location&exclude_fields=description`
+You can use a query to specify the fields to include. Hotel Id is include by default in every request. Ex.  
+`/hotels/0x8F1f1212D876d62B6AF0831B0630359816460f61?fields=name,location`.
+
+```javascript
+{ 
+  id: '0x417C3DDae54aB2f5BCd8d5A1750487a1f765a94a',
+  name: 'Winding Tree Hotel',
+  description: 'string',
+  location: { latitude: 35.89421911, longitude: 139.94637467 },
+  contacts: 
+   { 
+    general: 
+      { 
+        email: 'joseph.urban@example.com',
+        phone: 44123456789,
+        url: 'string',
+        ethereum: 'string',
+        additionalContacts: [Array] 
+      } 
+    },
+  address: 
+   { 
+     line1: 'string',
+     line2: 'string',
+     postalCode: 'string',
+     city: {},
+     state: 'string',
+     country: 'string' 
+   },
+  timezone: 'string',
+  currency: 'string',
+  images: [ 'string' ],
+  amenities: [ 'WiFi' ],
+  updatedAt: '2018-06-19T13:19:58.190Z'
+ }
+
+```
+If an error is produced, the response is
+
+```javascript
+{ 
+  manager: '0xD39Ca7d186a37bb6Bf48AE8abFeB4c687dc8F906',
+  id: '0x585c0771Fe960f99aBdba8dc77e5d31Be2Ada74d',
+  error: 'Unsupported data storage type: ipfs' 
+}
+```
