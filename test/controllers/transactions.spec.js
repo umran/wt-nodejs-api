@@ -19,7 +19,7 @@ describe('Transactions', function () {
     server.close();
   });
 
-  describe('GET /transactions', () => {
+  xdescribe('GET /transactions', () => {
     it('should return empty response when no transactionIds are passed', async () => {
       await request(server)
         .get('/transactions')
@@ -37,6 +37,7 @@ describe('Transactions', function () {
         .get('/transactions?transactionIds=0x52f67ef99966e8b6b46047e3b57ea5499aaf21b9efd21f4f55cc2c3176a64db7,0xd4a887be015ed0fb03ca73e29ed1c4c2b6d5a59d2207a4d9c9dc962d44bbc321')
         .expect('content-type', /application\/json/i)
         .expect((res) => {
+          console.log(res.boy);
           expect(res.body).to.have.nested.property('meta.total', 2);
           expect(res.body).to.have.nested.property('results');
           expect(res.body.results).to.not.be.empty;
