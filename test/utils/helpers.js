@@ -3,6 +3,9 @@
 const TruffleContract = require('truffle-contract');
 const Web3 = require('web3');
 const config = require('../../src/config');
+const {
+  HOTEL_DESCRIPTION,
+} = require('./constants.js');
 
 // dirty hack for web3@1.0.0 support for localhost testrpc, see
 // https://github.com/trufflesuite/truffle-contract/issues/56#issuecomment-331084530
@@ -45,6 +48,22 @@ const deployIndexAndHotel = async () => {
   config.set('testAddress', registerResult.logs[0].args.hotel);
 };
 
+const deployFullHotel = async (WtLibs) => {
+  const jsonClient = await WtLibs.getOffChainDataClient('json');
+  const descriptionUri = await jsonClient.upload(HOTEL_DESCRIPTION);
+  const dataUri = await jsonClient.upload({
+    descriptionUri,
+  });
+
+  let index = config.get('index');
+  const registerResult = await index.registerHotel(dataUri, {
+    from: config.get('user'),
+    gas: 6000000,
+  });
+  return registerResult.logs[0].args.hotel;
+};
+
 module.exports = {
   deployIndexAndHotel,
+  deployFullHotel,
 };

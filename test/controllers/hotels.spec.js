@@ -8,6 +8,7 @@ const config = require('../../src/config');
 const { WALLET_PASSWORD_HEADER, WALLET_ID_HEADER } = require('../../src/constants');
 const {
   deployIndexAndHotel,
+  deployFullHotel,
 } = require('../utils/helpers');
 
 // We can use the default test location for wallets since we're not modifying them
@@ -31,97 +32,108 @@ describe('Hotels', function () {
   });
 
   describe('GET /hotels', () => {
-    it('should return a list of hotels', async () => {
+    beforeEach(async () => {
+      await deployFullHotel(wtLibsInstance);
+    });
+    it('should return a list of hotels id', async () => {
       await request(server)
         .get('/hotels')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect((res) => {
-          expect(res.body.hotels.length).to.be.eql(1);
+          const { hotels } = res.body;
+          expect(hotels.length).to.be.eql(2);
+
+          hotels.forEach(hotel => {
+            expect(hotel).to.have.property('id');
+          });
+        });
+    });
+    it('should return a list of hotels', async () => {
+      const fields = ['name', 'location', 'invalidField'];
+      const query = `fields=${fields.join()}`;
+
+      await request(server)
+        .get(`/hotels?${query}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          const { hotels } = res.body;
+          expect(hotels.length).to.be.eql(2);
+          hotels.forEach(hotel => {
+            expect(hotel).to.have.property('id');
+            expect(hotel).to.not.have.property('invalidField');
+            expect(hotel).to.satisfy(
+              hotel => {
+                if (hotel.error) {
+                  return true;
+                }
+                return (hotel.name && hotel.location);
+              });
+          });
         });
     });
   });
 
   describe('GET /hotels/:hotelAddress', () => {
-    const testHotel = {
-      name: 'Premium hotel',
-      description: 'Great hotel',
-      location: {
-        latitude: 'lat',
-        longitude: 'long',
-      },
-    };
     let address;
     beforeEach(async () => {
-      const jsonClient = await wtLibsInstance.getOffChainDataClient('json');
-      const descUrl = await jsonClient.upload(testHotel);
-      const url = await jsonClient.upload({
-        description: descUrl,
-      });
-
-      let index = config.get('index');
-      const registerResult = await index.registerHotel(url, {
-        from: config.get('user'),
-        gas: 6000000,
-      });
-      address = registerResult.logs[0].args.hotel;
+      address = await deployFullHotel(wtLibsInstance);
     });
 
-    it('should return a hotel', async () => {
+    it('should return only required fields', async () => {
+      const fields = ['name', 'location'];
+      const query = `fields=${fields.join()}`;
+
       await request(server)
-        .get(`/hotels/${address}`)
+        .get(`/hotels/${address}?${query}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect((res) => {
-          expect(res.body.hotel).to.have.property('manager');
-          expect(res.body.hotel).to.have.property('url');
-          expect(res.body.hotel).to.have.property('address');
+          const { hotel } = res.body;
+          expect(hotel).to.have.all.keys([...fields, 'id']);
         })
         .expect(200);
     });
 
     it('should return only required fields', async () => {
       const fields = ['name', 'location'];
-      const query = `include_fields=${fields.join()}`;
+      const query = `fields=${fields.join()}`;
 
       await request(server)
         .get(`/hotels/${address}?${query}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect((res) => {
-          expect(res.body.hotel).to.have.property('name', testHotel.name);
-          expect(res.body.hotel).to.have.property('description', testHotel.description); // default included
-          expect(res.body.hotel).to.have.property('location');
-          expect(res.body.hotel).to.not.have.property('manager');
+          const { hotel } = res.body;
+          expect(hotel).to.have.all.keys([...fields, 'id']);
         })
         .expect(200);
     });
 
-    it('should exclude description', async () => {
-      const query = 'exclude_fields=description';
+    it('should return only required fields', async () => {
+      const fields = ['manager'];
+      const query = `fields=${fields.join()}`;
+
       await request(server)
         .get(`/hotels/${address}?${query}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect((res) => {
-          expect(res.body.hotel).to.not.have.property('description');
+          const { hotel } = res.body;
+          expect(hotel).to.have.all.keys([...fields, 'id']);
         })
         .expect(200);
     });
 
-    it('should include and exclude fields', async () => {
-      const Includefields = ['name', 'location'];
-      const Excludefields = ['description'];
-      const query = `include_fields=${Includefields.join()}&exclude_fields=${Excludefields.join()}`;
+    it('should return only id', async () => {
       await request(server)
-        .get(`/hotels/${address}?${query}`)
+        .get(`/hotels/${address}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect((res) => {
-          expect(res.body.hotel).to.have.property('name', testHotel.name);
-          expect(res.body.hotel).to.not.have.property('description');
-          expect(res.body.hotel).to.have.property('location');
-          expect(res.body.hotel).to.not.have.property('manager');
+          const { hotel } = res.body;
+          expect(hotel).to.have.property('id');
         })
         .expect(200);
     });
@@ -135,7 +147,7 @@ describe('Hotels', function () {
     });
   });
 
-  describe('POST /hotels', () => {
+  xdescribe('POST /hotels', () => {
     const name = 'new hotel';
     const description = 'some description';
     const manager = '0xd39ca7d186a37bb6bf48ae8abfeb4c687dc8f906';
@@ -233,7 +245,7 @@ describe('Hotels', function () {
     });
   });
 
-  describe('PUT /hotels/:hotelAddress', () => {
+  xdescribe('PUT /hotels/:hotelAddress', () => {
     const name = 'new hotel';
     const description = 'some description';
     const manager = '0xd39ca7d186a37bb6bf48ae8abfeb4c687dc8f906';
@@ -387,7 +399,7 @@ describe('Hotels', function () {
     });
   });
 
-  describe('DELETE /hotels/:hotelAddress', () => {
+  xdescribe('DELETE /hotels/:hotelAddress', () => {
     it('should create transactions on chain that will delete a hotel', async () => {
       const res = await request(server)
         .delete(`/hotels/${config.get('testAddress')}`)

@@ -1,17 +1,19 @@
 const { handleApplicationError } = require('../errors');
 const {
-  excludeFields,
-  includeFields,
-  resolveObject,
+  fetchHotel,
+  calculateFields,
 } = require('../services/filter-responses');
 
 const findAll = async (req, res, next) => {
+  const fieldsQuery = req.query.fields || '';
+  const fields = calculateFields(fieldsQuery);
   try {
     let hotels = await res.locals.wt.index.getAllHotels();
     let rawHotels = [];
     for (let hotel of hotels) {
-      rawHotels.push(await hotel.toPlainObject());
+      rawHotels.push(fetchHotel(hotel, fields));
     }
+    rawHotels = await Promise.all(rawHotels);
     res.status(200).json({ hotels: rawHotels });
   } catch (e) {
     next(e);
@@ -20,23 +22,12 @@ const findAll = async (req, res, next) => {
 
 const find = async (req, res, next) => {
   const { hotelAddress } = req.params;
-  const includeFieldsQuery = req.query.include_fields;
-  const excludeFieldsQuery = req.query.exclude_fields;
+  const fieldsQuery = req.query.fields || '';
+
+  const fields = calculateFields(fieldsQuery);
   try {
     let hotel = await res.locals.wt.index.getHotel(hotelAddress);
-    if (!includeFieldsQuery) {
-      return res.status(200).json({ hotel: await hotel.toPlainObject() });
-    }
-    const hotelDataIndex = await hotel.dataIndex;
-    const description = await hotelDataIndex.contents.description;
-    if (includeFieldsQuery) {
-      hotel = await includeFields(description.contents, includeFieldsQuery.split(','));
-    }
-    if (excludeFieldsQuery) {
-      hotel = await excludeFields(hotel, excludeFieldsQuery.split(','));
-    }
-    hotel = await resolveObject(hotel);
-    res.status(200).json({ hotel });
+    res.status(200).json({ hotel: await fetchHotel(hotel, fields) });
   } catch (e) {
     if (e.message.match(/cannot find hotel/i)) {
       return next(handleApplicationError('hotelNotFound', e));
