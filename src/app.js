@@ -7,8 +7,6 @@ const { version } = require('../package.json');
 
 const { validateIPWhiteList } = require('./middlewares');
 const { hotelsRouter } = require('./routes/hotels');
-const { transactionsRouter } = require('./routes/transactions');
-const { walletsRouter } = require('./routes/wallets');
 
 const { handleApplicationError } = require('./errors');
 const wtJsLibsService = require('./services/wt-js-libs');
@@ -19,8 +17,6 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(require('../docs/swagger.json'
 app.use(bodyParser.json());
 app.use('/*', validateIPWhiteList);
 app.use(hotelsRouter);
-app.use(transactionsRouter);
-app.use(walletsRouter);
 
 // Error handler
 app.use((err, req, res, next) => {

@@ -7,8 +7,6 @@ const { promisify } = require('util');
 const { expect } = require('chai');
 const {
   loadKeyFile,
-  storeKeyFile,
-  removeKeyFile,
 } = require('../../src/services/keyfiles');
 const config = require('../../src/config');
 const wallet = require('../utils/keys/ffa1e3be-e80a-4e1c-bb71-ed54c3bef115');
@@ -75,46 +73,6 @@ describe('keyfiles.js', () => {
         await loadKeyFile('random-nonexistent-uuid');
       } catch (e) {
         expect(e.message).to.match(/wallet not found/i);
-      }
-    });
-  });
-
-  describe('storeKeyFile', () => {
-    it('should store keyfile', async () => {
-      await storeKeyFile(wallet);
-      const fileContents = (await readFile(path.resolve(tempPath, `${wallet.id}.enc`))).toString();
-      expect(fileContents).to.eql(walletEncoded);
-    });
-
-    it('should prepend keyfile with used cipher', async () => {
-      await storeKeyFile(wallet);
-      const fileContents = (await readFile(path.resolve(tempPath, `${wallet.id}.enc`))).toString();
-      expect(fileContents).to.match(/^aes-256-cbc:/);
-    });
-
-    it('should throw when keyfile cannot be stored', async () => {
-      try {
-        config.set('keyFileStorage', 'some-totally-nonexistent-path');
-        await storeKeyFile(wallet);
-      } catch (e) {
-        expect(e.message).to.match(/wallet cannot be stored/i);
-        config.set('keyFileStorage', tempPath);
-      }
-    });
-  });
-
-  describe('removeKeyFile', () => {
-    it('should remove keyfile', async () => {
-      expect(fs.existsSync(path.resolve(tempPath, `${wallet.id}.enc`))).to.be.true;
-      await removeKeyFile(wallet.id);
-      expect(fs.existsSync(path.resolve(tempPath, `${wallet.id}.enc`))).to.be.false;
-    });
-
-    it('should throw when keyfile cannot be removed', async () => {
-      try {
-        await removeKeyFile('some-totally-random-nonexistent-uuid');
-      } catch (e) {
-        expect(e.message).to.match(/wallet cannot be removed/i);
       }
     });
   });

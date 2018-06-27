@@ -6,18 +6,8 @@ const { promisify } = require('util');
 const config = require('../config');
 
 const readFile = promisify(fs.readFile);
-const writeFile = promisify(fs.writeFile);
-const unlink = promisify(fs.unlink);
 
 const CIPHER_ALGORITHM = 'aes-256-cbc';
-
-const serializeContents = (contents) => {
-  const stringifiedContents = JSON.stringify(contents);
-  const cipher = crypto.createCipher(CIPHER_ALGORITHM, config.get('secret'));
-  let crypted = cipher.update(stringifiedContents, 'utf8', 'hex');
-  crypted += cipher.final('hex');
-  return CIPHER_ALGORITHM + ':' + crypted;
-};
 
 const deserializeContents = (contents) => {
   const splitContents = contents.split(':');
@@ -44,30 +34,6 @@ const loadKeyFile = async (uuid) => {
   }
 };
 
-const storeKeyFile = async (wallet) => {
-  // store under ${wallet.id}.json as per https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition
-  const location = path.resolve(config.get('keyFileStorage'), `${wallet.id}.enc`);
-  try {
-    await writeFile(
-      location,
-      serializeContents(wallet),
-      { encoding: 'utf8', flag: 'w' }
-    );
-  } catch (e) {
-    throw new Error('Wallet cannot be stored:' + e.message);
-  }
-};
-
-const removeKeyFile = async (uuid) => {
-  try {
-    await unlink(path.resolve(config.get('keyFileStorage'), `${uuid}.enc`));
-  } catch (e) {
-    throw new Error('Wallet cannot be removed:' + e.message);
-  }
-};
-
 module.exports = {
   loadKeyFile,
-  storeKeyFile,
-  removeKeyFile,
 };
