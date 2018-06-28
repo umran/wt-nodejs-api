@@ -33,19 +33,13 @@ const WTIndex = getContractWithProvider(
   provider
 );
 
-const deployIndexAndHotel = async () => {
+const deployIndex = async () => {
   const index = await WTIndex.new({
     from: config.get('user'),
     gas: 6000000,
   });
   config.set('indexAddress', index.address);
   config.set('index', index);
-  const hotelUrl = 'ipfs://some-random-hash';
-  const registerResult = await index.registerHotel(hotelUrl, {
-    from: config.get('user'),
-    gas: 6000000,
-  });
-  config.set('testAddress', registerResult.logs[0].args.hotel);
 };
 
 const deployFullHotel = async (WtLibs) => {
@@ -64,6 +58,6 @@ const deployFullHotel = async (WtLibs) => {
 };
 
 module.exports = {
-  deployIndexAndHotel,
+  deployIndex,
   deployFullHotel,
 };
