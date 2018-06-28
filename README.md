@@ -1,11 +1,9 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 # WT NodeJS API
-API written in nodejs to interact with the Winding Tree platform, it creates an
-http server with an encrypted ethereum account to send transactions to the WT
-platform hosted over the ethereum network.
+API written in nodejs to fetch information from  the Winding Tree platform.
 
 ## Requirements
-- Nodejs 8.9.x LTS
+- Nodejs 10.3.0
 
 ### Getting stared
 In order to install and run test we must:
@@ -45,55 +43,48 @@ To use Swagger pointing to localhost, you must update `docs/swagger.json`
 
 ```
 
-
 ## Examples
-### Wallet
-The very first thing to do, is to add a Wallet. This wallet is used to make
-transactions with the Ethereum network. An example of encrypted keystore v3
-JSON:
-```javaScript
-{
-    version: 3,
-    id: '04e9bcbb-96fa-497b-94d1-14df4cd20af6',
-    address: '2c7536e3605d9c16a7a3d7b1898e529396a65c23',
-    crypto: {
-        ciphertext: 'a1c25da3ecde4e6a24f3697251dd15d6208520efc84ad97397e906e6df24d251',
-        cipherparams: { iv: '2885df2b63f7ef247d753c82fa20038a' },
-        cipher: 'aes-128-ctr',
-        kdf: 'scrypt',
-        kdfparams: {
-            dklen: 32,
-            salt: '4531b3c174cc3ff32a6a7a85d6761b410db674807b2d216d022318ceee50be10',
-            n: 262144,
-            r: 8,
-            p: 1
-        },
-        mac: 'b8b010fff37f9ae5559a352a185e86f9b9c1d7f7a9f1bd4e82a5dd35468fc7f6'
-    }
-}
+### Fetch hotels
+
+Calling `GET /hotels` will retrieve an array of hotels. By default fields are `id`, `name`, and `location`.
+If an error is produced for an hotel, the response will look as
+```javascript
+items: [
+    ...
+    { 
+      id: '0x585c0771Fe960f99aBdba8dc77e5d31Be2Ada74d',
+      error: 'Unsupported data storage type: ipfs' 
+    },
+    ...
+]
 ```
 
-This wallet should for now be manually placed into a location specified in `configuration.json`
-file under the `privateKeyFile` key.
+You can use a query to specify the fields to include. Hotel Id is include by default in every request. Ex.  
+`GET /hotels?fields=name`.
 
-For the current endpoints documentation, run the API with `npm run dev` and see the `http://localhost:3000/docs`.
-
-With every request that results into a transaction on the Ethereum network (typically data modification),
-you have to provide a password for this keyfile in a `X-Wallet-Password` header.
+```javascript
+items: [
+    ...
+    { 
+      id: '0x585c0771Fe960f99aBdba8dc77e5d31Be2Ada74d',
+      name: 'WT Hotel',
+    },
+    ...
+]
+```
 
 ### Fetch hotel
 
-Request to `/hotels/:address` can fetch off-chain data in a single request.
+Request to `/hotels/:address` can fetch off-chain data in a single request. By default fields are `id`, `location`, 
+`name`, `description`, `contacts`, `address`, `currency`, `images`, `amenities`, `updatedAt`.
 
-You can use a query to specify the fields to include. Hotel Id is include by default in every request. Ex.  
-`/hotels/0x8F1f1212D876d62B6AF0831B0630359816460f61?fields=name,location`.
 
 ```javascript
 { 
   id: '0x417C3DDae54aB2f5BCd8d5A1750487a1f765a94a',
+  location: { latitude: 35.89421911, longitude: 139.94637467 },
   name: 'Winding Tree Hotel',
   description: 'string',
-  location: { latitude: 35.89421911, longitude: 139.94637467 },
   contacts: 
    { 
     general: 
@@ -114,20 +105,10 @@ You can use a query to specify the fields to include. Hotel Id is include by def
      state: 'string',
      country: 'string' 
    },
-  timezone: 'string',
   currency: 'string',
   images: [ 'string' ],
   amenities: [ 'WiFi' ],
   updatedAt: '2018-06-19T13:19:58.190Z'
  }
 
-```
-If an error is produced, the response is
-
-```javascript
-{ 
-  manager: '0xD39Ca7d186a37bb6Bf48AE8abFeB4c687dc8F906',
-  id: '0x585c0771Fe960f99aBdba8dc77e5d31Be2Ada74d',
-  error: 'Unsupported data storage type: ipfs' 
-}
 ```
