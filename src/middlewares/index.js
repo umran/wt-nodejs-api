@@ -10,7 +10,6 @@ const injectWtLibs = async (req, res, next) => {
   res.locals.wt = {
     instance: wtLibsInstance,
     index: await wtLibsInstance.getWTIndex(config.get('indexAddress')),
-    wallet: null,
   };
   next();
 };

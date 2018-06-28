@@ -1,6 +1,3 @@
-const WALLET_PASSWORD_HEADER = 'X-Wallet-Password';
-const WALLET_ID_HEADER = 'X-Wallet-Id';
-
 const DEFAULT_HOTEL_STRING = 'id,location,name,description,contacts,address,currency,images,amenities,updatedAt';
 const DEFAULT_HOTELS_STRING = 'id,location,name';
 
@@ -25,8 +22,6 @@ const HOTEL_FIELDS = [
 ];
 
 module.exports = {
-  WALLET_PASSWORD_HEADER,
-  WALLET_ID_HEADER,
   OBLIGATORY_FIELDS,
   DESCRIPTION_FIELDS,
   HOTEL_FIELDS,

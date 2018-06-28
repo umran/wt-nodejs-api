@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
-const sinon = require('sinon');
 const request = require('supertest');
 const wtJsLibs = require('../../src/services/wt-js-libs');
 const {
@@ -11,17 +10,14 @@ const {
 
 describe('Hotels', function () {
   let server;
-  let createWalletSpy;
   let wtLibsInstance;
   beforeEach(async () => {
     server = require('../../src/index');
     wtLibsInstance = wtJsLibs.getInstance();
-    createWalletSpy = sinon.spy(wtLibsInstance, 'createWallet');
     await deployIndex();
   });
 
   afterEach(() => {
-    createWalletSpy.restore();
     server.close();
   });
 
