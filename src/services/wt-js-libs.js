@@ -1,5 +1,7 @@
 const WtJsLibs = require('@windingtree/wt-js-libs');
 const InMemoryAdapter = require('@windingtree/off-chain-adapter-in-memory').adapter;
+const SwarmAdapter = require('@windingtree/off-chain-adapter-swarm').adapter;
+const HttpAdapter = require('@windingtree/off-chain-adapter-http').adapter;
 let wtJsLibsInstance;
 
 function initialize (web3Provider) {
@@ -16,6 +18,19 @@ function initialize (web3Provider) {
           options: { },
           create: (options) => {
             return new InMemoryAdapter(options);
+          },
+        },
+        'bzz-raw': {
+          options: {
+            swarmProviderUrl: 'https://swarm-gateways.net/',
+          },
+          create: (options) => {
+            return new SwarmAdapter(options);
+          },
+        },
+        https: {
+          create: () => {
+            return new HttpAdapter();
           },
         },
       },
