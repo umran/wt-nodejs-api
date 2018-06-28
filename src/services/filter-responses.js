@@ -1,9 +1,13 @@
 const _ = require('lodash');
 const {
-  DEFAULT_FIELDS,
+  OBLIGATORY_FIELDS,
   HOTEL_FIELDS,
   DESCRIPTION_FIELDS,
 } = require('../constants.js');
+
+const {
+  mapQueryFields,
+} = require('./mappings.js');
 
 const VALID_FIELDS = _.union(HOTEL_FIELDS, DESCRIPTION_FIELDS);
 
@@ -26,11 +30,10 @@ const fetchHotel = async (hotel, fields) => {
     if (indexFields.length) {
       indexProperties = fieldsOf(indexFields, hotel);
     }
-
     const description = (await indexRow.descriptionUri).contents;
     const descriptionFields = _.intersection(fields, DESCRIPTION_FIELDS);
     if (descriptionFields.length) {
-      descriptionProperties = fieldsOf(fields, description);
+      descriptionProperties = fieldsOf(descriptionFields, description);
     }
   } catch (e) {
     errorFields = {
@@ -40,10 +43,12 @@ const fetchHotel = async (hotel, fields) => {
   return { ...(await indexProperties), ...(await descriptionProperties), ...(await errorFields), id: hotel.address };
 };
 
-const calculateFields = fieldsQuery => {
+const calculateFields = async fieldsQuery => {
+  const fieldsArray = fieldsQuery.split(',');
+  const mappedFields = await mapQueryFields(fieldsArray);
   return _.intersection(
     VALID_FIELDS,
-    _.union(DEFAULT_FIELDS, fieldsQuery.split(','))
+    _.union(OBLIGATORY_FIELDS, mappedFields)
   );
 };
 
