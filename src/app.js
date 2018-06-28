@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
   const response = {
     docs: 'https://github.com/windingtree/wt-nodejs-api/blob/master/README.md',
     info: 'https://github.com/windingtree/wt-nodejs-api',
-    version: slkjdf,
+    version,
   };
   res.status(200).json(response);
 });
