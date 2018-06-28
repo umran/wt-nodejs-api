@@ -16,7 +16,7 @@ function handleApplicationError (code, e) {
   e.status = desc.status;
   e.code = `#${code}`;
   e.short = desc.short;
-  e.long = e.message || desc.long;
+  e.long = (code === 'genericError') ? desc.long : (e.message || desc.long);
   return e;
 }
 

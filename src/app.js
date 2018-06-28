@@ -22,6 +22,26 @@ app.use(hotelsRouter);
 app.use(transactionsRouter);
 app.use(walletsRouter);
 
+// Root handler
+app.get('/', (req, res) => {
+  const response = {
+    docs: 'https://github.com/windingtree/wt-nodejs-api/blob/master/README.md',
+    info: 'https://github.com/windingtree/wt-nodejs-api',
+    version: slkjdf,
+  };
+  res.status(200).json(response);
+});
+
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({
+    status: 404,
+    code: '#notFound',
+    short: 'Page not found',
+    long: 'This endpoint does not exist',
+  });
+});
+
 // Error handler
 app.use((err, req, res, next) => {
   if (config.get('log')) {
@@ -43,25 +63,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Root handler
-app.get('/', (req, res) => {
-  const response = {
-    docs: 'https://github.com/windingtree/wt-nodejs-api/blob/master/README.md',
-    info: 'https://github.com/windingtree/wt-nodejs-api',
-    version,
-  };
-  res.status(200).json(response);
-});
-
-// 404 handler
-app.use('*', (req, res) => {
-  res.status(404).json({
-    status: 404,
-    code: '#notFound',
-    short: 'Page not found',
-    long: 'This endpoint does not exist',
-  });
-});
 
 module.exports = {
   app,
