@@ -119,14 +119,13 @@
                   "id",
                   "location",
                   "name",
-                  "descriptions",
+                  "description",
                   "contacts",
                   "address",
                   "currency",
                   "images",
                   "amenities",
-                  "updatedAt",
-                  "location"
+                  "updatedAt"
                 ],
                 "enum": [
                   "id",
