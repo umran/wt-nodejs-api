@@ -5,7 +5,7 @@ const sinon = require('sinon');
 const request = require('supertest');
 const wtJsLibs = require('../../src/services/wt-js-libs');
 const {
-  deployIndexAndHotel,
+  deployIndex,
   deployFullHotel,
 } = require('../utils/helpers');
 
@@ -17,7 +17,7 @@ describe('Hotels', function () {
     server = require('../../src/index');
     wtLibsInstance = wtJsLibs.getInstance();
     createWalletSpy = sinon.spy(wtLibsInstance, 'createWallet');
-    await deployIndexAndHotel();
+    await deployIndex();
   });
 
   afterEach(() => {
@@ -28,24 +28,25 @@ describe('Hotels', function () {
   describe('GET /hotels', () => {
     beforeEach(async () => {
       await deployFullHotel(wtLibsInstance);
+      await deployFullHotel(wtLibsInstance);
     });
-    it('should return a list of hotels id', async () => {
+    it('should return default fields for hotels', async () => {
       await request(server)
         .get('/hotels')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect((res) => {
-          const { hotels } = res.body;
-          expect(hotels.length).to.be.eql(2);
+          const { items } = res.body;
+          expect(items.length).to.be.eql(2);
 
-          hotels.forEach(hotel => {
+          items.forEach(hotel => {
             expect(hotel).to.have.property('id');
           });
         });
     });
-    it('should return a list of hotels', async () => {
+    it('should return only required fields', async () => {
       const fields = [
-        'manager',
+        'managerAddress',
         'id',
         'name',
         'description',
@@ -66,18 +67,10 @@ describe('Hotels', function () {
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect((res) => {
-          const { hotels } = res.body;
-          expect(hotels.length).to.be.eql(2);
-          hotels.forEach(hotel => {
-            expect(hotel).to.have.property('id');
-            expect(hotel).to.not.have.property('invalidField');
-            expect(hotel).to.satisfy(
-              hotel => {
-                if (hotel.error) {
-                  return true;
-                }
-                return (hotel.name && hotel.location);
-              });
+          const { items } = res.body;
+          expect(items.length).to.be.eql(2);
+          items.forEach(hotel => {
+            expect(hotel).to.have.all.keys(fields);
           });
         });
     });
@@ -89,59 +82,73 @@ describe('Hotels', function () {
       address = await deployFullHotel(wtLibsInstance);
     });
 
-    it('should return only required fields', async () => {
-      const fields = ['name', 'location'];
-      const query = `fields=${fields.join()}`;
-
-      await request(server)
-        .get(`/hotels/${address}?${query}`)
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .expect((res) => {
-          const { hotel } = res.body;
-          expect(hotel).to.have.all.keys([...fields, 'id']);
-        })
-        .expect(200);
-    });
-
-    it('should return only required fields', async () => {
-      const fields = ['name', 'location'];
-      const query = `fields=${fields.join()}`;
-
-      await request(server)
-        .get(`/hotels/${address}?${query}`)
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .expect((res) => {
-          const { hotel } = res.body;
-          expect(hotel).to.have.all.keys([...fields, 'id']);
-        })
-        .expect(200);
-    });
-
-    it('should return only required fields', async () => {
-      const fields = ['manager'];
-      const query = `fields=${fields.join()}`;
-
-      await request(server)
-        .get(`/hotels/${address}?${query}`)
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .expect((res) => {
-          const { hotel } = res.body;
-          expect(hotel).to.have.all.keys([...fields, 'id']);
-        })
-        .expect(200);
-    });
-
-    it('should return only id', async () => {
+    it('should return default fields', async () => {
+      const defaultHotelFields = [
+        'id',
+        'location',
+        'name',
+        'description',
+        'contacts',
+        'address',
+        'currency',
+        'images',
+        'amenities',
+        'updatedAt',
+      ];
       await request(server)
         .get(`/hotels/${address}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect((res) => {
           const { hotel } = res.body;
-          expect(hotel).to.have.property('id');
+          expect(hotel).to.have.all.keys(defaultHotelFields);
+        })
+        .expect(200);
+    });
+
+    it('should return only required fields', async () => {
+      const fields = ['name', 'location'];
+      const query = `fields=${fields.join()}`;
+
+      await request(server)
+        .get(`/hotels/${address}?${query}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          const { hotel } = res.body;
+          expect(hotel).to.have.all.keys([...fields, 'id']);
+        })
+        .expect(200);
+    });
+
+    it('should return only required fields', async () => {
+      const fields = ['managerAddress'];
+      const query = `fields=${fields.join()}`;
+
+      await request(server)
+        .get(`/hotels/${address}?${query}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          const { hotel } = res.body;
+          expect(hotel).to.have.all.keys([...fields, 'id']);
+        })
+        .expect(200);
+    });
+
+    it('should return only required fields', async () => {
+      const fields = ['managerAddress', 'name'];
+      const invalidFields = ['invalid', 'invalidField'];
+      const query = `fields=${fields.join()},${invalidFields.join()}`;
+
+      await request(server)
+        .get(`/hotels/${address}?${query}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          const { hotel } = res.body;
+          expect(hotel).to.have.all.keys([...fields, 'id']);
+          expect(hotel).to.not.have.all.keys(invalidFields);
         })
         .expect(200);
     });
