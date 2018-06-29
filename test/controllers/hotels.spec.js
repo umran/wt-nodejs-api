@@ -156,5 +156,19 @@ describe('Hotels', function () {
         .set('accept', 'application/json')
         .expect(404);
     });
+
+    it('should not not blow up with different letter cases', async () => {
+      const fields = ['managerAddress'];
+      const query = `fields=${fields.join()}`;
+      await request(server)
+        .get(`/hotels/${address.toUpperCase()}?${query}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          const { hotel } = res.body;
+          expect(hotel).to.have.all.keys([...fields, 'id']);
+        })
+        .expect(200);
+    });
   });
 });

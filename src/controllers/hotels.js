@@ -28,11 +28,13 @@ const findAll = async (req, res, next) => {
 };
 
 const find = async (req, res, next) => {
-  const { hotelAddress } = req.params;
+  let { hotelAddress } = req.params;
   const fieldsQuery = req.query.fields || DEFAULT_HOTEL_STRING;
+  const { wt } = res.locals;
   const fields = await calculateFields(fieldsQuery);
   try {
-    let hotel = await res.locals.wt.index.getHotel(hotelAddress);
+    hotelAddress = wt.instance.dataModel.web3Instance.utils.toChecksumAddress(hotelAddress);
+    let hotel = await wt.index.getHotel(hotelAddress);
     hotel = await fetchHotel(hotel, fields);
     hotel = await mapHotel(hotel);
     res.status(200).json({ hotel });
