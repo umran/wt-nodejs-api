@@ -8,20 +8,25 @@ const {
 } = require('../services/filter-responses');
 
 const { mapHotel } = require('../services/mappings.js');
+const { paginate } = require('../services/pagination.js');
 
 const findAll = async (req, res, next) => {
+  const { limit, page } = req.query;
   const fieldsQuery = req.query.fields || DEFAULT_HOTELS_STRING;
   const fields = await calculateFields(fieldsQuery);
+
   try {
     let hotels = await res.locals.wt.index.getAllHotels();
+
+    let { items, next, error } = paginate(hotels, limit, page);
     let rawHotels = [];
     for (let hotel of hotels) {
       rawHotels.push(fetchHotel(hotel, fields));
     }
     rawHotels = await Promise.all(rawHotels);
-    let items = rawHotels.map(hotel => mapHotel(hotel));
+    items = rawHotels.map(hotel => mapHotel(hotel));
     items = await Promise.all(items);
-    res.status(200).json({ items });
+    res.status(200).json({ items, next, error });
   } catch (e) {
     next(e);
   }

@@ -8,6 +8,10 @@ const {
   deployFullHotel,
 } = require('../utils/helpers');
 
+const {
+  DEFAULT_PAGINATION_LIMIT
+} = require('../../src/constants.js');
+
 describe('Hotels', function () {
   let server;
   let wtLibsInstance;
@@ -67,6 +71,37 @@ describe('Hotels', function () {
           expect(items.length).to.be.eql(2);
           items.forEach(hotel => {
             expect(hotel).to.have.all.keys(fields);
+          });
+        });
+    });
+    it('should return error for pagination', async () => {
+      const pagination = 'limit=500&page=123';
+      await request(server)
+        .get(`/hotels?${pagination}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          const { items } = res.body;
+          expect(items.length).to.be.eql(2);
+
+          items.forEach(hotel => {
+            expect(hotel).to.have.property('id');
+          });
+        });
+    });
+    it('should return error for pagination', async () => {
+      const pagination = 'limit=infinit&page=zero';
+      await request(server)
+        .get(`/hotels?${pagination}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          const { items, next, error }  = res.body;
+          expect(items).to.be.an('array');
+          expect(items.length).to.be.eql(2);
+          expect(next).to.be.eql(`limit=${DEFAULT_PAGINATION_LIMIT}&page=1`);
+          items.forEach(hotel => {
+            expect(hotel).to.have.property('id');
           });
         });
     });

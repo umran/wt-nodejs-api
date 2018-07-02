@@ -73,6 +73,19 @@ items: [
 ]
 ```
 
+If pagination fails, next to the items list will be an error warning that the default values are used.
+
+```javascript
+items: [
+    ...
+    { 
+      id: '0x585c0771Fe960f99aBdba8dc77e5d31Be2Ada74d',
+      name: 'WT Hotel',
+    },
+    ...
+],
+error: 'Problems with paging. Default values are used'
+```
 ### Fetch hotel
 
 Request to `/hotels/:address` can fetch off-chain data in a single request. By default fields are `id`, `location`, 
