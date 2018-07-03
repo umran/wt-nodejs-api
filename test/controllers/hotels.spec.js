@@ -12,6 +12,8 @@ const {
   DEFAULT_PAGINATION_LIMIT,
 } = require('../../src/constants.js');
 
+const web3 = require('web3');
+
 describe('Hotels', function () {
   let server;
   let wtLibsInstance;
@@ -96,7 +98,7 @@ describe('Hotels', function () {
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect((res) => {
-          const { items, next, error }  = res.body;
+          const { items, next, error } = res.body;
           expect(items).to.be.an('array');
           expect(items.length).to.be.eql(2);
           expect(next).to.be.eql(`limit=${DEFAULT_PAGINATION_LIMIT}&page=1`);
@@ -111,6 +113,7 @@ describe('Hotels', function () {
     let address;
     beforeEach(async () => {
       address = await deployFullHotel(wtLibsInstance);
+      address = web3.utils.toChecksumAddress(address);
     });
 
     it('should return default fields', async () => {
@@ -186,24 +189,18 @@ describe('Hotels', function () {
 
     it('should return a 404 on a non-existent address', async () => {
       await request(server)
-        .get('/hotels/0x994afd347b160be3973b41f0a144819496d175e9')
+        .get('/hotels/0x7135422D4633901AE0D2469886da96A8a72CB264')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect(404);
     });
 
-    it('should not not blow up with different letter cases', async () => {
-      const fields = ['managerAddress'];
-      const query = `fields=${fields.join()}`;
+    it('should return error with different letter cases', async () => {
       await request(server)
-        .get(`/hotels/${address.toUpperCase()}?${query}`)
+        .get(`/hotels/${address.toUpperCase()}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .expect((res) => {
-          const { hotel } = res.body;
-          expect(hotel).to.have.all.keys([...fields, 'id']);
-        })
-        .expect(200);
+        .expect(422);
     });
   });
 });

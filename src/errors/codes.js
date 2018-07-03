@@ -23,4 +23,9 @@ module.exports = {
     short: 'API rate Limit Exceeded',
     long: 'The rate limit was exceeded. Please try later.',
   },
+  hotelChecksum: {
+    status: 422,
+    short: 'Checksum failed for hotel address.',
+    long: 'Given hotel address is not a valid Ethereum address. Must be a valid checksum address.',
+  },
 };

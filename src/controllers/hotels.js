@@ -38,7 +38,6 @@ const find = async (req, res, next) => {
   const { wt } = res.locals;
   const fields = await calculateFields(fieldsQuery);
   try {
-    hotelAddress = wt.instance.dataModel.web3Instance.utils.toChecksumAddress(hotelAddress);
     let hotel = await wt.index.getHotel(hotelAddress);
     hotel = await fetchHotel(hotel, fields);
     hotel = await mapHotel(hotel);
