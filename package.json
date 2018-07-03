@@ -38,8 +38,7 @@
     "express": "^4.16.3",
     "express-rate-limit": "^2.11.0",
     "lodash": "^4.17.10",
-    "swagger-ui-express": "^3.0.8",
-    "web3": "^1.0.0-beta.34"
+    "swagger-ui-express": "^3.0.8"
   },
   "devDependencies": {
     "@windingtree/wt-contracts": "^0.2.2",
@@ -56,7 +55,8 @@
     "nyc": "^11.6.0",
     "sinon": "^4.5.0",
     "supertest": "^3.0.0",
-    "truffle-contract": "^3.0.5"
+    "truffle-contract": "^3.0.5",
+    "web3": "^1.0.0-beta.34"
   },
   "engines": {
     "node": "10.3.0"
