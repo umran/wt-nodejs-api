@@ -18,7 +18,7 @@ const findAll = async (req, res, next) => {
   try {
     let hotels = await res.locals.wt.index.getAllHotels();
 
-    let { items, next, error } = paginate(hotels, limit, page);
+    let { items, next } = paginate(hotels, limit, page);
     let rawHotels = [];
     for (let hotel of hotels) {
       rawHotels.push(fetchHotel(hotel, fields));
@@ -26,8 +26,20 @@ const findAll = async (req, res, next) => {
     rawHotels = await Promise.all(rawHotels);
     items = rawHotels.map(hotel => mapHotel(hotel));
     items = await Promise.all(items);
-    res.status(200).json({ items, next, error });
+    res.status(200).json({ items, next });
   } catch (e) {
+    if (e.message.match(/limit and page are not numbers/i)) {
+      return next(handleApplicationError('paginationFormat', e));
+    }
+    if (e.message.match(/Limit out of range/i)) {
+      return next(handleApplicationError('limitRange', e));
+    }
+    if (e.message.match(/Pagination outside of the limits./i)) {
+      return next(handleApplicationError('paginationLimit', e));
+    }
+    if (e.message.match(/Negative Page./i)) {
+      return next(handleApplicationError('negativePage', e));
+    }
     next(e);
   }
 };
