@@ -24,15 +24,14 @@ const fetchHotel = async (hotel, fields) => {
   let descriptionProperties;
   let errorFields;
   try {
-    const indexRow = (await hotel.dataIndex).contents;
-
     const indexFields = _.intersection(fields, HOTEL_FIELDS);
     if (indexFields.length) {
       indexProperties = fieldsOf(indexFields, hotel);
     }
-    const description = (await indexRow.descriptionUri).contents;
     const descriptionFields = _.intersection(fields, DESCRIPTION_FIELDS);
     if (descriptionFields.length) {
+      const indexRow = (await hotel.dataIndex).contents;
+      const description = (await indexRow.descriptionUri).contents;
       descriptionProperties = fieldsOf(descriptionFields, description);
     }
   } catch (e) {
