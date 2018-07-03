@@ -6,7 +6,7 @@ const {
 const paginate = (items, limit = DEFAULT_PAGINATION_LIMIT, page = 0) => {
   let error, next;
   try {
-    if (typeof limit !== 'number' || typeof page !== 'number'){
+    if (typeof limit !== 'number' || typeof page !== 'number') {
       throw new Error();
     }
     if (limit > MAX_PAGE_SIZE) {

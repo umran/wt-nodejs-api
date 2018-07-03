@@ -9,7 +9,7 @@ const {
 } = require('../utils/helpers');
 
 const {
-  DEFAULT_PAGINATION_LIMIT
+  DEFAULT_PAGINATION_LIMIT,
 } = require('../../src/constants.js');
 
 describe('Hotels', function () {
