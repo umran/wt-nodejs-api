@@ -11,7 +11,7 @@ const { hotelsRouter } = require('./routes/hotels');
 const { handleApplicationError } = require('./errors');
 const wtJsLibsService = require('./services/wt-js-libs');
 
-wtJsLibsService.initialize(config.get('web3Provider'));
+wtJsLibsService.initialize(config.get('web3Provider'), config.get('swarmProviderUrl'));
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(require('../docs/swagger.json')));
 app.use(bodyParser.json());

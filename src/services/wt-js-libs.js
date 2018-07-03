@@ -1,14 +1,11 @@
 const WtJsLibs = require('@windingtree/wt-js-libs');
-const InMemoryAdapter = require('@windingtree/off-chain-adapter-in-memory').adapter;
-const SwarmAdapter = require('@windingtree/off-chain-adapter-swarm').adapter;
-const HttpAdapter = require('@windingtree/off-chain-adapter-http').adapter;
+const InMemoryAdapter = require('@windingtree/off-chain-adapter-in-memory');
+const SwarmAdapter = require('@windingtree/off-chain-adapter-swarm');
+const HttpAdapter = require('@windingtree/off-chain-adapter-http');
 let wtJsLibsInstance;
 
-function initialize (web3Provider) {
+function initialize (web3Provider, swarmProviderUrl) {
   wtJsLibsInstance = WtJsLibs.createInstance({
-    // web3-json data model type is hardcoded for now
-    // subject to change
-    dataModelType: 'web3-json',
     dataModelOptions: {
       provider: web3Provider,
     },
@@ -22,7 +19,7 @@ function initialize (web3Provider) {
         },
         'bzz-raw': {
           options: {
-            swarmProviderUrl: 'https://swarm-gateways.net/',
+            swarmProviderUrl,
           },
           create: (options) => {
             return new SwarmAdapter(options);
