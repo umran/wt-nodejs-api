@@ -1,9 +1,5 @@
 const { handleApplicationError } = require('../errors');
 
-const {
-  mapHotel,
-} = require('../services/mappings');
-
 const findAll = async (req, res, next) => {
   let { hotelAddress } = req.params;
   const { wt } = res.locals;
