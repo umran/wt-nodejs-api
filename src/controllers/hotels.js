@@ -20,7 +20,7 @@ const findAll = async (req, res, next) => {
 
     let { items, next } = paginate(hotels, limit, page);
     let rawHotels = [];
-    for (let hotel of hotels) {
+    for (let hotel of items) {
       rawHotels.push(fetchHotel(hotel, fields));
     }
     rawHotels = await Promise.all(rawHotels);

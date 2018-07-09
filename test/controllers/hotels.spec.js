@@ -42,6 +42,22 @@ describe('Hotels', function () {
           });
         });
     });
+
+    it('should apply limit', async () => {
+      await request(server)
+        .get('/hotels?limit=1')
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          const { items } = res.body;
+          expect(items.length).to.be.eql(1);
+
+          items.forEach(hotel => {
+            expect(hotel).to.have.property('id');
+          });
+        });
+    });
+
     it('should return only required fields', async () => {
       const fields = [
         'managerAddress',

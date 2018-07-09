@@ -4,7 +4,9 @@ const {
 } = require('../constants.js');
 
 const paginate = (items, limit = DEFAULT_PAGINATION_LIMIT, page = 0) => {
-  if (isNaN(parseInt(limit)) || isNaN(parseInt(page))) {
+  limit = parseInt(limit);
+  page = parseInt(page);
+  if (isNaN(limit) || isNaN(page)) {
     throw new Error('limit and page are not numbers.');
   }
   if (limit > MAX_PAGE_SIZE || limit <= 0) {
