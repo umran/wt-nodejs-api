@@ -48,4 +48,8 @@ module.exports = {
     short: 'Page must be great than or equal to zero.',
     long: 'Limit must be a natural number. Page must be greater than 0s.',
   },
+  roomTypeNotFound: {
+    status: 404,
+    short: 'Room type not found',
+  },
 };

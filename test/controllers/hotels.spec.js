@@ -116,7 +116,6 @@ describe('Hotels', function () {
         })
         .expect(422);
     });
-
   });
 
   describe('GET /hotels/:hotelAddress', () => {
