@@ -24,6 +24,9 @@ const HOTEL_FIELDS = [
 const DEFAULT_PAGINATION_LIMIT = 30;
 const MAX_PAGE_SIZE = 300;
 
+const AVAILABILITY_FIELD = 'availability';
+const RATE_PLANS_FIELD = 'ratePlans';
+
 module.exports = {
   OBLIGATORY_FIELDS,
   DESCRIPTION_FIELDS,
@@ -32,4 +35,6 @@ module.exports = {
   DEFAULT_HOTEL_STRING,
   DEFAULT_PAGINATION_LIMIT,
   MAX_PAGE_SIZE,
+  AVAILABILITY_FIELD,
+  RATE_PLANS_FIELD,
 };

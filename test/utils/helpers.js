@@ -5,6 +5,7 @@ const Web3 = require('web3');
 const config = require('../../src/config');
 const {
   HOTEL_DESCRIPTION,
+  RATE_PLAN,
 } = require('./constants.js');
 
 // dirty hack for web3@1.0.0 support for localhost testrpc, see
@@ -45,8 +46,10 @@ const deployIndex = async () => {
 const deployFullHotel = async (WtLibs) => {
   const jsonClient = await WtLibs.getOffChainDataClient('json');
   const descriptionUri = await jsonClient.upload(HOTEL_DESCRIPTION);
+  const ratePlansUri = await jsonClient.upload(RATE_PLAN);
   const dataUri = await jsonClient.upload({
     descriptionUri,
+    ratePlansUri,
   });
 
   let index = config.get('index');

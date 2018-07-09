@@ -6,8 +6,8 @@ const HOTEL_DESCRIPTION = {
   'name': 'string',
   'description': 'string',
   'roomTypes': {
-    'additionalProp1': {
-      'id': '1234-abcd',
+    'room-type-1111': {
+      'id': 'room-type-1111',
       'name': 'string',
       'description': 'string',
       'totalQuantity': 0,
@@ -26,8 +26,8 @@ const HOTEL_DESCRIPTION = {
         'nonSmoking': 'some',
       },
     },
-    'additionalProp2': {
-      'id': '1234-abcd',
+    'room-type-2222': {
+      'id': 'room-type-2222',
       'name': 'string',
       'description': 'string',
       'totalQuantity': 0,
@@ -46,8 +46,8 @@ const HOTEL_DESCRIPTION = {
         'nonSmoking': 'some',
       },
     },
-    'additionalProp3': {
-      'id': '1234-abcd',
+    'room-type-3333': {
+      'id': 'room-type-3333',
       'name': 'string',
       'description': 'string',
       'totalQuantity': 0,
@@ -66,6 +66,7 @@ const HOTEL_DESCRIPTION = {
         'nonSmoking': 'some',
       },
     },
+
   },
   'contacts': {
     'general': {
@@ -100,6 +101,52 @@ const HOTEL_DESCRIPTION = {
   'updatedAt': '2018-06-19T13:19:58.190Z',
 };
 
+const RATE_PLAN = {
+  'id': 'rate-plan-1111',
+  'name': 'string',
+  'description': 'string',
+  'currency': 'string',
+  'roomTypeIds': [
+    'room-type-123',
+  ],
+  'updatedAt': '2018-07-09T09:22:54.548Z',
+  'availableForReservation': {
+    'start': '2018-07-09T09:22:54.548Z',
+    'end': '2018-07-09T09:22:54.548Z',
+  },
+  'availableForTravel': {
+    'start': '2018-07-09T09:22:54.548Z',
+    'end': '2018-07-09T09:22:54.548Z',
+  },
+  'pricing': {
+    'base': {
+      'maxOccupancyLimit': 0,
+      'rates': [
+        {
+          'amount': 0,
+          'minLengthOfStay': 0,
+          'maxAge': 0,
+        },
+      ],
+    },
+    'additional': {
+      'maxOccupancyLimit': 0,
+      'rates': {},
+    },
+  },
+  'restrictions': {
+    'bookingCutOff': {
+      'min': 0,
+      'max': 0,
+    },
+    'lengthOfStay': {
+      'min': 0,
+      'max': 0,
+    },
+  },
+};
+
 module.exports = {
   HOTEL_DESCRIPTION,
+  RATE_PLAN,
 };
