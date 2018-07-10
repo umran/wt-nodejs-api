@@ -3,7 +3,7 @@ const { expect } = require('chai');
 const { paginate } = require('../../src/services/pagination');
 
 const {
-  DEFAULT_PAGINATION_LIMIT,
+  DEFAULT_PAGE_SIZE,
 } = require('../../src/constants');
 
 describe('Pagination', function () {
@@ -16,10 +16,10 @@ describe('Pagination', function () {
     it('should return default number of items if not said otherwise', async () => {
       const { items, next } = paginate(allItems);
       expect(items).to.be.an('array');
-      expect(items.length).to.be.eql(DEFAULT_PAGINATION_LIMIT);
+      expect(items.length).to.be.eql(DEFAULT_PAGE_SIZE);
       expect(items[0]).to.be.eql(0);
       expect(items[29]).to.be.eql(29);
-      expect(next).to.be.eql(`limit=${DEFAULT_PAGINATION_LIMIT}&page=1`);
+      expect(next).to.be.eql(`limit=${DEFAULT_PAGE_SIZE}&page=1`);
     });
 
     it('should return second page', async () => {
@@ -49,7 +49,7 @@ describe('Pagination', function () {
       try {
         paginate(allItems, limit, page);
       } catch (e) {
-        expect(e).to.have.property('message', 'limit and page are not numbers.');
+        expect(e).to.have.property('message', 'Limit and page are not numbers.');
       }
     });
 

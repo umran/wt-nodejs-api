@@ -1,7 +1,7 @@
 const { handleApplicationError } = require('../errors');
 const {
-  DEFAULT_HOTELS_STRING,
-  DEFAULT_HOTEL_STRING } = require('../constants.js');
+  DEFAULT_HOTELS_FIELDS,
+  DEFAULT_HOTEL_FIELDS } = require('../constants.js');
 const {
   fetchHotel,
   calculateFields,
@@ -12,7 +12,7 @@ const { paginate } = require('../services/pagination.js');
 
 const findAll = async (req, res, next) => {
   const { limit, page } = req.query;
-  const fieldsQuery = req.query.fields || DEFAULT_HOTELS_STRING;
+  const fieldsQuery = req.query.fields || DEFAULT_HOTELS_FIELDS;
   const fields = await calculateFields(fieldsQuery);
 
   try {
@@ -46,7 +46,7 @@ const findAll = async (req, res, next) => {
 
 const find = async (req, res, next) => {
   let { hotelAddress } = req.params;
-  const fieldsQuery = req.query.fields || DEFAULT_HOTEL_STRING;
+  const fieldsQuery = req.query.fields || DEFAULT_HOTEL_FIELDS;
   const { wt } = res.locals;
   const fields = await calculateFields(fieldsQuery);
   try {

@@ -1,13 +1,13 @@
 const {
-  DEFAULT_PAGINATION_LIMIT,
+  DEFAULT_PAGE_SIZE,
   MAX_PAGE_SIZE,
-} = require('../constants.js');
+} = require('../constants');
 
-const paginate = (items, limit = DEFAULT_PAGINATION_LIMIT, page = 0) => {
+const paginate = (items, limit = DEFAULT_PAGE_SIZE, page = 0) => {
   limit = parseInt(limit);
   page = parseInt(page);
   if (isNaN(limit) || isNaN(page)) {
-    throw new Error('limit and page are not numbers.');
+    throw new Error('Limit and page are not numbers.');
   }
   if (limit > MAX_PAGE_SIZE || limit <= 0) {
     throw new Error('Limit out of range.');

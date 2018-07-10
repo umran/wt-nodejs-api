@@ -3,11 +3,11 @@ const {
   OBLIGATORY_FIELDS,
   HOTEL_FIELDS,
   DESCRIPTION_FIELDS,
-} = require('../constants.js');
+} = require('../constants');
 
 const {
   mapQueryFields,
-} = require('./mappings.js');
+} = require('./mappings');
 
 const VALID_FIELDS = _.union(HOTEL_FIELDS, DESCRIPTION_FIELDS);
 

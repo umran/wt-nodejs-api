@@ -1,5 +1,5 @@
-const DEFAULT_HOTEL_STRING = 'id,location,name,description,contacts,address,currency,images,amenities,updatedAt';
-const DEFAULT_HOTELS_STRING = 'id,location,name';
+const DEFAULT_HOTEL_FIELDS = 'id,location,name,description,contacts,address,currency,images,amenities,updatedAt';
+const DEFAULT_HOTELS_FIELDS = 'id,location,name';
 
 const OBLIGATORY_FIELDS = ['id'];
 const DESCRIPTION_FIELDS = [
@@ -21,20 +21,15 @@ const HOTEL_FIELDS = [
   'id',
 ];
 
-const DEFAULT_PAGINATION_LIMIT = 30;
+const DEFAULT_PAGE_SIZE = 30;
 const MAX_PAGE_SIZE = 300;
-
-const AVAILABILITY_FIELD = 'availability';
-const RATE_PLANS_FIELD = 'ratePlans';
 
 module.exports = {
   OBLIGATORY_FIELDS,
   DESCRIPTION_FIELDS,
   HOTEL_FIELDS,
-  DEFAULT_HOTELS_STRING,
-  DEFAULT_HOTEL_STRING,
-  DEFAULT_PAGINATION_LIMIT,
+  DEFAULT_HOTELS_FIELDS,
+  DEFAULT_HOTEL_FIELDS,
+  DEFAULT_PAGE_SIZE,
   MAX_PAGE_SIZE,
-  AVAILABILITY_FIELD,
-  RATE_PLANS_FIELD,
 };
