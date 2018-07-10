@@ -2,7 +2,7 @@ const hotelMapping = {
   manager: 'managerAddress',
 };
 
-const mapHotel = async (hotel) => {
+const mapHotelObjectToResponse = (hotel) => {
   return Object.keys(hotel).reduce((newHotel, field) => {
     const newField = hotelMapping[field] || field;
     newHotel[newField] = hotel[field];
@@ -14,7 +14,7 @@ const fieldMapping = {
   managerAddress: 'manager',
 };
 
-const mapQueryFields = async (fields) => {
+const mapHotelFieldsFromQuery = (fields) => {
   return fields.reduce((newFields, field) => {
     const newField = fieldMapping[field] || field;
     newFields.push(newField);
@@ -23,6 +23,6 @@ const mapQueryFields = async (fields) => {
 };
 
 module.exports = {
-  mapHotel,
-  mapQueryFields,
+  mapHotelObjectToResponse,
+  mapHotelFieldsFromQuery,
 };
