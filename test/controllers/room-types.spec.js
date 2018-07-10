@@ -11,7 +11,7 @@ const {
 
 const {
   HOTEL_DESCRIPTION,
-} = require('../utils/constants');
+} = require('../utils/test-data');
 
 describe('Room types', function () {
   let server;

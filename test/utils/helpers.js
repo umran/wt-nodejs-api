@@ -6,7 +6,7 @@ const config = require('../../src/config');
 const {
   HOTEL_DESCRIPTION,
   RATE_PLAN,
-} = require('./constants.js');
+} = require('./test-data');
 
 // dirty hack for web3@1.0.0 support for localhost testrpc, see
 // https://github.com/trufflesuite/truffle-contract/issues/56#issuecomment-331084530

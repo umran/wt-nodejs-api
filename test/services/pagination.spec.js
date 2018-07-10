@@ -1,10 +1,10 @@
 /* eslint-env mocha */
 const { expect } = require('chai');
-const { paginate } = require('../../src/services/pagination.js');
+const { paginate } = require('../../src/services/pagination');
 
 const {
   DEFAULT_PAGINATION_LIMIT,
-} = require('../../src/constants.js');
+} = require('../../src/constants');
 
 describe('Pagination', function () {
   let allItems = [];
