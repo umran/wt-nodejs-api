@@ -1,5 +1,4 @@
 /* eslint-env mocha */
-/* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
 const web3 = require('web3');
 const request = require('supertest');
@@ -43,6 +42,7 @@ describe('Room types', function () {
         });
     });
   });
+
   describe('GET /hotels/:hotelAddress/roomTypes/:roomTypeId', () => {
     it('should return a room type ', async () => {
       await request(server)
@@ -54,6 +54,7 @@ describe('Room types', function () {
           expect(hotel).to.have.property('room-type-1111');
         });
     });
+
     it('should return 404', async () => {
       await request(server)
         .get(`/hotels/${address}/roomTypes/room-type-0000}`)

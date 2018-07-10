@@ -28,6 +28,7 @@ describe('Hotels', function () {
       await deployFullHotel(wtLibsInstance);
       await deployFullHotel(wtLibsInstance);
     });
+
     it('should return default fields for hotels', async () => {
       await request(server)
         .get('/hotels')
@@ -39,6 +40,8 @@ describe('Hotels', function () {
 
           items.forEach(hotel => {
             expect(hotel).to.have.property('id');
+            expect(hotel).to.have.property('name');
+            expect(hotel).to.have.property('location');
           });
         });
     });
@@ -54,11 +57,13 @@ describe('Hotels', function () {
 
           items.forEach(hotel => {
             expect(hotel).to.have.property('id');
+            expect(hotel).to.have.property('name');
+            expect(hotel).to.have.property('location');
           });
         });
     });
 
-    it('should return only required fields', async () => {
+    it('should return all fields that a client asks for', async () => {
       const fields = [
         'managerAddress',
         'id',
@@ -88,6 +93,7 @@ describe('Hotels', function () {
           });
         });
     });
+
     it('should return 422 #limitRange', async () => {
       const pagination = 'limit=-500&page=0';
       await request(server)
@@ -99,6 +105,7 @@ describe('Hotels', function () {
         })
         .expect(422);
     });
+
     it('should return 422 #paginationLimit', async () => {
       const pagination = 'limit=15&page=1600';
       await request(server)
@@ -110,6 +117,7 @@ describe('Hotels', function () {
         })
         .expect(422);
     });
+
     it('should return 422 #paginationFormat', async () => {
       const pagination = 'limit=1&page=zero';
       await request(server)
@@ -121,6 +129,7 @@ describe('Hotels', function () {
         })
         .expect(422);
     });
+
     it('should return 422 #negativePage', async () => {
       const pagination = 'limit=1&page=-1';
       await request(server)
@@ -165,7 +174,7 @@ describe('Hotels', function () {
         .expect(200);
     });
 
-    it('should return only required fields', async () => {
+    it('should return all fields that a client asks for', async () => {
       const fields = ['name', 'location'];
       const query = `fields=${fields.join()}`;
 
@@ -180,7 +189,7 @@ describe('Hotels', function () {
         .expect(200);
     });
 
-    it('should return only required fields', async () => {
+    it('should return all fields that a client asks for', async () => {
       const fields = ['managerAddress'];
       const query = `fields=${fields.join()}`;
 
@@ -195,7 +204,7 @@ describe('Hotels', function () {
         .expect(200);
     });
 
-    it('should return only required fields', async () => {
+    it('should not return any non-existent fields even if a client asks for them', async () => {
       const fields = ['managerAddress', 'name'];
       const invalidFields = ['invalid', 'invalidField'];
       const query = `fields=${fields.join()},${invalidFields.join()}`;
@@ -212,7 +221,7 @@ describe('Hotels', function () {
         .expect(200);
     });
 
-    it('should return a 404 on a non-existent address', async () => {
+    it('should return a 404 for a non-existent address', async () => {
       await request(server)
         .get('/hotels/0x7135422D4633901AE0D2469886da96A8a72CB264')
         .set('content-type', 'application/json')
@@ -220,11 +229,14 @@ describe('Hotels', function () {
         .expect(404);
     });
 
-    it('should return error with different letter cases', async () => {
+    it('should not work for an address in a badly checksummed format', async () => {
       await request(server)
         .get(`/hotels/${address.toUpperCase()}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
+        .expect((res) => {
+          expect(res.body).to.have.property('code', '#hotelChecksum');
+        })
         .expect(422);
     });
   });

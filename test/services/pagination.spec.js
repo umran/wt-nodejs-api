@@ -104,6 +104,5 @@ describe('Pagination', function () {
       expect(items).to.have.property('length', 1);
       expect(next).to.be.eql('limit=1&page=1');
     });
-
   });
 });
