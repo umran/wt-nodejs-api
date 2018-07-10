@@ -24,14 +24,11 @@ const find = async (req, res, next) => {
     const description = (await indexRow.descriptionUri).contents;
     let roomType = (await description.roomTypes)[roomTypeId];
     if (!roomType) {
-      throw new Error('Room Type not found');
+      return next(handleApplicationError('roomTypeNotFound'));
     }
     
     res.status(200).json(roomType);
   } catch (e) {
-    if (e.message.match(/Room Type not found/i)) {
-      return next(handleApplicationError('roomTypeNotFound', e));
-    }
     next(e);
   }
 };
