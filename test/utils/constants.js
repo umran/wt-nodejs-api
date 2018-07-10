@@ -86,7 +86,7 @@ const HOTEL_DESCRIPTION = {
     'line1': 'string',
     'line2': 'string',
     'postalCode': 'string',
-    'city': {},
+    'city': 'string',
     'state': 'string',
     'country': 'string',
   },

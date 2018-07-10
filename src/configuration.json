@@ -1,18 +1,13 @@
 {
   "defaultNetwork": "local",
   "testnet": {
-    "gasMargin": 1.5,
     "indexAddress": "0x09C0AECBA9BBEBCCDAAF3FE8473591A69C4C11BE",
-    "secret": "do-not-use-me-in-production",
     "port": 3000,
     "web3Provider": "https://ropsten.infura.io/WKNyJ0kClh8Ao5LdmO7z",
     "swarmProviderUrl": "https://swarm-gateways.net/",
     "whiteList": []
   },
   "local": {
-    "gasMargin": 2,
-    "secret": "do-not-use-me-in-production",
-    "keyFileStorage": "./keys",
     "port": 3000,
     "log": true,
     "web3Provider": "http://localhost:8545",
@@ -20,13 +15,10 @@
     "whiteList": []
   },
   "test": {
-    "gasMargin": 2,
     "port": 3000,
-    "secret": "super-random-test-secret ",
     "web3Provider": "http://localhost:8545",
-    "swarmProviderUrl": "http://localhost:8500",
     "user": "0xd39ca7d186a37bb6bf48ae8abfeb4c687dc8f906",
-    "keyFileStorage": "./test/utils/keys",
+    "swarmProviderUrl": "http://localhost:8500",
     "whiteList": [
       "127.0.0.1"
     ],
