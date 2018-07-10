@@ -9,8 +9,7 @@ const findAll = async (req, res, next) => {
     const indexRow = (await hotel.dataIndex).contents;
     const description = (await indexRow.descriptionUri).contents;
     let roomTypes = await description.roomTypes;
-    hotel = { roomTypes };
-    res.status(200).json({ hotel });
+    res.status(200).json(roomTypes);
   } catch (e) {
     next(e);
   }
@@ -28,9 +27,7 @@ const find = async (req, res, next) => {
       throw new Error('Room Type not found');
     }
     
-    let hotel = {};
-    hotel[roomTypeId] = roomType;
-    res.status(200).json({ hotel });
+    res.status(200).json(roomType);
   } catch (e) {
     if (e.message.match(/Room Type not found/i)) {
       return next(handleApplicationError('roomTypeNotFound', e));

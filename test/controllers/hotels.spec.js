@@ -168,8 +168,7 @@ describe('Hotels', function () {
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect((res) => {
-          const { hotel } = res.body;
-          expect(hotel).to.have.all.keys(defaultHotelFields);
+          expect(res.body).to.have.all.keys(defaultHotelFields);
         })
         .expect(200);
     });
@@ -183,8 +182,7 @@ describe('Hotels', function () {
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect((res) => {
-          const { hotel } = res.body;
-          expect(hotel).to.have.all.keys([...fields, 'id']);
+          expect(res.body).to.have.all.keys([...fields, 'id']);
         })
         .expect(200);
     });
@@ -198,8 +196,7 @@ describe('Hotels', function () {
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect((res) => {
-          const { hotel } = res.body;
-          expect(hotel).to.have.all.keys([...fields, 'id']);
+          expect(res.body).to.have.all.keys([...fields, 'id']);
         })
         .expect(200);
     });
@@ -214,9 +211,8 @@ describe('Hotels', function () {
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect((res) => {
-          const { hotel } = res.body;
-          expect(hotel).to.have.all.keys([...fields, 'id']);
-          expect(hotel).to.not.have.all.keys(invalidFields);
+          expect(res.body).to.have.all.keys([...fields, 'id']);
+          expect(res.body).to.not.have.all.keys(invalidFields);
         })
         .expect(200);
     });

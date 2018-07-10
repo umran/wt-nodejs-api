@@ -14,7 +14,7 @@ const fieldMapping = {
   managerAddress: 'manager',
 };
 
-const mapQueryFields = async fields => {
+const mapQueryFields = async (fields) => {
   return fields.reduce((newFields, field) => {
     const newField = fieldMapping[field] || field;
     newFields.push(newField);

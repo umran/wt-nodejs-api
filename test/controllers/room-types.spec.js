@@ -36,9 +36,7 @@ describe('Room types', function () {
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect((res) => {
-          const { hotel } = res.body;
-          expect(hotel).to.have.property('roomTypes');
-          expect(hotel.roomTypes).to.eql(HOTEL_DESCRIPTION.roomTypes);
+          expect(res.body).to.eql(HOTEL_DESCRIPTION.roomTypes);
         });
     });
   });
@@ -50,8 +48,7 @@ describe('Room types', function () {
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect((res) => {
-          const { hotel } = res.body;
-          expect(hotel).to.have.property('room-type-1111');
+          expect(res.body).to.have.property('id', 'room-type-1111');
         });
     });
 

@@ -1,14 +1,15 @@
 const { handleApplicationError } = require('../errors');
 const {
   DEFAULT_HOTELS_FIELDS,
-  DEFAULT_HOTEL_FIELDS } = require('../constants.js');
+  DEFAULT_HOTEL_FIELDS,
+} = require('../constants');
 const {
   fetchHotel,
   calculateFields,
 } = require('../services/filter-responses');
 
-const { mapHotel } = require('../services/mappings.js');
-const { paginate } = require('../services/pagination.js');
+const { mapHotel } = require('../services/mappings');
+const { paginate } = require('../services/pagination');
 
 const findAll = async (req, res, next) => {
   const { limit, page } = req.query;
@@ -53,7 +54,7 @@ const find = async (req, res, next) => {
     let hotel = await wt.index.getHotel(hotelAddress);
     hotel = await fetchHotel(hotel, fields);
     hotel = await mapHotel(hotel);
-    res.status(200).json({ hotel });
+    res.status(200).json(hotel);
   } catch (e) {
     if (e.message.match(/cannot find hotel/i)) {
       return next(handleApplicationError('hotelNotFound', e));
