@@ -13,47 +13,6 @@ module.exports = {
     status: 404,
     short: 'Hotel not found',
   },
-  missingManager: {
-    status: 400,
-    short: 'Field `manager` is mandatory',
-  },
-  missingPassword: {
-    status: 401,
-    short: 'Password is required',
-    long: 'You must include "X-Wallet-Password" header',
-  },
-  missingWallet: {
-    status: 401,
-    short: 'Wallet id is required',
-    long: 'You must include "X-Wallet-Id" header',
-  },
-  badWalletVersion: {
-    status: 400,
-    short: 'Wallet version is not 3',
-    long: 'Platform supports only Wallets in version 3',
-  },
-  badWalletFormat: {
-    status: 400,
-    short: 'Wallet has a bad format',
-    long: 'Check https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition for valid formats',
-  },
-  walletConflict: {
-    status: 409,
-    short: 'Wallet ID already exists',
-    long: 'Wallet ID already exists but with a different contents. If you\'ve changed the password, delete the original wallet.',
-  },
-  walletNotFound: {
-    status: 404,
-    short: 'Wallet not found',
-  },
-  cannotUnlockWallet: {
-    status: 401,
-    short: 'Wallet cannot be unlocked',
-  },
-  managerWalletMismatch: {
-    status: 401,
-    short: 'Wallet owner and hotel manager differ.',
-  },
   whiteList: {
     status: 403,
     short: 'IP is not whitelisted.',
@@ -63,5 +22,34 @@ module.exports = {
     status: 429,
     short: 'API rate Limit Exceeded',
     long: 'The rate limit was exceeded. Please try later.',
+  },
+  hotelChecksum: {
+    status: 422,
+    short: 'Checksum failed for hotel address.',
+    long: 'Given hotel address is not a valid Ethereum address. Must be a valid checksum address.',
+  },
+  limitRange: {
+    status: 422,
+    short: 'Limit must be a natural number.',
+    long: 'Limit must be greater than 0.',
+  },
+  paginationLimit: {
+    status: 422,
+    short: 'The page exceed the number of hotels.',
+    long: 'The first item of the page is beyond the amount of hotels.',
+  },
+  paginationFormat: {
+    status: 422,
+    short: 'Page and limit must be numbers.',
+    long: 'Limit must be a natural number. Page must be greater than 0s.',
+  },
+  negativePage: {
+    status: 422,
+    short: 'Page must be great than or equal to zero.',
+    long: 'Limit must be a natural number. Page must be greater than 0s.',
+  },
+  roomTypeNotFound: {
+    status: 404,
+    short: 'Room type not found',
   },
 };

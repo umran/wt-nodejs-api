@@ -60,3 +60,6 @@ typings/
 # test and key files
 keys/*.json
 test/utils/temp-keys/*
+
+# IDE
+.idea/

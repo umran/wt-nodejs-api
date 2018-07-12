@@ -7,20 +7,16 @@ const { version } = require('../package.json');
 
 const { validateIPWhiteList } = require('./middlewares');
 const { hotelsRouter } = require('./routes/hotels');
-const { transactionsRouter } = require('./routes/transactions');
-const { walletsRouter } = require('./routes/wallets');
 
 const { handleApplicationError } = require('./errors');
 const wtJsLibsService = require('./services/wt-js-libs');
 
-wtJsLibsService.initialize(config.get('web3Provider'));
+wtJsLibsService.initialize(config.get('web3Provider'), config.get('swarmProviderUrl'));
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(require('../docs/swagger.json')));
 app.use(bodyParser.json());
 app.use('/*', validateIPWhiteList);
 app.use(hotelsRouter);
-app.use(transactionsRouter);
-app.use(walletsRouter);
 
 // Root handler
 app.get('/', (req, res) => {

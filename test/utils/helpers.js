@@ -3,6 +3,10 @@
 const TruffleContract = require('truffle-contract');
 const Web3 = require('web3');
 const config = require('../../src/config');
+const {
+  HOTEL_DESCRIPTION,
+  RATE_PLAN,
+} = require('./test-data');
 
 // dirty hack for web3@1.0.0 support for localhost testrpc, see
 // https://github.com/trufflesuite/truffle-contract/issues/56#issuecomment-331084530
@@ -10,7 +14,8 @@ function hackInSendAsync (instance) {
   if (typeof instance.currentProvider.sendAsync !== 'function') {
     instance.currentProvider.sendAsync = function () {
       return instance.currentProvider.send.apply(
-        instance.currentProvider, arguments
+        instance.currentProvider,
+        arguments
       );
     };
   }
@@ -24,22 +29,38 @@ function getContractWithProvider (metadata, provider) {
   return contract;
 }
 const provider = new Web3.providers.HttpProvider(config.get('web3Provider'));
-const WTIndex = getContractWithProvider(require('@windingtree/wt-contracts/build/contracts/WTIndex'), provider);
+const WTIndex = getContractWithProvider(
+  require('@windingtree/wt-contracts/build/contracts/WTIndex'),
+  provider
+);
 
-const deployIndexAndHotel = async () => {
+const deployIndex = async () => {
   const index = await WTIndex.new({
     from: config.get('user'),
     gas: 6000000,
   });
   config.set('indexAddress', index.address);
-  const hotelUrl = 'ipfs://some-random-hash';
-  const registerResult = await index.registerHotel(hotelUrl, {
+  config.set('index', index);
+};
+
+const deployFullHotel = async (WtLibs) => {
+  const jsonClient = await WtLibs.getOffChainDataClient('json');
+  const descriptionUri = await jsonClient.upload(HOTEL_DESCRIPTION);
+  const ratePlansUri = await jsonClient.upload(RATE_PLAN);
+  const dataUri = await jsonClient.upload({
+    descriptionUri,
+    ratePlansUri,
+  });
+
+  let index = config.get('index');
+  const registerResult = await index.registerHotel(dataUri, {
     from: config.get('user'),
     gas: 6000000,
   });
-  config.set('testAddress', registerResult.logs[0].args.hotel);
+  return registerResult.logs[0].args.hotel;
 };
 
 module.exports = {
-  deployIndexAndHotel,
+  deployIndex,
+  deployFullHotel,
 };

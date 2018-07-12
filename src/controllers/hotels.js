@@ -1,93 +1,119 @@
+const _ = require('lodash');
 const { handleApplicationError } = require('../errors');
+const {
+  DEFAULT_HOTELS_FIELDS,
+  DEFAULT_HOTEL_FIELDS,
+  OBLIGATORY_FIELDS,
+  HOTEL_FIELDS,
+  DESCRIPTION_FIELDS,
+} = require('../constants');
+const {
+  mapHotelObjectToResponse,
+  mapHotelFieldsFromQuery,
+} = require('../services/property-mapping');
+const { paginate } = require('../services/pagination');
+
+// Helpers
+
+const VALID_FIELDS = _.union(HOTEL_FIELDS, DESCRIPTION_FIELDS);
+
+const pickAndResolveFields = (contents, fields) => {
+  return fields.reduce(async (plainContent, field) => {
+    plainContent = await plainContent;
+    plainContent[field] = await contents[field];
+    return plainContent;
+  }, {});
+};
+
+const resolveHotelObject = async (hotel, fields) => {
+  let indexProperties;
+  let descriptionProperties;
+  let errorFields;
+  try {
+    const indexFields = _.intersection(fields, HOTEL_FIELDS);
+    if (indexFields.length) {
+      indexProperties = pickAndResolveFields(hotel, indexFields);
+    }
+    const descriptionFields = _.intersection(fields, DESCRIPTION_FIELDS);
+    if (descriptionFields.length) {
+      const indexContents = (await hotel.dataIndex).contents;
+      const description = (await indexContents.descriptionUri).contents;
+      descriptionProperties = pickAndResolveFields(description, descriptionFields);
+    }
+  } catch (e) {
+    errorFields = {
+      error: e.message,
+    };
+  }
+  
+  return mapHotelObjectToResponse({
+    ...(await indexProperties),
+    ...(await descriptionProperties),
+    ...errorFields,
+    id: hotel.address,
+  });
+};
+
+const calculateFields = (fieldsQuery) => {
+  const fieldsArray = fieldsQuery.split(',');
+  const mappedFields = mapHotelFieldsFromQuery(fieldsArray);
+  return _.intersection(
+    VALID_FIELDS,
+    _.union(OBLIGATORY_FIELDS, mappedFields)
+  );
+};
+
+// Actual controllers
 
 const findAll = async (req, res, next) => {
+  const { limit, page } = req.query;
+  const fieldsQuery = req.query.fields || DEFAULT_HOTELS_FIELDS;
+  const fields = calculateFields(fieldsQuery);
+
   try {
     let hotels = await res.locals.wt.index.getAllHotels();
+
+    let { items, next } = paginate(hotels, limit, page);
     let rawHotels = [];
-    for (let hotel of hotels) {
-      rawHotels.push(await hotel.toPlainObject());
+    for (let hotel of items) {
+      rawHotels.push(resolveHotelObject(hotel, fields));
     }
-    res.status(200).json({ hotels: rawHotels });
+    items = await Promise.all(rawHotels);
+    res.status(200).json({ items, next });
   } catch (e) {
+    if (e.message.match(/limit and page are not numbers/i)) {
+      return next(handleApplicationError('paginationFormat', e));
+    }
+    if (e.message.match(/Limit out of range/i)) {
+      return next(handleApplicationError('limitRange', e));
+    }
+    if (e.message.match(/Pagination outside of the limits./i)) {
+      return next(handleApplicationError('paginationLimit', e));
+    }
+    if (e.message.match(/Negative Page./i)) {
+      return next(handleApplicationError('negativePage', e));
+    }
     next(e);
   }
 };
 
 const find = async (req, res, next) => {
-  const { hotelAddress } = req.params;
+  let { hotelAddress } = req.params;
+  const fieldsQuery = req.query.fields || DEFAULT_HOTEL_FIELDS;
+  const { wt } = res.locals;
+  const fields = calculateFields(fieldsQuery);
   try {
-    let hotel = await res.locals.wt.index.getHotel(hotelAddress);
-    return res.status(200).json({ hotel: await hotel.toPlainObject() });
+    let hotel = await wt.index.getHotel(hotelAddress);
+    res.status(200).json(await resolveHotelObject(hotel, fields));
   } catch (e) {
     if (e.message.match(/cannot find hotel/i)) {
       return next(handleApplicationError('hotelNotFound', e));
-    }
-    next(e);
-  }
-};
-
-const create = async (req, res, next) => {
-  const { hotel: hotelData } = req.body;
-  if (!hotelData.manager) {
-    return next(handleApplicationError('missingManager'));
-  }
-  try {
-    const result = await res.locals.wt.index.addHotel(res.locals.wt.wallet, hotelData);
-    res.status(202).json(result);
-  } catch (e) {
-    next(e);
-  }
-};
-
-const update = async (req, res, next) => {
-  const { hotel: hotelData } = req.body;
-  const { hotelAddress } = req.params;
-  try {
-    const hotel = await res.locals.wt.index.getHotel(hotelAddress);
-    if (hotelData.url) {
-      hotel.url = hotelData.url;
-    }
-    if (hotelData.name) {
-      hotel.name = hotelData.name;
-    }
-    if (hotelData.description) {
-      hotel.description = hotelData.description;
-    }
-
-    const transactionIds = await res.locals.wt.index.updateHotel(res.locals.wt.wallet, hotel);
-    res.status(202).json({ transactionIds });
-  } catch (e) {
-    if (e.message.match(/cannot find hotel/i)) {
-      return next(handleApplicationError('hotelNotFound', e));
-    }
-    if (e.message.match(/transaction originator/i)) {
-      return next(handleApplicationError('managerWalletMismatch', e));
-    }
-    next(e);
-  }
-};
-
-const remove = async (req, res, next) => {
-  const { hotelAddress } = req.params;
-  try {
-    const hotel = await res.locals.wt.index.getHotel(hotelAddress);
-    const transactionIds = await res.locals.wt.index.removeHotel(res.locals.wt.wallet, hotel);
-    res.status(202).json({ transactionIds });
-  } catch (e) {
-    if (e.message.match(/cannot find hotel/i)) {
-      return next(handleApplicationError('hotelNotFound', e));
-    }
-    if (e.message.match(/transaction originator/i)) {
-      return next(handleApplicationError('managerWalletMismatch', e));
     }
     next(e);
   }
 };
 
 module.exports = {
-  create,
   find,
   findAll,
-  remove,
-  update,
 };

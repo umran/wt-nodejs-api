@@ -1,415 +1,239 @@
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
-const sinon = require('sinon');
 const request = require('supertest');
 const wtJsLibs = require('../../src/services/wt-js-libs');
-const config = require('../../src/config');
-const { WALLET_PASSWORD_HEADER, WALLET_ID_HEADER } = require('../../src/constants');
 const {
-  deployIndexAndHotel,
+  deployIndex,
+  deployFullHotel,
 } = require('../utils/helpers');
 
-// We can use the default test location for wallets since we're not modifying them
-const walletUuid = 'ffa1e3be-e80a-4e1c-bb71-ed54c3bef115';
-const walletPassword = 'test123';
+const web3 = require('web3');
 
 describe('Hotels', function () {
   let server;
-  let createWalletSpy;
-
+  let wtLibsInstance;
   beforeEach(async () => {
     server = require('../../src/index');
-    const wtLibsInstance = wtJsLibs.getInstance();
-    createWalletSpy = sinon.spy(wtLibsInstance, 'createWallet');
-    await deployIndexAndHotel();
+    wtLibsInstance = wtJsLibs.getInstance();
+    await deployIndex();
   });
 
   afterEach(() => {
-    createWalletSpy.restore();
     server.close();
   });
 
   describe('GET /hotels', () => {
-    it('should return a list of hotels', async () => {
+    beforeEach(async () => {
+      await deployFullHotel(wtLibsInstance);
+      await deployFullHotel(wtLibsInstance);
+    });
+
+    it('should return default fields for hotels', async () => {
       await request(server)
         .get('/hotels')
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect((res) => {
-          expect(res.body.hotels.length).to.be.eql(1);
+          const { items } = res.body;
+          expect(items.length).to.be.eql(2);
+
+          items.forEach(hotel => {
+            expect(hotel).to.have.property('id');
+            expect(hotel).to.have.property('name');
+            expect(hotel).to.have.property('location');
+          });
         });
+    });
+
+    it('should apply limit', async () => {
+      await request(server)
+        .get('/hotels?limit=1')
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          const { items } = res.body;
+          expect(items.length).to.be.eql(1);
+
+          items.forEach(hotel => {
+            expect(hotel).to.have.property('id');
+            expect(hotel).to.have.property('name');
+            expect(hotel).to.have.property('location');
+          });
+        });
+    });
+
+    it('should return all fields that a client asks for', async () => {
+      const fields = [
+        'managerAddress',
+        'id',
+        'name',
+        'description',
+        'location',
+        'contacts',
+        'address',
+        'roomTypes',
+        'timezone',
+        'currency',
+        'images',
+        'amenities',
+        'updatedAt',
+      ];
+      const query = `fields=${fields.join()}`;
+
+      await request(server)
+        .get(`/hotels?${query}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          const { items } = res.body;
+          expect(items.length).to.be.eql(2);
+          items.forEach(hotel => {
+            expect(hotel).to.have.all.keys(fields);
+          });
+        });
+    });
+
+    it('should return 422 #limitRange', async () => {
+      const pagination = 'limit=-500&page=0';
+      await request(server)
+        .get(`/hotels?${pagination}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          expect(res.body).to.have.property('code', '#limitRange');
+        })
+        .expect(422);
+    });
+
+    it('should return 422 #paginationLimit', async () => {
+      const pagination = 'limit=15&page=1600';
+      await request(server)
+        .get(`/hotels?${pagination}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          expect(res.body).to.have.property('code', '#paginationLimit');
+        })
+        .expect(422);
+    });
+
+    it('should return 422 #paginationFormat', async () => {
+      const pagination = 'limit=1&page=zero';
+      await request(server)
+        .get(`/hotels?${pagination}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          expect(res.body).to.have.property('code', '#paginationFormat');
+        })
+        .expect(422);
+    });
+
+    it('should return 422 #negativePage', async () => {
+      const pagination = 'limit=1&page=-1';
+      await request(server)
+        .get(`/hotels?${pagination}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          expect(res.body).to.have.property('code', '#negativePage');
+        })
+        .expect(422);
     });
   });
 
   describe('GET /hotels/:hotelAddress', () => {
-    it('should return a hotel', async () => {
-      const name = 'new hotel';
-      const description = 'some description';
-      const manager = '0xd39ca7d186a37bb6bf48ae8abfeb4c687dc8f906';
-      const location = {
-        latitude: 50.0754789,
-        longitude: 14.4225864,
-      };
+    let address;
+    beforeEach(async () => {
+      address = await deployFullHotel(wtLibsInstance);
+      address = web3.utils.toChecksumAddress(address);
+    });
 
-      let res = await request(server)
-        .post('/hotels')
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .set(WALLET_ID_HEADER, walletUuid)
-        .send({ hotel: { name, description, manager, location } });
-
-      expect(res.body).to.have.property('address');
-      expect(res.body).to.have.property('transactionIds');
-      expect(res.body.transactionIds.length).to.be.above(0);
-
+    it('should return default fields', async () => {
+      const defaultHotelFields = [
+        'id',
+        'location',
+        'name',
+        'description',
+        'contacts',
+        'address',
+        'currency',
+        'images',
+        'amenities',
+        'updatedAt',
+      ];
       await request(server)
-        .get(`/hotels/${res.body.address}`)
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .expect((res) => {
-          expect(res.body.hotel).to.have.property('name', name);
-          expect(res.body.hotel).to.have.property('description', description);
-          expect(res.body.hotel).to.have.property('location');
-          expect(res.body.hotel).to.have.nested.property('location.latitude', location.latitude);
-          expect(res.body.hotel).to.have.nested.property('location.longitude', location.longitude);
-          expect(res.body.hotel).to.have.property('manager');
-          expect(res.body.hotel.manager.toLowerCase()).to.be.eql(manager);
-        })
-        .expect(200);
-    });
-
-    it('should return a 404 on a non-existent address', async () => {
-      await request(server)
-        .get('/hotels/0x994afd347b160be3973b41f0a144819496d175e9')
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .expect(404);
-    });
-  });
-
-  describe('POST /hotels', () => {
-    const name = 'new hotel';
-    const description = 'some description';
-    const manager = '0xd39ca7d186a37bb6bf48ae8abfeb4c687dc8f906';
-    const location = {
-      latitude: 50.0754789,
-      longitude: 14.4225864,
-    };
-
-    it('should create transactions on chain that will create a hotel', async () => {
-      await request(server)
-        .post('/hotels')
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .set(WALLET_ID_HEADER, walletUuid)
-        .send({ hotel: { name, description, manager, location } })
-        .expect((res) => {
-          expect(res.body).to.have.property('address');
-          expect(res.body).to.have.property('transactionIds');
-          expect(res.body.transactionIds.length).to.be.above(0);
-        })
-        .expect(202);
-      expect(createWalletSpy.callCount).to.be.eql(1);
-      const wallet = await createWalletSpy.returnValues[0];
-      expect(wallet).to.have.property('__destroyedFlag', true);
-    });
-
-    it('should return 400 on missing manager', async () => {
-      const res = await request(server)
-        .post('/hotels')
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .set(WALLET_ID_HEADER, walletUuid)
-        .send({ hotel: { name, description, location } })
-        .expect(400);
-        
-      expect(res.body).to.have.property('code', '#missingManager');
-      expect(res.body).to.have.property('short');
-      expect(res.body.short).to.match(/is mandatory/i);
-    });
-
-    it('should return 401 on bad password', async () => {
-      const res = await request(server)
-        .post('/hotels')
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, 'random-password')
-        .set(WALLET_ID_HEADER, walletUuid)
-        .send({ hotel: { name, description, manager, location } })
-        .expect(401);
-      expect(res.body).to.have.property('code', '#cannotUnlockWallet');
-      expect(res.body).to.have.property('short');
-      expect(res.body.short).to.match(/cannot be unlocked/i);
-    });
-
-    it('should return 401 on bad wallet id', async () => {
-      const res = await request(server)
-        .post('/hotels')
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .set(WALLET_ID_HEADER, 'random-nonexistent-wallet-id')
-        .send({ hotel: { name, description, manager, location } })
-        .expect(401);
-      expect(res.body).to.have.property('code', '#cannotUnlockWallet');
-      expect(res.body).to.have.property('short');
-      expect(res.body.short).to.match(/cannot be unlocked/i);
-    });
-
-    it('should return 401 on missing password', async () => {
-      const res = await request(server)
-        .post('/hotels')
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .set(WALLET_ID_HEADER, walletUuid)
-        .send({ hotel: { name, description, manager } })
-        .expect(401);
-      expect(res.body).to.have.property('code', '#missingPassword');
-      expect(res.body).to.have.property('short');
-      expect(res.body.short).to.match(/password is required/i);
-    });
-
-    it('should return 401 on missing wallet', async () => {
-      const res = await request(server)
-        .post('/hotels')
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .send({ hotel: { name, description, manager, location } })
-        .expect(401);
-      expect(res.body).to.have.property('code', '#missingWallet');
-      expect(res.body).to.have.property('short');
-      expect(res.body.short).to.match(/wallet id is required/i);
-    });
-  });
-
-  describe('PUT /hotels/:hotelAddress', () => {
-    const name = 'new hotel';
-    const description = 'some description';
-    const manager = '0xd39ca7d186a37bb6bf48ae8abfeb4c687dc8f906';
-    const url = 'ipfs://some-new-shiny-url';
-    const location = {
-      latitude: 50.0754789,
-      longitude: 14.4225864,
-    };
-
-    it('should create transactions on chain that will update a hotel', async () => {
-      let address;
-      let res = await request(server)
-        .post('/hotels')
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .set(WALLET_ID_HEADER, walletUuid)
-        .send({ hotel: { name, description, manager, location } });
-      address = res.body.address;
-      expect(res.body).to.have.property('address');
-      expect(res.body).to.have.property('transactionIds');
-      expect(res.body.transactionIds.length).to.be.above(0);
-      expect(createWalletSpy.callCount).to.be.eql(1);
-      let wallet = await createWalletSpy.returnValues[0];
-      expect(wallet).to.have.property('__destroyedFlag', true);
-      createWalletSpy.resetHistory();
-
-      await request(server)
-        .put(`/hotels/${res.body.address}`)
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .set(WALLET_ID_HEADER, walletUuid)
-        .send({ hotel: { description: 'Best hotel.', name: 'WTHotel', url: 'new-url' } })
-        .expect((res) => {
-          expect(res.body.transactionIds.length).to.be.above(0);
-        })
-        .expect(202);
-
-      expect(createWalletSpy.callCount).to.be.eql(1);
-      wallet = await createWalletSpy.returnValues[0];
-      expect(wallet).to.have.property('__destroyedFlag', true);
-
-      res = await request(server)
         .get(`/hotels/${address}`)
-        .expect(200);
-      expect(res.body).to.have.nested.property('hotel.url', 'new-url');
-      expect(res.body).to.have.nested.property('hotel.name', 'WTHotel');
-      expect(res.body).to.have.nested.property('hotel.description', 'Best hotel.');
-    });
-
-    it('should never update a manager', async () => {
-      await request(server)
-        .put(`/hotels/${config.get('testAddress')}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .set(WALLET_ID_HEADER, walletUuid)
-        .send({ hotel: {
-          name,
-          description,
-          location,
-          manager: 'someone-else',
-        } })
-        .expect(202);
-
-      const res = await request(server)
-        .get(`/hotels/${config.get('testAddress')}`)
+        .expect((res) => {
+          expect(res.body).to.have.all.keys(defaultHotelFields);
+        })
         .expect(200);
-      expect(res.body).to.have.nested.property('hotel.manager');
-      expect(res.body.hotel.manager.toLowerCase()).to.be.eql(manager);
     });
 
-    it('should never null url', async () => {
+    it('should return all fields that a client asks for', async () => {
+      const fields = ['name', 'location'];
+      const query = `fields=${fields.join()}`;
+
       await request(server)
-        .put(`/hotels/${config.get('testAddress')}`)
+        .get(`/hotels/${address}?${query}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .set(WALLET_ID_HEADER, walletUuid)
-        .send({ hotel: { url: null } })
-        .expect(202);
-          
-      const res = await request(server)
-        .get(`/hotels/${config.get('testAddress')}`)
+        .expect((res) => {
+          expect(res.body).to.have.all.keys([...fields, 'id']);
+        })
         .expect(200);
-      expect(res.body).to.have.nested.property('hotel.url');
     });
 
-    it('should return 404 when trying to update non-existing hotel', async () => {
+    it('should return all fields that a client asks for', async () => {
+      const fields = ['managerAddress'];
+      const query = `fields=${fields.join()}`;
+
       await request(server)
-        .put('/hotels/0x76ccdbb28c18168cc4ab55b11fc3be776e81200c')
+        .get(`/hotels/${address}?${query}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .set(WALLET_ID_HEADER, walletUuid)
-        .send({ name, description, location })
+        .expect((res) => {
+          expect(res.body).to.have.all.keys([...fields, 'id']);
+        })
+        .expect(200);
+    });
+
+    it('should not return any non-existent fields even if a client asks for them', async () => {
+      const fields = ['managerAddress', 'name'];
+      const invalidFields = ['invalid', 'invalidField'];
+      const query = `fields=${fields.join()},${invalidFields.join()}`;
+
+      await request(server)
+        .get(`/hotels/${address}?${query}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          expect(res.body).to.have.all.keys([...fields, 'id']);
+          expect(res.body).to.not.have.all.keys(invalidFields);
+        })
+        .expect(200);
+    });
+
+    it('should return a 404 for a non-existent address', async () => {
+      await request(server)
+        .get('/hotels/0x7135422D4633901AE0D2469886da96A8a72CB264')
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
         .expect(404);
     });
 
-    it('should return 401 on updating a hotel of a different manager', async () => {
+    it('should not work for an address in a badly checksummed format', async () => {
       await request(server)
-        .put(`/hotels/${config.get('testAddress')}`)
+        .get(`/hotels/${address.toUpperCase()}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, 'windingtree')
-        .set(WALLET_ID_HEADER, '7fe84016-4686-4622-97c9-dc7b47f5f5c6')
-        // url is required to force interaction with network
-        .send({ hotel: { name, description: 'random-updated-description', location, url } })
-        .expect(401);
-    });
-
-    it('should return 401 on bad password', async () => {
-      const res = await request(server)
-        .put(`/hotels/${config.get('testAddress')}`)
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, 'random-password')
-        .set(WALLET_ID_HEADER, walletUuid)
-        .send({ hotel: { name, description, manager, location } })
-        .expect(401);
-      expect(res.body).to.have.property('code', '#cannotUnlockWallet');
-      expect(res.body).to.have.property('short');
-      expect(res.body.short).to.match(/cannot be unlocked/i);
-    });
-
-    it('should return 401 on a missing password', async () => {
-      const res = await request(server)
-        .put(`/hotels/${config.get('testAddress')}`)
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .set(WALLET_ID_HEADER, walletUuid)
-        .send({ hotel: { name, description, manager, location } })
-        .expect(401);
-      expect(res.body).to.have.property('code', '#missingPassword');
-      expect(res.body).to.have.property('short');
-      expect(res.body.short).to.match(/password is required/i);
-    });
-
-    it('should return 401 on a missing wallet id', async () => {
-      const res = await request(server)
-        .put(`/hotels/${config.get('testAddress')}`)
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .send({ hotel: { name, description, manager, location } })
-        .expect(401);
-      expect(res.body).to.have.property('code', '#missingWallet');
-      expect(res.body).to.have.property('short');
-      expect(res.body.short).to.match(/wallet id is required/i);
-    });
-  });
-
-  describe('DELETE /hotels/:hotelAddress', () => {
-    it('should create transactions on chain that will delete a hotel', async () => {
-      const res = await request(server)
-        .delete(`/hotels/${config.get('testAddress')}`)
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .set(WALLET_ID_HEADER, walletUuid)
-        .expect(202);
-
-      expect(createWalletSpy.callCount).to.be.eql(1);
-      expect(res.body.transactionIds.length).to.be.above(0);
-      const wallet = await createWalletSpy.returnValues[0];
-      expect(wallet).to.have.property('__destroyedFlag', true);
-    });
-
-    it('should return 404 when trying to delete non-existing hotel', async () => {
-      await request(server)
-        .delete('/hotels/0x76ccdbb28c18168cc4ab55b11fc3be776e81200c')
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, walletPassword)
-        .set(WALLET_ID_HEADER, walletUuid)
-        .expect(404);
-    });
-
-    it('should return 401 on deleting a hotel of a different manager', async () => {
-      await request(server)
-        .delete(`/hotels/${config.get('testAddress')}`)
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, 'windingtree')
-        .set(WALLET_ID_HEADER, '7fe84016-4686-4622-97c9-dc7b47f5f5c6')
-        .expect(401);
-    });
-
-    it('should return 401 on bad password', async () => {
-      const res = await request(server)
-        .delete(`/hotels/${config.get('testAddress')}`)
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, 'random-password')
-        .set(WALLET_ID_HEADER, walletUuid)
-        .expect(401);
-      expect(res.body).to.have.property('code', '#cannotUnlockWallet');
-      expect(res.body).to.have.property('short');
-      expect(res.body.short).to.match(/cannot be unlocked/i);
-    });
-
-    it('should return 401 on a missing password', async () => {
-      const res = await request(server)
-        .delete(`/hotels/${config.get('testAddress')}`)
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .set(WALLET_ID_HEADER, walletUuid);
-      expect(res.body).to.have.property('code', '#missingPassword');
-      expect(res.body).to.have.property('short');
-      expect(res.body.short).to.match(/password is required/i);
-    });
-
-    it('should return 401 on a missing wallet id', async () => {
-      const res = await request(server)
-        .delete(`/hotels/${config.get('testAddress')}`)
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .set(WALLET_PASSWORD_HEADER, walletPassword);
-      expect(res.body).to.have.property('code', '#missingWallet');
-      expect(res.body).to.have.property('short');
-      expect(res.body.short).to.match(/wallet id is required/i);
+        .expect((res) => {
+          expect(res.body).to.have.property('code', '#hotelChecksum');
+        })
+        .expect(422);
     });
   });
 });

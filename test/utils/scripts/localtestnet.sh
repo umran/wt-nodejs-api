@@ -7,19 +7,19 @@ set -o errexit
 trap cleanup EXIT
 
 cleanup() {
-  # Kill the testrpc instance that we started (if we started one and if it's still running).
-  if [ -n "$testrpc_pid" ] && ps -p $testrpc_pid > /dev/null; then
-    kill -9 $testrpc_pid
+  # Kill the ganache instance that we started (if we started one and if it's still running).
+  if [ -n "$ganache_pid" ] && ps -p $ganache_pid > /dev/null; then
+    kill -9 $ganache_pid
   fi
 }
 
-testrpc_port=8545
+ganache_port=8545
 
-testrpc_running() {
-  nc -z localhost "$testrpc_port"
+ganache_running() {
+  nc -z localhost "$ganache_port"
 }
 
-start_testrpc() {
+start_ganache() {
   # We define 5 accounts with balance lots of ether, needed for high-value tests.
   # Available Accounts - on a clean network
   # =======================================
@@ -38,15 +38,15 @@ start_testrpc() {
   )
 
   node_modules/.bin/ganache-cli -i 77 --gasLimit 6000000 "${accounts[@]}" > /dev/null &
-  testrpc_pid=$!
+  ganache_pid=$!
   sleep 1
 }
 
-if testrpc_running; then
-  echo "Using existing testrpc instance"
+if ganache_running; then
+  echo "Using existing ganache instance"
 else
-  echo "Starting our own testrpc instance"
-  start_testrpc
+  echo "Starting our own ganache instance"
+  start_ganache
 fi
 
 ./node_modules/.bin/nyc --reporter=text ./node_modules/mocha/bin/mocha "test/**/*.spec.js" --timeout 20000

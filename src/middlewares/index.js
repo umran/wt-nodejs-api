@@ -1,8 +1,4 @@
-const compose = require('compose-middleware').compose;
-
 const wtJsLibs = require('../services/wt-js-libs');
-const { WALLET_PASSWORD_HEADER, WALLET_ID_HEADER } = require('../constants');
-const { loadKeyFile } = require('../services/keyfiles');
 const { handleApplicationError } = require('../errors');
 const config = require('../config');
 
@@ -14,40 +10,7 @@ const injectWtLibs = async (req, res, next) => {
   res.locals.wt = {
     instance: wtLibsInstance,
     index: await wtLibsInstance.getWTIndex(config.get('indexAddress')),
-    wallet: null,
   };
-  next();
-};
-
-const unlockAccount = compose([
-  injectWtLibs,
-  async (req, res, next) => {
-    const keyFileUuid = req.header(WALLET_ID_HEADER);
-    const password = req.header(WALLET_PASSWORD_HEADER);
-    if (!password) {
-      return next(handleApplicationError('missingPassword'));
-    }
-    if (!keyFileUuid) {
-      return next(handleApplicationError('missingWallet'));
-    }
-
-    try {
-      const wallet = await loadKeyFile(keyFileUuid);
-      res.locals.wt.wallet = await res.locals.wt.instance.createWallet(await wallet);
-      await res.locals.wt.wallet.unlock(password);
-    } catch (err) {
-      return next(handleApplicationError('cannotUnlockWallet', err));
-    }
-    next();
-  },
-]);
-
-const wipeAccountFromMemory = async (req, res, next) => {
-  res.on('finish', () => {
-    if (res.locals.wt.wallet) {
-      res.locals.wt.wallet.destroy();
-    }
-  });
   next();
 };
 
@@ -71,9 +34,18 @@ const validateIPWhiteList = function (req, res, next) {
   next();
 };
 
+const validateHotelAddress = (req, res, next) => {
+  const { hotelAddress } = req.params;
+  const { wt } = res.locals;
+  if (!wt.instance.dataModel.web3Instance.utils.checkAddressChecksum(hotelAddress)) {
+    return next(handleApplicationError('hotelChecksum'));
+  }
+
+  next();
+};
+
 module.exports = {
   injectWtLibs,
-  unlockAccount,
-  wipeAccountFromMemory,
   validateIPWhiteList,
+  validateHotelAddress,
 };
