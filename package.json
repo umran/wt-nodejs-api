@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint src test",
-    "test": "rimraf .nyc_output && ETH_NETWORK=test ./test/utils/scripts/localtestnet.sh",
+    "test": "rimraf .nyc_output && WT_CONFIG=test ./test/utils/scripts/localtestnet.sh",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "now-start": "ETH_NETWORK=testnet node ./src/index.js",
-    "dev": "ETH_NETWORK=local node ./src/index.js",
+    "now-start": "WT_CONFIG=ropsten node ./src/index.js",
+    "dev": "WT_CONFIG=local node ./src/index.js",
     "deploy": "now -e NODE_ENV=production --token $NOW_TOKEN --npm --public",
     "alias": "now alias --token=$NOW_TOKEN",
     "dev-net": "./scripts/dev-net.sh"

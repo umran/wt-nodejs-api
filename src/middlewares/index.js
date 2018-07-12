@@ -9,13 +9,13 @@ const injectWtLibs = async (req, res, next) => {
   const wtLibsInstance = wtJsLibs.getInstance();
   res.locals.wt = {
     instance: wtLibsInstance,
-    index: await wtLibsInstance.getWTIndex(config.get('indexAddress')),
+    index: await wtLibsInstance.getWTIndex(config.indexAddress),
   };
   next();
 };
 
 const validateIPWhiteList = function (req, res, next) {
-  const whiteList = config.get('whiteList');
+  const whiteList = config.whiteList;
   if (!whiteList.length) {
     return next();
   }

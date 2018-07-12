@@ -1,13 +1,9 @@
 const { app } = require('./app');
-const config = require('./config');
-const { deployIndex } = require('../scripts/local-network');
+const { port, networkSetup } = require('./config');
 
-const server = app.listen(config.get('port'), () => {
-  if (process.env.ETH_NETWORK === 'local') {
-    deployIndex();
-  }
-  if (config.get('log')) {
-    console.log(`WT API AT ${config.get('port')}!`);
+const server = app.listen(port, () => {
+  if (networkSetup) {
+    networkSetup();
   }
 });
 

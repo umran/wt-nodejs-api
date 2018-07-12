@@ -3,7 +3,7 @@ const Web3 = require('web3');
 const config = require('../src/config');
 const WTIndexContract = require('@windingtree/wt-contracts/build/contracts/WTIndex');
 
-const provider = new Web3.providers.HttpProvider(config.get('web3Provider'));
+const provider = new Web3.providers.HttpProvider(config.web3Provider);
 const web3 = new Web3(provider);
 
 // dirty hack for web3@1.0.0 support for localhost testrpc, see
@@ -33,8 +33,8 @@ const deployIndex = async () => {
     from: accounts[0],
     gas: 6000000,
   });
-  config.set('indexAddress', address);
-  console.log(`WTIndex at ${address}!`);
+  config.indexAddress = address;
+  config.logger && config.logger.log(`WTIndex at ${address}!`);
 };
 
 module.exports = {

@@ -1,5 +1,4 @@
 /* eslint-env mocha */
-/* eslint-disable no-unused-expressions */
 const TruffleContract = require('truffle-contract');
 const Web3 = require('web3');
 const config = require('../../src/config');
@@ -28,7 +27,7 @@ function getContractWithProvider (metadata, provider) {
   contract = hackInSendAsync(contract);
   return contract;
 }
-const provider = new Web3.providers.HttpProvider(config.get('web3Provider'));
+const provider = new Web3.providers.HttpProvider(config.web3Provider);
 const WTIndex = getContractWithProvider(
   require('@windingtree/wt-contracts/build/contracts/WTIndex'),
   provider
@@ -36,11 +35,12 @@ const WTIndex = getContractWithProvider(
 
 const deployIndex = async () => {
   const index = await WTIndex.new({
-    from: config.get('user'),
+    from: config.user,
     gas: 6000000,
   });
-  config.set('indexAddress', index.address);
-  config.set('index', index);
+  // TODO drop dependency on config
+  config.indexAddress = index.address;
+  config.index = index;
 };
 
 const deployFullHotel = async (WtLibs) => {
@@ -52,9 +52,9 @@ const deployFullHotel = async (WtLibs) => {
     ratePlansUri,
   });
 
-  let index = config.get('index');
+  let index = config.index;
   const registerResult = await index.registerHotel(dataUri, {
-    from: config.get('user'),
+    from: config.user,
     gas: 6000000,
   });
   return registerResult.logs[0].args.hotel;
