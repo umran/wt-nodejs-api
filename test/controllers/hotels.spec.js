@@ -12,11 +12,11 @@ const web3 = require('web3');
 
 describe('Hotels', function () {
   let server;
-  let wtLibsInstance;
+  let wtLibsInstance, indexContract;
   beforeEach(async () => {
     server = require('../../src/index');
     wtLibsInstance = wtJsLibs.getInstance();
-    await deployIndex();
+    indexContract = await deployIndex();
   });
 
   afterEach(() => {
@@ -25,8 +25,8 @@ describe('Hotels', function () {
 
   describe('GET /hotels', () => {
     beforeEach(async () => {
-      await deployFullHotel(wtLibsInstance);
-      await deployFullHotel(wtLibsInstance);
+      await deployFullHotel(await wtLibsInstance.getOffChainDataClient('json'), indexContract);
+      await deployFullHotel(await wtLibsInstance.getOffChainDataClient('json'), indexContract);
     });
 
     it('should return default fields for hotels', async () => {
@@ -146,7 +146,7 @@ describe('Hotels', function () {
   describe('GET /hotels/:hotelAddress', () => {
     let address;
     beforeEach(async () => {
-      address = await deployFullHotel(wtLibsInstance);
+      address = await deployFullHotel(await wtLibsInstance.getOffChainDataClient('json'), indexContract);
       address = web3.utils.toChecksumAddress(address);
     });
 

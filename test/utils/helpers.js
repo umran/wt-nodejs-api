@@ -2,10 +2,14 @@
 const TruffleContract = require('truffle-contract');
 const Web3 = require('web3');
 const config = require('../../src/config');
+const WTIndexContract = require('@windingtree/wt-contracts/build/contracts/WTIndex');
 const {
   HOTEL_DESCRIPTION,
   RATE_PLAN,
 } = require('./test-data');
+
+const provider = new Web3.providers.HttpProvider(config.web3Provider);
+const web3 = new Web3(provider);
 
 // dirty hack for web3@1.0.0 support for localhost testrpc, see
 // https://github.com/trufflesuite/truffle-contract/issues/56#issuecomment-331084530
@@ -13,8 +17,7 @@ function hackInSendAsync (instance) {
   if (typeof instance.currentProvider.sendAsync !== 'function') {
     instance.currentProvider.sendAsync = function () {
       return instance.currentProvider.send.apply(
-        instance.currentProvider,
-        arguments
+        instance.currentProvider, arguments
       );
     };
   }
@@ -27,34 +30,30 @@ function getContractWithProvider (metadata, provider) {
   contract = hackInSendAsync(contract);
   return contract;
 }
-const provider = new Web3.providers.HttpProvider(config.web3Provider);
-const WTIndex = getContractWithProvider(
-  require('@windingtree/wt-contracts/build/contracts/WTIndex'),
-  provider
-);
 
 const deployIndex = async () => {
-  const index = await WTIndex.new({
-    from: config.user,
+  const indexContract = getContractWithProvider(WTIndexContract, provider);
+  const accounts = await web3.eth.getAccounts();
+  const index = await indexContract.new({
+    from: accounts[0],
     gas: 6000000,
   });
   // TODO drop dependency on config
   config.indexAddress = index.address;
-  config.index = index;
+  return index;
 };
 
-const deployFullHotel = async (WtLibs) => {
-  const jsonClient = await WtLibs.getOffChainDataClient('json');
-  const descriptionUri = await jsonClient.upload(HOTEL_DESCRIPTION);
-  const ratePlansUri = await jsonClient.upload(RATE_PLAN);
-  const dataUri = await jsonClient.upload({
+const deployFullHotel = async (offChainDataAdapter, index) => {
+  const descriptionUri = await offChainDataAdapter.upload(HOTEL_DESCRIPTION);
+  const ratePlansUri = await offChainDataAdapter.upload(RATE_PLAN);
+  const accounts = await web3.eth.getAccounts();
+  const dataUri = await offChainDataAdapter.upload({
     descriptionUri,
     ratePlansUri,
   });
 
-  let index = config.index;
   const registerResult = await index.registerHotel(dataUri, {
-    from: config.user,
+    from: accounts[0],
     gas: 6000000,
   });
   return registerResult.logs[0].args.hotel;

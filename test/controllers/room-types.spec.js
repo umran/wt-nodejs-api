@@ -15,14 +15,13 @@ const {
 describe('Room types', function () {
   let server;
   let wtLibsInstance;
-  let address;
+  let address, index;
 
   beforeEach(async () => {
     server = require('../../src/index');
     wtLibsInstance = wtJsLibs.getInstance();
-    await deployIndex();
-    address = await deployFullHotel(wtLibsInstance);
-    address = web3.utils.toChecksumAddress(address);
+    index = await deployIndex();
+    address = web3.utils.toChecksumAddress(await deployFullHotel(await wtLibsInstance.getOffChainDataClient('json'), index));
   });
 
   afterEach(() => {
