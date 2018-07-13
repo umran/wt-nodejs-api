@@ -1,9 +1,9 @@
 const { app } = require('./app');
-const { port, networkSetup } = require('./config');
+const config = require('./config');
 
-const server = app.listen(port, () => {
-  if (networkSetup) {
-    networkSetup();
+const server = app.listen(config.port, () => {
+  if (config.networkSetup) {
+    config.networkSetup(config);
   }
 });
 

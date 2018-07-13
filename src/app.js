@@ -2,16 +2,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
 const app = express();
-const { web3Provider, swarmProviderUrl, logger } = require('./config');
+const { logger } = require('./config');
 const { version } = require('../package.json');
 
 const { validateIPWhiteList } = require('./middlewares');
 const { hotelsRouter } = require('./routes/hotels');
 
 const { handleApplicationError } = require('./errors');
-const wtJsLibsService = require('./services/wt-js-libs');
-
-wtJsLibsService.initialize(web3Provider, swarmProviderUrl);
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(require('../docs/swagger.json')));
 app.use(bodyParser.json());
@@ -40,7 +37,7 @@ app.use('*', (req, res) => {
 
 // Error handler
 app.use((err, req, res, next) => {
-  logger && logger.error(err);
+  logger.error(err.message);
   if (!err.code) {
     // Handle special cases of generic errors
     if (err.message === 'Invalid JSON RPC response: ""') {

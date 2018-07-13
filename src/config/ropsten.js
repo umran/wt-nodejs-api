@@ -1,10 +1,33 @@
+const WtJsLibs = require('@windingtree/wt-js-libs');
+const SwarmAdapter = require('@windingtree/off-chain-adapter-swarm');
+const HttpAdapter = require('@windingtree/off-chain-adapter-http');
 const winston = require('winston');
 
 module.exports = {
-  indexAddress: '0x09C0AECBA9BBEBCCDAAF3FE8473591A69C4C11BE',
+  wtIndexAddress: '0x09C0AECBA9BBEBCCDAAF3FE8473591A69C4C11BE',
   port: 3000,
-  web3Provider: 'https://ropsten.infura.io/WKNyJ0kClh8Ao5LdmO7z',
-  swarmProviderUrl: 'https://swarm-gateways.net/',
+  wtLibs: WtJsLibs.createInstance({
+    dataModelOptions: {
+      provider: 'https://ropsten.infura.io/WKNyJ0kClh8Ao5LdmO7z',
+    },
+    offChainDataOptions: {
+      adapters: {
+        'bzz-raw': {
+          options: {
+            swarmProviderUrl: 'https://swarm-gateways.net/',
+          },
+          create: (options) => {
+            return new SwarmAdapter(options);
+          },
+        },
+        https: {
+          create: () => {
+            return new HttpAdapter();
+          },
+        },
+      },
+    },
+  }),
   whiteList: [],
   logger: winston.createLogger({
     level: 'debug',

@@ -33,8 +33,7 @@ const deployIndex = async () => {
     from: accounts[0],
     gas: 6000000,
   });
-  config.indexAddress = address;
-  config.logger && config.logger.log(`WTIndex at ${address}!`);
+  return address;
 };
 
 module.exports = {

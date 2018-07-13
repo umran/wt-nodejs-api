@@ -38,8 +38,7 @@ const deployIndex = async () => {
     from: accounts[0],
     gas: 6000000,
   });
-  // TODO drop dependency on config
-  config.indexAddress = index.address;
+  config.wtIndexAddress = index.address;
   return index;
 };
 
