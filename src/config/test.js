@@ -27,8 +27,7 @@ module.exports = {
     level: 'debug',
     transports: [
       new winston.transports.Console({
-        format: winston.format.simple(),
-        handleExceptions: true,
+        silent: true
       }),
     ],
   }),
