@@ -1,4 +1,5 @@
 /* eslint-env mocha */
+/* eslint-disable no-unused-expressions */
 const { expect } = require('chai');
 const { paginate } = require('../../src/services/pagination');
 
@@ -100,9 +101,18 @@ describe('Pagination', function () {
     });
 
     it('should not panic when limit and page are passed as strings', async () => {
-      const { items, next } = paginate(allItems, '1', '0');
-      expect(items).to.have.property('length', 1);
-      expect(next).to.be.eql('limit=1&page=1');
+      const { items, next } = paginate(allItems, '7', '0');
+      expect(items).to.have.property('length', 7);
+      expect(next).to.be.eql('limit=7&page=1');
+    });
+
+    it('should not provide next if there is no next page', async () => {
+      let { items, next } = paginate(allItems, 110);
+      expect(items).to.have.property('length', 100);
+      expect(next).to.be.undefined;
+      const result = paginate(allItems, 100);
+      expect(result.items).to.have.property('length', 100);
+      expect(result.next).to.be.undefined;
     });
   });
 });
