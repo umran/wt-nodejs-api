@@ -20,9 +20,12 @@ const paginate = (items, limit = DEFAULT_PAGE_SIZE, page = 0) => {
   if (start > items.length) {
     throw new Error('Pagination outside of the limits.');
   }
+  const total = items.length;
+  let next;
   items = items.slice(start, start + limit);
-  const next = `limit=${limit}&page=${page + 1}`;
-
+  if (start + limit < total) {
+    next = `limit=${limit}&page=${page + 1}`;
+  }
   return { items, next };
 };
 
