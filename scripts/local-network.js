@@ -1,7 +1,7 @@
 const TruffleContract = require('truffle-contract');
 const Web3 = require('web3');
-const config = require('../src/config');
 const WTIndexContract = require('@windingtree/wt-contracts/build/contracts/WTIndex');
+const config = require('../src/config');
 
 const provider = new Web3.providers.HttpProvider(config.web3Provider);
 const web3 = new Web3(provider);
@@ -29,13 +29,29 @@ const getContractWithProvider = (metadata, provider) => {
 const deployIndex = async () => {
   const indexContract = getContractWithProvider(WTIndexContract, provider);
   const accounts = await web3.eth.getAccounts();
-  const { address } = await indexContract.new({
+  return indexContract.new({
     from: accounts[0],
     gas: 6000000,
   });
-  return address;
+};
+
+const deployFullHotel = async (offChainDataAdapter, index, hotelDescription, ratePlan) => {
+  const descriptionUri = await offChainDataAdapter.upload(hotelDescription);
+  const ratePlansUri = await offChainDataAdapter.upload(ratePlan);
+  const accounts = await web3.eth.getAccounts();
+  const dataUri = await offChainDataAdapter.upload({
+    descriptionUri,
+    ratePlansUri,
+  });
+
+  const registerResult = await index.registerHotel(dataUri, {
+    from: accounts[0],
+    gas: 6000000,
+  });
+  return registerResult.logs[0].args.hotel;
 };
 
 module.exports = {
   deployIndex,
+  deployFullHotel,
 };

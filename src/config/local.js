@@ -37,7 +37,7 @@ module.exports = {
   }),
   whiteList: [],
   networkSetup: async (currentConfig) => {
-    currentConfig.wtIndexAddress = await deployIndex();
+    currentConfig.wtIndexAddress = (await deployIndex()).address;
   },
   logger: winston.createLogger({
     level: 'debug',
