@@ -6,17 +6,23 @@ const wtJsLibs = require('../../src/services/wt-js-libs');
 const {
   deployIndex,
   deployFullHotel,
-} = require('../utils/helpers');
+} = require('../../scripts/local-network');
+const {
+  HOTEL_DESCRIPTION,
+  RATE_PLAN,
+} = require('../utils/test-data');
 
 const web3 = require('web3');
 
 describe('Hotels', function () {
   let server;
-  let wtLibsInstance;
+  let wtLibsInstance, indexContract;
   beforeEach(async () => {
     server = require('../../src/index');
+    const config = require('../../src/config');
     wtLibsInstance = wtJsLibs.getInstance();
-    await deployIndex();
+    indexContract = await deployIndex();
+    config.wtIndexAddress = indexContract.address;
   });
 
   afterEach(() => {
@@ -25,8 +31,8 @@ describe('Hotels', function () {
 
   describe('GET /hotels', () => {
     beforeEach(async () => {
-      await deployFullHotel(wtLibsInstance);
-      await deployFullHotel(wtLibsInstance);
+      await deployFullHotel(await wtLibsInstance.getOffChainDataClient('json'), indexContract, HOTEL_DESCRIPTION, RATE_PLAN);
+      await deployFullHotel(await wtLibsInstance.getOffChainDataClient('json'), indexContract, HOTEL_DESCRIPTION, RATE_PLAN);
     });
 
     it('should return default fields for hotels', async () => {
@@ -146,7 +152,7 @@ describe('Hotels', function () {
   describe('GET /hotels/:hotelAddress', () => {
     let address;
     beforeEach(async () => {
-      address = await deployFullHotel(wtLibsInstance);
+      address = await deployFullHotel(await wtLibsInstance.getOffChainDataClient('json'), indexContract, HOTEL_DESCRIPTION, RATE_PLAN);
       address = web3.utils.toChecksumAddress(address);
     });
 

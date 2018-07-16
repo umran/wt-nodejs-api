@@ -45,7 +45,7 @@ describe('API', function () {
   });
 
   it('GET with not whitelisted ip. Expect #whiteList', async () => {
-    config.set('whiteList', ['11.22.33.44']);
+    config.whiteList = ['11.22.33.44'];
     await request(server)
       .get('/')
       .expect((res) => {
@@ -55,7 +55,7 @@ describe('API', function () {
   });
 
   it('Allow all ips with empty whiteList', async () => {
-    config.set('whiteList', []);
+    config.whiteList = [];
     await request(server)
       .get('/')
       .expect(200);

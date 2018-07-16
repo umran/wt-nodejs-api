@@ -6,23 +6,24 @@ const wtJsLibs = require('../../src/services/wt-js-libs');
 const {
   deployIndex,
   deployFullHotel,
-} = require('../utils/helpers');
-
+} = require('../../scripts/local-network');
 const {
   HOTEL_DESCRIPTION,
+  RATE_PLAN,
 } = require('../utils/test-data');
 
 describe('Room types', function () {
   let server;
   let wtLibsInstance;
-  let address;
+  let address, indexContract;
 
   beforeEach(async () => {
     server = require('../../src/index');
+    const config = require('../../src/config');
     wtLibsInstance = wtJsLibs.getInstance();
-    await deployIndex();
-    address = await deployFullHotel(wtLibsInstance);
-    address = web3.utils.toChecksumAddress(address);
+    indexContract = await deployIndex();
+    config.wtIndexAddress = indexContract.address;
+    address = web3.utils.toChecksumAddress(await deployFullHotel(await wtLibsInstance.getOffChainDataClient('json'), indexContract, HOTEL_DESCRIPTION, RATE_PLAN));
   });
 
   afterEach(() => {
