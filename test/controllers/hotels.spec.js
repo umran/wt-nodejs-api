@@ -17,6 +17,7 @@ const web3 = require('web3');
 describe('Hotels', function () {
   let server;
   let wtLibsInstance, indexContract;
+  let hotel0address, hotel1address;
   beforeEach(async () => {
     server = require('../../src/index');
     const config = require('../../src/config');
@@ -31,8 +32,8 @@ describe('Hotels', function () {
 
   describe('GET /hotels', () => {
     beforeEach(async () => {
-      await deployFullHotel(await wtLibsInstance.getOffChainDataClient('json'), indexContract, HOTEL_DESCRIPTION, RATE_PLAN);
-      await deployFullHotel(await wtLibsInstance.getOffChainDataClient('json'), indexContract, HOTEL_DESCRIPTION, RATE_PLAN);
+      hotel0address = await deployFullHotel(await wtLibsInstance.getOffChainDataClient('json'), indexContract, HOTEL_DESCRIPTION, RATE_PLAN);
+      hotel1address = await deployFullHotel(await wtLibsInstance.getOffChainDataClient('json'), indexContract, HOTEL_DESCRIPTION, RATE_PLAN);
     });
 
     it('should return default fields for hotels', async () => {
@@ -43,29 +44,12 @@ describe('Hotels', function () {
         .expect((res) => {
           const { items } = res.body;
           expect(items.length).to.be.eql(2);
-
-          items.forEach(hotel => {
-            expect(hotel).to.have.property('id');
-            expect(hotel).to.have.property('name');
-            expect(hotel).to.have.property('location');
-          });
-        });
-    });
-
-    it('should apply limit', async () => {
-      await request(server)
-        .get('/hotels?limit=1')
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .expect((res) => {
-          const { items } = res.body;
-          expect(items.length).to.be.eql(1);
-
-          items.forEach(hotel => {
-            expect(hotel).to.have.property('id');
-            expect(hotel).to.have.property('name');
-            expect(hotel).to.have.property('location');
-          });
+          expect(items[0]).to.have.property('id', hotel0address);
+          expect(items[0]).to.have.property('name');
+          expect(items[0]).to.have.property('location');
+          expect(items[1]).to.have.property('id', hotel1address);
+          expect(items[1]).to.have.property('name');
+          expect(items[1]).to.have.property('location');
         });
     });
 
@@ -100,52 +84,63 @@ describe('Hotels', function () {
         });
     });
 
-    it('should return 422 #limitRange', async () => {
-      const pagination = 'limit=-500&page=0';
+    it('should apply limit', async () => {
+      await request(server)
+        .get('/hotels?limit=1')
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          const { items, next } = res.body;
+          expect(items.length).to.be.eql(1);
+          expect(next).to.be.eql(`http://example.com/hotels?limit=1&startWith=${hotel1address}`);
+
+          items.forEach(hotel => {
+            expect(hotel).to.have.property('id');
+            expect(hotel).to.have.property('name');
+            expect(hotel).to.have.property('location');
+          });
+        });
+    });
+
+    it('should paginate', async () => {
+      await request(server)
+        .get(`/hotels?limit=1&startWith=${hotel1address}`)
+        .set('content-type', 'application/json')
+        .set('accept', 'application/json')
+        .expect((res) => {
+          const { items, next } = res.body;
+          expect(items.length).to.be.eql(1);
+          expect(next).to.be.undefined;
+          items.forEach(hotel => {
+            expect(hotel).to.have.property('id');
+            expect(hotel).to.have.property('name');
+            expect(hotel).to.have.property('location');
+          });
+        });
+    });
+
+    it('should return 422 #paginationLimitError on negative limit', async () => {
+      const pagination = 'limit=-500';
       await request(server)
         .get(`/hotels?${pagination}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect((res) => {
-          expect(res.body).to.have.property('code', '#limitRange');
+          expect(res.body).to.have.property('code', '#paginationLimitError');
         })
         .expect(422);
     });
 
-    it('should return 422 #paginationLimit', async () => {
-      const pagination = 'limit=15&page=1600';
+    it('should return 404 #paginationStartWithError if the startWith does not exist', async () => {
+      const pagination = 'limit=1&startWith=random-hotel-address';
       await request(server)
         .get(`/hotels?${pagination}`)
         .set('content-type', 'application/json')
         .set('accept', 'application/json')
         .expect((res) => {
-          expect(res.body).to.have.property('code', '#paginationLimit');
+          expect(res.body).to.have.property('code', '#paginationStartWithError');
         })
-        .expect(422);
-    });
-
-    it('should return 422 #paginationFormat', async () => {
-      const pagination = 'limit=1&page=zero';
-      await request(server)
-        .get(`/hotels?${pagination}`)
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .expect((res) => {
-          expect(res.body).to.have.property('code', '#paginationFormat');
-        })
-        .expect(422);
-    });
-
-    it('should return 422 #negativePage', async () => {
-      const pagination = 'limit=1&page=-1';
-      await request(server)
-        .get(`/hotels?${pagination}`)
-        .set('content-type', 'application/json')
-        .set('accept', 'application/json')
-        .expect((res) => {
-          expect(res.body).to.have.property('code', '#negativePage');
-        })
-        .expect(422);
+        .expect(404);
     });
   });
 

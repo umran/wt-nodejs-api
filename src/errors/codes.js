@@ -28,25 +28,15 @@ module.exports = {
     short: 'Checksum failed for hotel address.',
     long: 'Given hotel address is not a valid Ethereum address. Must be a valid checksum address.',
   },
-  limitRange: {
+  paginationLimitError: {
     status: 422,
-    short: 'Limit must be a natural number.',
-    long: 'Limit must be greater than 0.',
+    short: 'Bad limit parameter.',
+    long: 'Limit must be a natural number greater than 0.',
   },
-  paginationLimit: {
-    status: 422,
-    short: 'The page exceed the number of hotels.',
-    long: 'The first item of the page is beyond the amount of hotels.',
-  },
-  paginationFormat: {
-    status: 422,
-    short: 'Page and limit must be numbers.',
-    long: 'Limit must be a natural number. Page must be greater than 0s.',
-  },
-  negativePage: {
-    status: 422,
-    short: 'Page must be great than or equal to zero.',
-    long: 'Limit must be a natural number. Page must be greater than 0s.',
+  paginationStartWithError: {
+    status: 404,
+    short: 'startWith does not exist.',
+    long: 'Cannot find startWith in hotel collection.',
   },
   roomTypeNotFound: {
     status: 404,
