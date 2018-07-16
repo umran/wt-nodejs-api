@@ -1,9 +1,10 @@
+const { baseUrl } = require('../config');
 const {
   DEFAULT_PAGE_SIZE,
   MAX_PAGE_SIZE,
 } = require('../constants');
 
-const paginate = (items, limit = DEFAULT_PAGE_SIZE, page = 0) => {
+const paginate = (basePath, items, limit = DEFAULT_PAGE_SIZE, page = 0) => {
   limit = parseInt(limit);
   page = parseInt(page);
   if (isNaN(limit) || isNaN(page)) {
@@ -24,7 +25,7 @@ const paginate = (items, limit = DEFAULT_PAGE_SIZE, page = 0) => {
   let next;
   items = items.slice(start, start + limit);
   if (start + limit < total) {
-    next = `limit=${limit}&page=${page + 1}`;
+    next = `${baseUrl}${basePath}?limit=${limit}&page=${page + 1}`;
   }
   return { items, next };
 };

@@ -72,8 +72,7 @@ const findAll = async (req, res, next) => {
 
   try {
     let hotels = await res.locals.wt.index.getAllHotels();
-
-    let { items, next } = paginate(hotels, limit, page);
+    let { items, next } = paginate(req.path, hotels, limit, page);
     let rawHotels = [];
     for (let hotel of items) {
       rawHotels.push(resolveHotelObject(hotel, fields));
