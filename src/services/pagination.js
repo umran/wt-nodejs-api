@@ -1,34 +1,51 @@
+const { baseUrl } = require('../config');
 const {
   DEFAULT_PAGE_SIZE,
   MAX_PAGE_SIZE,
 } = require('../constants');
 
-const paginate = (items, limit = DEFAULT_PAGE_SIZE, page = 0) => {
+class LimitValidationError extends Error {};
+class MissingStartWithError extends Error {};
+
+const paginate = (basePath, items, limit = DEFAULT_PAGE_SIZE, startWith, itemPaginationKey) => {
   limit = parseInt(limit);
-  page = parseInt(page);
-  if (isNaN(limit) || isNaN(page)) {
-    throw new Error('Limit and page are not numbers.');
+  if (isNaN(limit)) {
+    throw new LimitValidationError('Limit is not a number.');
   }
   if (limit > MAX_PAGE_SIZE || limit <= 0) {
-    throw new Error('Limit out of range.');
+    throw new LimitValidationError('Limit is out of range.');
   }
-  if (page < 0) {
-    throw new Error('Negative Page.');
+  if (startWith && itemPaginationKey) {
+    startWith = items.find((i) => i[itemPaginationKey] === startWith);
+    if (!startWith) {
+      throw new MissingStartWithError('Cannot find startWith in items list.');
+    }
   }
 
-  const start = page * limit;
-  if (start > items.length) {
-    throw new Error('Pagination outside of the limits.');
+  let startWithIndex = items.indexOf(startWith);
+  if (startWith && startWithIndex === -1) {
+    throw new MissingStartWithError('Cannot find startWith in items list.');
+  } else if (!startWith) {
+    startWithIndex = 0;
   }
-  const total = items.length;
+
   let next;
-  items = items.slice(start, start + limit);
-  if (start + limit < total) {
-    next = `limit=${limit}&page=${page + 1}`;
+  if (startWithIndex + limit < items.length) {
+    let nextStart = items[startWithIndex + limit];
+    if (itemPaginationKey) {
+      nextStart = nextStart[itemPaginationKey];
+    }
+    next = `${baseUrl}${basePath}?limit=${limit}&startWith=${nextStart}`;
   }
-  return { items, next };
+  
+  return {
+    items: items.slice(startWithIndex, startWithIndex + limit),
+    next,
+  };
 };
 
 module.exports = {
   paginate,
+  LimitValidationError,
+  MissingStartWithError,
 };

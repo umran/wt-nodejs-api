@@ -34,6 +34,15 @@
             }
           },
           {
+            "name": "startWith",
+            "in": "query",
+            "description": "The first record that will be included in the result",
+            "required": false,
+            "schema": {
+              "$ref": "https://raw.githubusercontent.com/windingtree/wiki/master/hotel-data-swagger.yaml#/components/schemas/EthereumAddressType"
+            }
+          },
+          {
             "name": "fields",
             "in": "query",
             "description": "List of fields to return with the hotel item. Selecting only `id` field leads to fastest responses as all data are  trieved from WTIndex only.\n",

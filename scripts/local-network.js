@@ -48,7 +48,7 @@ const deployFullHotel = async (offChainDataAdapter, index, hotelDescription, rat
     from: accounts[0],
     gas: 6000000,
   });
-  return registerResult.logs[0].args.hotel;
+  return web3.utils.toChecksumAddress(registerResult.logs[0].args.hotel);
 };
 
 module.exports = {

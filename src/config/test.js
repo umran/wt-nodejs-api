@@ -4,6 +4,7 @@ const winston = require('winston');
 
 module.exports = {
   port: 8100,
+  baseUrl: 'http://example.com',
   wtIndexAddress: 'will-be-set-during-init',
   wtLibs: WtJsLibs.createInstance({
     dataModelOptions: {
@@ -27,7 +28,7 @@ module.exports = {
     level: 'debug',
     transports: [
       new winston.transports.Console({
-        silent: true
+        silent: true,
       }),
     ],
   }),

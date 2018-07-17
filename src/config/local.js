@@ -7,6 +7,7 @@ const { deployIndex } = require('../../scripts/local-network');
 const winston = require('winston');
 module.exports = {
   port: 3000,
+  baseUrl: 'http://localhost:3000',
   wtIndexAddress: 'will-be-set-during-init',
   wtLibs: WtJsLibs.createInstance({
     dataModelOptions: {

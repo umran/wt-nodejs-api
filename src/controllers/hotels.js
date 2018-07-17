@@ -11,7 +11,11 @@ const {
   mapHotelObjectToResponse,
   mapHotelFieldsFromQuery,
 } = require('../services/property-mapping');
-const { paginate } = require('../services/pagination');
+const {
+  paginate,
+  LimitValidationError,
+  MissingStartWithError,
+} = require('../services/pagination');
 
 // Helpers
 
@@ -66,14 +70,13 @@ const calculateFields = (fieldsQuery) => {
 // Actual controllers
 
 const findAll = async (req, res, next) => {
-  const { limit, page } = req.query;
+  const { limit, startWith } = req.query;
   const fieldsQuery = req.query.fields || DEFAULT_HOTELS_FIELDS;
   const fields = calculateFields(fieldsQuery);
 
   try {
     let hotels = await res.locals.wt.index.getAllHotels();
-
-    let { items, next } = paginate(hotels, limit, page);
+    let { items, next } = paginate(req.path, hotels, limit, startWith, 'address');
     let rawHotels = [];
     for (let hotel of items) {
       rawHotels.push(resolveHotelObject(hotel, fields));
@@ -81,17 +84,11 @@ const findAll = async (req, res, next) => {
     items = await Promise.all(rawHotels);
     res.status(200).json({ items, next });
   } catch (e) {
-    if (e.message.match(/limit and page are not numbers/i)) {
-      return next(handleApplicationError('paginationFormat', e));
+    if (e instanceof LimitValidationError) {
+      return next(handleApplicationError('paginationLimitError', e));
     }
-    if (e.message.match(/Limit out of range/i)) {
-      return next(handleApplicationError('limitRange', e));
-    }
-    if (e.message.match(/Pagination outside of the limits./i)) {
-      return next(handleApplicationError('paginationLimit', e));
-    }
-    if (e.message.match(/Negative Page./i)) {
-      return next(handleApplicationError('negativePage', e));
+    if (e instanceof MissingStartWithError) {
+      return next(handleApplicationError('paginationStartWithError', e));
     }
     next(e);
   }

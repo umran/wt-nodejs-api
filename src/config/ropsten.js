@@ -6,6 +6,7 @@ const winston = require('winston');
 module.exports = {
   wtIndexAddress: '0x09C0AECBA9BBEBCCDAAF3FE8473591A69C4C11BE',
   port: 3000,
+  baseUrl: process.env.BASE_URL || 'https://demo-api.windingtree.com',
   wtLibs: WtJsLibs.createInstance({
     dataModelOptions: {
       provider: 'https://ropsten.infura.io/WKNyJ0kClh8Ao5LdmO7z',
