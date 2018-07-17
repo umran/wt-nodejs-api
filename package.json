@@ -69,7 +69,8 @@
   "nyc": {
     "exclude": [
       "scripts/",
-      "test/"
+      "test/",
+      "src/config"
     ]
   }
 }

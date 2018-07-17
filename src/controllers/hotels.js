@@ -30,6 +30,8 @@ const pickAndResolveFields = (contents, fields) => {
   }, {});
 };
 
+// TODO this will probably be rewritten when more (recursive) documents are added
+// TODO benefit from toPlainObject somehow
 const resolveHotelObject = async (hotel, fields) => {
   let indexProperties;
   let descriptionProperties;
@@ -53,10 +55,10 @@ const resolveHotelObject = async (hotel, fields) => {
       message = 'Cannot access off-chain data';
     }
     return {
-      id: hotel.address,
       error: message,
+      originalError: e.message,
       data: {
-        originalMessage: e.message,
+        id: hotel.address,
       },
     };
   }
@@ -91,8 +93,12 @@ const findAll = async (req, res, next) => {
     for (let hotel of items) {
       rawHotels.push(resolveHotelObject(hotel, fields));
     }
-    items = await Promise.all(rawHotels);
-    res.status(200).json({ items, next });
+    const resolvedItems = await Promise.all(rawHotels);
+    res.status(200).json({
+      items: resolvedItems.filter((i) => !i.error),
+      errors: resolvedItems.filter((i) => i.error),
+      next,
+    });
   } catch (e) {
     if (e instanceof LimitValidationError) {
       return next(handleApplicationError('paginationLimitError', e));
@@ -114,9 +120,6 @@ const find = async (req, res, next) => {
     hotel = await wt.index.getHotel(hotelAddress);
   } catch (e) {
     return next(handleApplicationError('hotelNotFound', e));
-  }
-  if (!hotel) {
-    return next(handleApplicationError('hotelNotFound'));
   }
 
   try {
