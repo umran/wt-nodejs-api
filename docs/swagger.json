@@ -319,16 +319,49 @@
               },
               "managerAddress": {
                 "$ref": "https://raw.githubusercontent.com/windingtree/wiki/master/hotel-data-swagger.yaml#/components/schemas/EthereumAddressType"
+              },
+              "roomTypes" : {
+                "description" : "Room types in the hotel",
+                "$ref" : "#/components/schemas/RoomTypesResponse"
               }
             }
           }
         ]
       },
-      "HotelDetail": {
-        "$ref": "https://raw.githubusercontent.com/windingtree/wiki/master/hotel-data-swagger.yaml#/components/schemas/HotelDescription"
+      "HotelDetail" : {
+        "allOf" : [
+          {
+            "$ref" : "https://raw.githubusercontent.com/windingtree/wiki/master/hotel-data-swagger.yaml#/components/schemas/HotelDescription"
+          }, {
+            "type" : "object",
+            "properties" : {
+              "roomTypes" : {
+                "description" : "Room types in the hotel",
+                "$ref" : "#/components/schemas/RoomTypesResponse"
+              }
+            }
+          }
+        ]
       },
-      "RoomTypeResponse": {
-        "$ref": "https://raw.githubusercontent.com/windingtree/wiki/master/hotel-data-swagger.yaml#/components/schemas/RoomType"
+      "RoomTypesResponse" : {
+        "description" : "Mapping where keys are id of room types and the values are room types",
+        "type" : "object",
+        "additionalProperties" : {
+          "$ref" : "#/components/schemas/RoomTypeResponse"
+        }
+      },
+      "RoomTypeResponse" : {
+        "allOf" : [ {
+          "$ref" : "https://raw.githubusercontent.com/windingtree/wiki/master/hotel-data-swagger.yaml#/components/schemas/RoomType"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "$ref" : "https://raw.githubusercontent.com/windingtree/wiki/master/hotel-data-swagger.yaml#/components/schemas/ObjectIdType",
+              "description" : "Vendor room type ID (should be unique for hotel)"
+            }
+          }
+        } ]
       },
       "Error": {
         "title": "Error",
