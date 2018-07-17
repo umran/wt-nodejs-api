@@ -25,6 +25,11 @@ const pickAndResolveFields = (contents, fields) => {
   return fields.reduce(async (plainContent, field) => {
     plainContent = await plainContent;
     plainContent[field] = await contents[field];
+    if (field === 'roomTypes') {
+      for (let roomTypeId in plainContent[field]) {
+        plainContent[field][roomTypeId].id = roomTypeId;
+      }
+    }
     return plainContent;
   }, {});
 };

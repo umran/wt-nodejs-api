@@ -80,6 +80,9 @@ describe('Hotels', function () {
           expect(items.length).to.be.eql(2);
           items.forEach(hotel => {
             expect(hotel).to.have.all.keys(fields);
+            for (let roomType in hotel.roomTypes) {
+              expect(hotel.roomTypes[roomType]).to.have.property('id');
+            }
           });
         });
     });

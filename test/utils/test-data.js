@@ -7,7 +7,6 @@ const HOTEL_DESCRIPTION = {
   'description': 'string',
   'roomTypes': {
     'room-type-1111': {
-      'id': 'room-type-1111',
       'name': 'string',
       'description': 'string',
       'totalQuantity': 0,
@@ -27,7 +26,6 @@ const HOTEL_DESCRIPTION = {
       },
     },
     'room-type-2222': {
-      'id': 'room-type-2222',
       'name': 'string',
       'description': 'string',
       'totalQuantity': 0,
@@ -47,7 +45,6 @@ const HOTEL_DESCRIPTION = {
       },
     },
     'room-type-3333': {
-      'id': 'room-type-3333',
       'name': 'string',
       'description': 'string',
       'totalQuantity': 0,

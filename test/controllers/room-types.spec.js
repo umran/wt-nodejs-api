@@ -38,6 +38,9 @@ describe('Room types', function () {
         .set('accept', 'application/json')
         .expect((res) => {
           expect(res.body).to.eql(HOTEL_DESCRIPTION.roomTypes);
+          for (let roomType in res.body) {
+            expect(res.body[roomType]).to.have.property('id');
+          }
         });
     });
   });
