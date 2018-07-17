@@ -359,7 +359,7 @@
             "id" : {
               "$ref" : "https://raw.githubusercontent.com/windingtree/wiki/master/hotel-data-swagger.yaml#/components/schemas/ObjectIdType",
               "description" : "Vendor room type ID (should be unique for hotel)"
-            },
+            }
           }
         } ]
       },
